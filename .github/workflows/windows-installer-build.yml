@@ -111,40 +111,7 @@ jobs:
           conan profile detect --force
           echo "Conan profile created successfully"
 
-      - name: Install Cura from source
-        shell: powershell
-        run: |
-          $pydir = Get-Content pydir.txt
-          $env:PATH += ";$pydir;$pydir/Scripts"
 
-          Write-Host "Installing Cura and dependencies from source..."
-
-          # Install essential build tools
-          python -m pip install --upgrade pip wheel setuptools
-          python -m pip install pyinstaller
-
-          # Install Cura's Python dependencies
-          if (Test-Path "_cura_sources/requirements.txt") {
-            python -m pip install -r _cura_sources/requirements.txt
-          }
-
-          # Install common dependencies that Cura needs
-          python -m pip install PyQt6 PyQt6-Qt6 sip
-          python -m pip install numpy scipy
-          python -m pip install requests urllib3 certifi
-          python -m pip install Pillow
-          python -m pip install trimesh
-          python -m pip install keyring
-          python -m pip install cryptography
-          python -m pip install shapely
-          python -m pip install pynest2d
-
-          # Install Cura itself in development mode
-          cd _cura_sources
-          python -m pip install -e .
-          cd ..
-
-          Write-Host "Cura installation completed"
 
       - name: Prepare Cura distribution with real CuraEngine
         id: prepare-distribution
