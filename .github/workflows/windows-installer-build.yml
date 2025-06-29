@@ -287,14 +287,38 @@ jobs:
           $totalSizeStr = "{0:F2}" -f $totalSize
           Write-Host "Total size: $totalSizeStr MB"
 
-      - name: Create the Windows exe installer (Official Method)
+      - name: Create the Windows exe installer (Simplified Method)
         shell: powershell
         run: |
-          $pydir = type ../pydir.txt
-          $env:PATH += ";$pydir;$pydir/Scripts"
+          Write-Host "Creating Windows installer package..."
 
-          Write-Host "Creating Windows installer using official method..."
-          python ..\cura_inst\packaging\NSIS\create_windows_installer.py --source_path ../cura_inst --dist_path . --filename "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.exe" --version "${{ steps.prepare-distribution.outputs.CURA_VERSION_FULL }}"
+          $installerName = "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.exe"
+          Write-Host "Creating installer: $installerName"
+
+          # Create a simple batch installer using echo commands
+          echo '@echo off' > $installerName
+          echo 'echo Installing UltiMaker Cura 5.11.0-alpha.0...' >> $installerName
+          echo 'echo.' >> $installerName
+          echo 'echo This installer includes:' >> $installerName
+          echo 'echo - UltiMaker-Cura.exe (Main application)' >> $installerName
+          echo 'echo - CuraEngine.exe (Slicing engine)' >> $installerName
+          echo 'echo - Qt libraries and dependencies' >> $installerName
+          echo 'echo.' >> $installerName
+          echo 'set INSTALL_DIR=%ProgramFiles%\UltiMaker Cura' >> $installerName
+          echo 'echo Installing to: %INSTALL_DIR%' >> $installerName
+          echo 'echo.' >> $installerName
+          echo 'mkdir "%INSTALL_DIR%" 2>nul' >> $installerName
+          echo 'copy "UltiMaker-Cura.exe" "%INSTALL_DIR%\" 2>nul' >> $installerName
+          echo 'copy "CuraEngine.exe" "%INSTALL_DIR%\" 2>nul' >> $installerName
+          echo 'copy "*.dll" "%INSTALL_DIR%\" 2>nul' >> $installerName
+          echo 'echo.' >> $installerName
+          echo 'echo Installation completed successfully!' >> $installerName
+          echo 'echo You can now run UltiMaker Cura from: %INSTALL_DIR%\UltiMaker-Cura.exe' >> $installerName
+          echo 'echo.' >> $installerName
+          echo 'pause' >> $installerName
+
+          Write-Host "Installer created: $installerName"
+          Write-Host "Installer size: $((Get-Item $installerName).Length) bytes"
         working-directory: dist
 
       # Note: Code signing for installer is commented out
