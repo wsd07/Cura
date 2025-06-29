@@ -135,11 +135,12 @@ jobs:
           echo Installing COMPLETE Cura package using Conan...
           echo Full Cura installation starting...
 
-          conan install --requires "cura/5.11.0-alpha.0@ultimaker/testing" --build=missing --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}"
-          if errorlevel 1 (
-            echo Cura installation failed, trying without CuraEngine build...
-            conan install --requires "cura/5.11.0-alpha.0@ultimaker/testing" --build=never --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}"
-            if errorlevel 1 echo Partial installation completed
+          echo Trying to install Cura without building CuraEngine...
+          conan install --requires "cura/5.11.0-alpha.0@ultimaker/testing" --build=never --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}" || (
+            echo Full Cura install failed, trying individual components...
+            conan install --requires "uranium/5.11.0-alpha.0@ultimaker/testing" --build=never --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}"
+            conan install --requires "cura_resources/5.11.0-alpha.0@ultimaker/testing" --build=never --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}"
+            echo Individual components installation completed
           )
 
           echo Conan installation phase completed
