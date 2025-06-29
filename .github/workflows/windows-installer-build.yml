@@ -155,7 +155,7 @@ jobs:
           echo "CURA_APP_NAME=$app_name" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
           # Create a simple Python script to test
-          python -c "with open('test_cura.py', 'w') as f: f.write('print(\"Hello from Cura Test Build\")\ninput(\"Press Enter to exit...\")\n')"
+          echo 'print("Hello from Cura Test Build")' | Out-File -FilePath "test_cura.py" -Encoding utf8
 
           # Create basic executable with PyInstaller
           pyinstaller --onefile --name "UltiMaker-Cura" --distpath "dist/UltiMaker-Cura" test_cura.py
