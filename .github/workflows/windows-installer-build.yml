@@ -143,12 +143,14 @@ jobs:
 
           # Install other Cura dependencies (optional ones with error handling)
           Write-Host "Attempting to install pynest2d (optional)..."
-          try {
-            python -m pip install pynest2d
+          $ErrorActionPreference = "SilentlyContinue"
+          python -m pip install pynest2d 2>$null
+          if ($LASTEXITCODE -eq 0) {
             Write-Host "pynest2d installed successfully"
-          } catch {
+          } else {
             Write-Host "pynest2d not available, continuing without it..."
           }
+          $ErrorActionPreference = "Stop"
 
           # Try to install Cura from source if possible
           if ((Test-Path "_cura_sources/setup.py") -or (Test-Path "_cura_sources/pyproject.toml")) {
