@@ -47,12 +47,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install conan==2.7.0
           pip install wheel setuptools
+          pip install GitPython
+          pip install requests
+          pip install pyyaml
+          pip install jinja2
 
       - name: Setup Conan
         run: |
           conan profile detect --force
-          conan config install https://github.com/ultimaker/conan-config.git
-          conan config install https://github.com/ultimaker/conan-config.git -sf profiles/windows
+          conan config install https://github.com/wsd07/conan-config.git
+          conan config install https://github.com/wsd07/conan-config.git -sf profiles/windows
 
       - name: Cache Conan packages
         uses: actions/cache@v3
@@ -104,12 +108,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install conan==2.7.0
           pip install wheel setuptools
+          pip install GitPython
+          pip install requests
+          pip install pyyaml
+          pip install jinja2
 
       - name: Setup Conan
         run: |
           conan profile detect --force
-          conan config install https://github.com/ultimaker/conan-config.git
-          conan config install https://github.com/ultimaker/conan-config.git -sf profiles/macos
+          conan config install https://github.com/wsd07/conan-config.git
+          conan config install https://github.com/wsd07/conan-config.git -sf profiles/macos
 
       - name: Cache Conan packages
         uses: actions/cache@v3
@@ -190,12 +198,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install conan==2.7.0
           pip install wheel setuptools
+          pip install GitPython
+          pip install requests
+          pip install pyyaml
+          pip install jinja2
 
       - name: Setup Conan
         run: |
           conan profile detect --force
-          conan config install https://github.com/ultimaker/conan-config.git
-          conan config install https://github.com/ultimaker/conan-config.git -sf profiles/linux
+          conan config install https://github.com/wsd07/conan-config.git
+          conan config install https://github.com/wsd07/conan-config.git -sf profiles/linux
 
       - name: Cache Conan packages
         uses: actions/cache@v3

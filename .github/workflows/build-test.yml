@@ -1,5 +1,5 @@
 name: Build Test
-run-name: Test build on ${{ matrix.os }} by @${{ github.actor }}
+run-name: Test build by @${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -75,6 +75,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install conan==2.7.0
           pip install wheel setuptools
+          pip install GitPython
+          pip install requests
+          pip install pyyaml
+          pip install jinja2
 
       - name: Setup Conan
         run: |

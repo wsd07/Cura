@@ -55,7 +55,7 @@ class CuraConan(ConanFile):
         "cura_debug_mode": False,  # Not yet implemented
         "internal": False,
         "i18n_extract": False,
-        "skip_licenses_download": False,
+        "skip_licenses_download": True,
     }
 
     def set_version(self):
