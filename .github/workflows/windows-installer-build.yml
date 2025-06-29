@@ -109,7 +109,7 @@ jobs:
           # Create a simple profile for Windows builds
           echo "Creating Conan profile for Windows build..."
           conan profile detect --force
-          conan profile show default
+          echo "Conan profile created successfully"
 
       - name: Install Cura dependencies
         shell: powershell
