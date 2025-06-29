@@ -133,11 +133,13 @@ jobs:
           set PATH=%PYDIR%;%PYDIR%\Scripts;%PATH%
 
           echo Installing COMPLETE Cura package using Conan...
-          echo Attempting full Cura installation (CuraEngine build may fail, that's expected)...
+          echo Full Cura installation starting...
 
-          conan install --requires "cura/5.11.0-alpha.0@ultimaker/testing" --build=missing --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}" || (
-            echo Cura installation failed (likely due to CuraEngine build), attempting without CuraEngine...
-            conan install --requires "cura/5.11.0-alpha.0@ultimaker/testing" --build=never --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}" || echo Partial installation completed
+          conan install --requires "cura/5.11.0-alpha.0@ultimaker/testing" --build=missing --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}"
+          if errorlevel 1 (
+            echo Cura installation failed, trying without CuraEngine build...
+            conan install --requires "cura/5.11.0-alpha.0@ultimaker/testing" --build=never --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}"
+            if errorlevel 1 echo Partial installation completed
           )
 
           echo Conan installation phase completed
