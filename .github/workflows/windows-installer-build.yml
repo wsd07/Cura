@@ -111,147 +111,60 @@ jobs:
           conan profile detect --force
           echo "Conan profile created successfully"
 
-      - name: Install Cura dependencies and prepare environment
+      - name: Gather/build the packages with Conan (Official Method)
         shell: powershell
         run: |
-          $pydir = Get-Content pydir.txt
+          $pydir = type pydir.txt
           $env:PATH += ";$pydir;$pydir/Scripts"
 
-          Write-Host "Installing comprehensive Cura dependencies..."
+          Write-Host "Installing Cura using Conan (following official method)..."
 
-          # Install essential build tools
-          python -m pip install --upgrade pip wheel setuptools
-          python -m pip install pyinstaller
+          # Use Conan to install Cura and all its dependencies (following official script)
+          conan install --requires "cura/5.11.0-alpha.0@ultimaker/testing" --build=missing --update -of cura_inst --deployer-package="*" -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN || '' }}"
 
-          # Install Qt and GUI dependencies (CRITICAL - NEVER REMOVE!)
-          Write-Host "Installing Qt dependencies..."
-          python -m pip install PyQt6 PyQt6-Qt6 sip
-          python -m pip install PyQt6-WebEngine PyQt6-3D
-
-          # Install scientific computing dependencies
-          Write-Host "Installing scientific computing libraries..."
-          python -m pip install numpy scipy
-          python -m pip install trimesh shapely
-
-          # Install networking and security
-          Write-Host "Installing networking libraries..."
-          python -m pip install requests urllib3 certifi
-          python -m pip install cryptography keyring
-
-          # Install image processing
-          python -m pip install Pillow
-
-          # Install other Cura dependencies (optional ones with error handling)
-          Write-Host "Attempting to install pynest2d (optional)..."
-          $ErrorActionPreference = "SilentlyContinue"
-          python -m pip install pynest2d 2>$null
-          if ($LASTEXITCODE -eq 0) {
-            Write-Host "pynest2d installed successfully"
-          } else {
-            Write-Host "pynest2d not available, continuing without it..."
-          }
-          $ErrorActionPreference = "Stop"
-
-          # Try to install Cura from source if possible
-          if ((Test-Path "_cura_sources/setup.py") -or (Test-Path "_cura_sources/pyproject.toml")) {
-            Write-Host "Installing Cura from source..."
-            cd _cura_sources
-            try {
-              python -m pip install -e .
-              Write-Host "Cura source installation successful"
-            } catch {
-              Write-Host "Cura source install failed, continuing with basic setup..."
-            }
-            cd ..
-          } else {
-            Write-Host "No Cura setup files found, skipping source installation"
-          }
-
-          Write-Host "Dependencies installation completed"
-
-      - name: Prepare Cura distribution with real CuraEngine
+      - name: Create the Cura distribution with pyinstaller (Official Method)
         id: prepare-distribution
+        shell: cmd
+        run: |
+          call cura_inst\conanrun.bat
+
+          python -m venv cura_installer_venv
+          call cura_installer_venv\Scripts\Activate.bat
+
+          python -m pip install -r cura_inst\packaging\pip_requirements_core_basic.txt --no-warn-script-location
+          python -m pip install -r cura_inst\packaging\pip_requirements_core_hashes.txt --no-warn-script-location
+          python -m pip install -r cura_inst\packaging\pip_requirements_installer_basic.txt --no-warn-script-location
+
+          python Cura-workflows\runner_scripts\prepare_installer.py --os Windows --architecture X64 --summary-output %GITHUB_STEP_SUMMARY% --variables-output %GITHUB_OUTPUT%
+
+          pyinstaller cura_inst\UltiMaker-Cura.spec
+
+      - name: Add MSVC redistributables (Official Method)
         shell: powershell
         run: |
-          $pydir = Get-Content pydir.txt
-          $env:PATH += ";$pydir;$pydir/Scripts"
-
-          Write-Host "Preparing Cura distribution with real CuraEngine..."
-
-          # Set up environment variables for installer naming
-          $cura_version = "5.11.0-alpha.0"
-          $installer_filename = "UltiMaker-Cura-$cura_version-win64-X64"
-          $app_name = "UltiMaker Cura"
-
-          # Output variables for later steps
-          echo "INSTALLER_FILENAME=$installer_filename" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-          echo "CURA_VERSION=$cura_version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-          echo "CURA_VERSION_FULL=$cura_version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-          echo "CURA_APP_NAME=$app_name" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-
-          # Create distribution directory
-          New-Item -ItemType Directory -Force -Path "dist/UltiMaker-Cura"
-
-          # Copy the real CuraEngine.exe from repository
-          if (Test-Path "_cura_sources/CuraEngine.exe") {
-            Copy-Item "_cura_sources/CuraEngine.exe" "dist/UltiMaker-Cura/CuraEngine.exe"
-            Write-Host "CuraEngine.exe copied successfully"
+          $MSDIR="C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Redist/MSVC"
+          if ( (dir -Exclude "v*" $MSDIR).Count -ne 1 ) {
+            Write-Host "Warning: Multiple or no MSVC versions found, skipping redistributables"
           } else {
-            Write-Host "Error: CuraEngine.exe not found in _cura_sources directory"
-            Write-Host "Listing contents of _cura_sources:"
-            Get-ChildItem "_cura_sources" | Select-Object Name, Length | Format-Table
-            exit 1
+            $MSDIR_R=(dir -Exclude "v*" $MSDIR)[0].FullName
+            $MSDIR_DLLS=(dir $MSDIR_R/x64/Microsoft.VC*.CRT)[0].FullName
+            copy $MSDIR_DLLS/concrt140.dll dist/UltiMaker-Cura/.
+            copy $MSDIR_DLLS/msvcp140.dll dist/UltiMaker-Cura/.
+            copy $MSDIR_DLLS/msvcp140_1.dll dist/UltiMaker-Cura/.
+            copy $MSDIR_DLLS/msvcp140_2.dll dist/UltiMaker-Cura/.
+            copy $MSDIR_DLLS/vcruntime140.dll dist/UltiMaker-Cura/.
+            copy $MSDIR_DLLS/vcruntime140_1.dll dist/UltiMaker-Cura/.
+            Write-Host "MSVC redistributables added"
           }
 
-          # Create a proper Cura launcher script with Qt support
-          Write-Host "Creating Cura launcher script..."
-          echo 'import sys' | Out-File -FilePath "cura_launcher.py" -Encoding utf8
-          echo 'import os' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo 'from pathlib import Path' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo 'def main():' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    print("UltiMaker Cura Launcher")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    print("Version: 5.11.0-alpha.0")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    print("This launcher includes real CuraEngine.exe and Qt libraries")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    app_dir = Path(__file__).parent' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    cura_engine_path = app_dir / "CuraEngine.exe"' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    if cura_engine_path.exists():' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '        print(f"Found CuraEngine: {cura_engine_path}")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '        size_mb = cura_engine_path.stat().st_size / (1024*1024)' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '        print(f"Size: {size_mb:.2f} MB")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    else:' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '        print("Warning: CuraEngine.exe not found!")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    print("This is a functional Cura launcher with real dependencies.")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    input("Press Enter to exit...")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo 'if __name__ == "__main__":' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-          echo '    main()' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
-
-          # Create Cura executable with PyInstaller, including Qt dependencies
-          Write-Host "Creating Cura executable with PyInstaller (including Qt libraries)..."
-
-          # Find Qt DLLs and include them
-          $qtPath = "$pydir\Lib\site-packages\PyQt6\Qt6\bin"
-          if (Test-Path $qtPath) {
-            Write-Host "Found Qt libraries at: $qtPath"
-            pyinstaller --onefile --name "UltiMaker-Cura" --distpath "dist/UltiMaker-Cura" --add-data "$qtPath\*.dll;." cura_launcher.py
+      - name: Add Python DLL workaround (Official Method)
+        shell: powershell
+        run: |
+          if (Test-Path "Cura-workflows/python_dll_workaround") {
+            copy Cura-workflows/python_dll_workaround/* dist/UltiMaker-Cura/.
+            Write-Host "Python DLL workaround applied"
           } else {
-            Write-Host "Qt path not found, creating basic executable..."
-            pyinstaller --onefile --name "UltiMaker-Cura" --distpath "dist/UltiMaker-Cura" cura_launcher.py
-          }
-
-          # Verify both executables exist
-          if ((Test-Path "dist/UltiMaker-Cura/UltiMaker-Cura.exe") -and (Test-Path "dist/UltiMaker-Cura/CuraEngine.exe")) {
-            Write-Host "Both UltiMaker-Cura.exe and CuraEngine.exe are ready"
-
-            # Show file sizes
-            $curaSize = (Get-Item "dist/UltiMaker-Cura/UltiMaker-Cura.exe").Length
-            $engineSize = (Get-Item "dist/UltiMaker-Cura/CuraEngine.exe").Length
-            Write-Host "UltiMaker-Cura.exe size: $([math]::Round($curaSize/1MB, 2)) MB"
-            Write-Host "CuraEngine.exe size: $([math]::Round($engineSize/1MB, 2)) MB"
-          } else {
-            Write-Host "Error: Failed to create required executables"
-            exit 1
+            Write-Host "Python DLL workaround files not found, skipping"
           }
 
       # Note: Code signing steps are commented out as they require specific certificates
@@ -304,23 +217,14 @@ jobs:
           $totalSize = (Get-ChildItem -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
           Write-Host "Total size: ${totalSize:F2} MB"
 
-      - name: Create the Windows exe installer
+      - name: Create the Windows exe installer (Official Method)
         shell: powershell
         run: |
-          Write-Host "Creating basic Windows installer..."
+          $pydir = type ../pydir.txt
+          $env:PATH += ";$pydir;$pydir/Scripts"
 
-          # Create a simple zip file as installer for now
-          $installerName = "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.exe"
-
-          # Create a basic batch file installer
-          echo '@echo off' > "$installerName"
-          echo 'echo Installing UltiMaker Cura...' >> "$installerName"
-          echo 'echo This is a test installer' >> "$installerName"
-          echo 'mkdir "C:\Program Files\UltiMaker Cura" 2>nul' >> "$installerName"
-          echo 'copy "UltiMaker-Cura.exe" "C:\Program Files\UltiMaker Cura\" 2>nul' >> "$installerName"
-          echo 'echo Installation completed' >> "$installerName"
-          echo 'pause' >> "$installerName"
-          Write-Host "Basic installer created: $installerName"
+          Write-Host "Creating Windows installer using official method..."
+          python ..\cura_inst\packaging\NSIS\create_windows_installer.py --source_path ../cura_inst --dist_path . --filename "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.exe" --version "${{ steps.prepare-distribution.outputs.CURA_VERSION_FULL }}"
         working-directory: dist
 
       # Note: Code signing for installer is commented out
