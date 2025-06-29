@@ -145,7 +145,7 @@ jobs:
           try { python -m pip install pynest2d } catch { Write-Host "pynest2d not available, continuing..." }
 
           # Try to install Cura from source if possible
-          if (Test-Path "_cura_sources/setup.py" -or Test-Path "_cura_sources/pyproject.toml") {
+          if ((Test-Path "_cura_sources/setup.py") -or (Test-Path "_cura_sources/pyproject.toml")) {
             Write-Host "Installing Cura from source..."
             cd _cura_sources
             try {
@@ -155,6 +155,8 @@ jobs:
               Write-Host "Cura source install failed, continuing with basic setup..."
             }
             cd ..
+          } else {
+            Write-Host "No Cura setup files found, skipping source installation"
           }
 
           Write-Host "Dependencies installation completed"
