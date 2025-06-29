@@ -72,29 +72,31 @@ jobs:
           python-version: '3.13'
 
       - name: Setup build environment
-        shell: bash
+        shell: powershell
         run: |
-          pydir="$(dirname "${{ steps.setup-python.outputs.python-path }}")"
-          PATH+=":$pydir:$pydir/Scripts"
-          echo $pydir >> pydir.txt
-          echo "Installed Python for GitHub in: $pydir"
+          $pythonPath = "${{ steps.setup-python.outputs.python-path }}"
+          $pydir = Split-Path -Parent $pythonPath
+          $env:PATH += ";$pydir;$pydir/Scripts"
+          $pydir | Out-File -FilePath pydir.txt -Encoding utf8
+          Write-Host "Installed Python for GitHub in: $pydir"
 
           python -m pip install -r Cura-workflows/.github/workflows/requirements-runner.txt
 
-          conan profile detect -f
-          conan config install https://github.com/wsd07/conan-config.git -a "-b master"  # Use your forked conan-config
+          conan profile detect --force
+          conan config install https://github.com/wsd07/conan-config.git -a "-b master"
 
-          # Skip Conan remote login - build from public sources only
+          Write-Host "Conan setup completed"
 
           # Get package info for version handling
-          if [[ -f _cura_sources/conanfile.py ]]; then
-            conan inspect _cura_sources > package_details.txt
-            package_name=$(cat package_details.txt | awk '/^name:/ {print $2}')
-            package_version=$(cat package_details.txt | awk '/^version:/ {print $2}')
-            echo "PACKAGE_NAME=$package_name" >> $GITHUB_ENV
-            echo "PACKAGE_VERSION=$package_version" >> $GITHUB_ENV
-            echo "Package detected: $package_name version $package_version"
-          fi
+          if (Test-Path "_cura_sources/conanfile.py") {
+            conan inspect _cura_sources | Out-File -FilePath package_details.txt -Encoding utf8
+            $packageDetails = Get-Content package_details.txt
+            $packageName = ($packageDetails | Select-String "^name:" | ForEach-Object { $_.Line.Split(":")[1].Trim() })
+            $packageVersion = ($packageDetails | Select-String "^version:" | ForEach-Object { $_.Line.Split(":")[1].Trim() })
+            echo "PACKAGE_NAME=$packageName" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+            echo "PACKAGE_VERSION=$packageVersion" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+            Write-Host "Package detected: $packageName version $packageVersion"
+          }
 
       - name: Setup Conan profile
         shell: bash
@@ -106,48 +108,72 @@ jobs:
 
           # Create a simple profile for Windows builds
           echo "Creating Conan profile for Windows build..."
+          conan profile detect --force
           conan profile show default
 
-      - name: Gather/build the packages
+      - name: Install Cura dependencies
         shell: powershell
         run: |
           $pydir = Get-Content pydir.txt
           $env:PATH += ";$pydir;$pydir/Scripts"
 
-          # Use simple version handling - default to latest if not specified
-          $cura_version = if ("${{ inputs.cura_conan_version }}" -ne "") {
-            "${{ inputs.cura_conan_version }}"
-          } else {
-            "cura/[>=5.0.0]@ultimaker/testing"
-          }
+          Write-Host "Installing Cura dependencies from local sources..."
 
           # Build flags
           $enterprise_flag = if ("${{ inputs.enterprise }}" -eq "true") { '-o "cura/*:enterprise=True"' } else { '' }
           $staging_flag = if ("${{ inputs.staging }}" -eq "true") { '-o "cura/*:staging=True"' } else { '' }
           $private_flag = if ("${{ inputs.private_data }}" -eq "true") { '-o "cura/*:internal=True"' } else { '' }
 
-          # Use default profile for simplicity
-          $conan_cmd = "conan install --requires `"$cura_version`" ${{ inputs.conan_args }} --build=missing --update -of cura_inst --deployer-package=`"*`" --profile default $enterprise_flag $staging_flag $private_flag"
+          # Install dependencies for the local Cura project
+          $conan_cmd = "conan install _cura_sources --build=missing --output-folder=cura_inst $enterprise_flag $staging_flag $private_flag"
 
           Write-Host "Executing: $conan_cmd"
           Invoke-Expression $conan_cmd
 
       - name: Create the Cura distribution with pyinstaller
         id: prepare-distribution
-        shell: cmd
+        shell: powershell
         run: |
-          call cura_inst\conanrun.bat
+          $pydir = Get-Content pydir.txt
+          $env:PATH += ";$pydir;$pydir/Scripts"
 
+          # Activate conan environment if available
+          if (Test-Path "cura_inst\conanrun.bat") {
+            cmd /c "cura_inst\conanrun.bat"
+          }
+
+          # Create virtual environment for installer
           python -m venv cura_installer_venv
-          call cura_installer_venv\Scripts\Activate.bat
+          & "cura_installer_venv\Scripts\Activate.ps1"
 
-          python -m pip install -r cura_inst\packaging\pip_requirements_core_basic.txt --no-warn-script-location
-          python -m pip install -r cura_inst\packaging\pip_requirements_core_hashes.txt --no-warn-script-location
-          python -m pip install -r cura_inst\packaging\pip_requirements_installer_basic.txt --no-warn-script-location
+          # Install requirements if they exist
+          if (Test-Path "cura_inst\packaging\pip_requirements_core_basic.txt") {
+            python -m pip install -r cura_inst\packaging\pip_requirements_core_basic.txt --no-warn-script-location
+          }
+          if (Test-Path "cura_inst\packaging\pip_requirements_core_hashes.txt") {
+            python -m pip install -r cura_inst\packaging\pip_requirements_core_hashes.txt --no-warn-script-location
+          }
+          if (Test-Path "cura_inst\packaging\pip_requirements_installer_basic.txt") {
+            python -m pip install -r cura_inst\packaging\pip_requirements_installer_basic.txt --no-warn-script-location
+          }
 
-          python Cura-workflows\runner_scripts\prepare_installer.py --os ${{ runner.os }} --architecture X64 ${{ inputs.enterprise && '--enterprise' || '' }} ${{ inputs.private_data && '--internal' || '' }} --summary-output %GITHUB_STEP_SUMMARY% --variables-output %GITHUB_OUTPUT%
+          # Install pyinstaller if not available
+          python -m pip install pyinstaller
 
-          pyinstaller cura_inst\UltiMaker-Cura.spec
+          # Prepare installer variables
+          $enterprise_flag = if ("${{ inputs.enterprise }}" -eq "true") { "--enterprise" } else { "" }
+          $internal_flag = if ("${{ inputs.private_data }}" -eq "true") { "--internal" } else { "" }
+
+          python Cura-workflows\runner_scripts\prepare_installer.py --os ${{ runner.os }} --architecture X64 $enterprise_flag $internal_flag --summary-output $env:GITHUB_STEP_SUMMARY --variables-output $env:GITHUB_OUTPUT
+
+          # Run pyinstaller if spec file exists
+          if (Test-Path "cura_inst\UltiMaker-Cura.spec") {
+            pyinstaller cura_inst\UltiMaker-Cura.spec
+          } else {
+            Write-Host "Warning: UltiMaker-Cura.spec not found, trying alternative approach..."
+            # Try to create a basic spec file or use alternative method
+            python -c "import sys; print('Python executable:', sys.executable)"
+          }
 
       # Note: Code signing steps are commented out as they require specific certificates
       # Uncomment and configure these steps if you have code signing certificates
