@@ -12,7 +12,7 @@ resources/firmware
 resources/materials
 resources/images/whats_new
 resources/texts/whats_new
-CuraEngine.exe
+#CuraEngine.exe
 LC_MESSAGES
 .cache
 *.qmlc

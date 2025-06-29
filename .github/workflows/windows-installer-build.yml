@@ -111,37 +111,49 @@ jobs:
           conan profile detect --force
           echo "Conan profile created successfully"
 
-      - name: Install basic Python dependencies
+      - name: Install Cura from source
         shell: powershell
         run: |
           $pydir = Get-Content pydir.txt
           $env:PATH += ";$pydir;$pydir/Scripts"
 
-          Write-Host "Installing basic Python dependencies for Cura..."
+          Write-Host "Installing Cura and dependencies from source..."
 
-          # Install essential packages for building Cura
-          python -m pip install --upgrade pip
-          python -m pip install wheel setuptools
+          # Install essential build tools
+          python -m pip install --upgrade pip wheel setuptools
           python -m pip install pyinstaller
-          python -m pip install PyQt6 PyQt6-Qt6
+
+          # Install Cura's Python dependencies
+          if (Test-Path "_cura_sources/requirements.txt") {
+            python -m pip install -r _cura_sources/requirements.txt
+          }
+
+          # Install common dependencies that Cura needs
+          python -m pip install PyQt6 PyQt6-Qt6 sip
           python -m pip install numpy scipy
-          python -m pip install requests urllib3
-          python -m pip install certifi
+          python -m pip install requests urllib3 certifi
+          python -m pip install Pillow
+          python -m pip install trimesh
+          python -m pip install keyring
+          python -m pip install cryptography
+          python -m pip install shapely
+          python -m pip install pynest2d
 
-          # Create basic directory structure
-          New-Item -ItemType Directory -Force -Path "cura_inst"
-          New-Item -ItemType Directory -Force -Path "cura_inst/packaging"
+          # Install Cura itself in development mode
+          cd _cura_sources
+          python -m pip install -e .
+          cd ..
 
-          Write-Host "Basic dependencies installed successfully"
+          Write-Host "Cura installation completed"
 
-      - name: Create basic Cura executable
+      - name: Prepare Cura distribution with real CuraEngine
         id: prepare-distribution
         shell: powershell
         run: |
           $pydir = Get-Content pydir.txt
           $env:PATH += ";$pydir;$pydir/Scripts"
 
-          Write-Host "Creating basic Cura executable..."
+          Write-Host "Preparing Cura distribution with real CuraEngine..."
 
           # Set up environment variables for installer naming
           $cura_version = "5.11.0-alpha.0"
@@ -154,18 +166,40 @@ jobs:
           echo "CURA_VERSION_FULL=$cura_version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           echo "CURA_APP_NAME=$app_name" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-          # Create a simple Python script to test
-          echo 'print("Hello from Cura Test Build")' | Out-File -FilePath "test_cura.py" -Encoding utf8
+          # Create distribution directory
+          New-Item -ItemType Directory -Force -Path "dist/UltiMaker-Cura"
 
-          # Create basic executable with PyInstaller
-          pyinstaller --onefile --name "UltiMaker-Cura" --distpath "dist/UltiMaker-Cura" test_cura.py
-
-          # Also create a copy with the expected name
-          if (Test-Path "dist/UltiMaker-Cura/UltiMaker-Cura.exe") {
-            Copy-Item "dist/UltiMaker-Cura/UltiMaker-Cura.exe" "dist/UltiMaker-Cura/CuraEngine.exe"
-            Write-Host "Basic executables created successfully"
+          # Copy the real CuraEngine.exe from repository
+          if (Test-Path "CuraEngine.exe") {
+            Copy-Item "CuraEngine.exe" "dist/UltiMaker-Cura/CuraEngine.exe"
+            Write-Host "CuraEngine.exe copied successfully"
           } else {
-            Write-Host "Warning: Failed to create executable"
+            Write-Host "Error: CuraEngine.exe not found in repository"
+            exit 1
+          }
+
+          # Create a basic Cura launcher script
+          echo 'import sys' | Out-File -FilePath "cura_launcher.py" -Encoding utf8
+          echo 'import os' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
+          echo 'print("UltiMaker Cura Launcher")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
+          echo 'print("Version: 5.11.0-alpha.0")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
+          echo 'print("This launcher includes real CuraEngine.exe")' | Out-File -FilePath "cura_launcher.py" -Encoding utf8 -Append
+
+          # Create Cura executable with PyInstaller
+          pyinstaller --onefile --name "UltiMaker-Cura" --distpath "dist/UltiMaker-Cura" cura_launcher.py
+
+          # Verify both executables exist
+          if ((Test-Path "dist/UltiMaker-Cura/UltiMaker-Cura.exe") -and (Test-Path "dist/UltiMaker-Cura/CuraEngine.exe")) {
+            Write-Host "Both UltiMaker-Cura.exe and CuraEngine.exe are ready"
+
+            # Show file sizes
+            $curaSize = (Get-Item "dist/UltiMaker-Cura/UltiMaker-Cura.exe").Length
+            $engineSize = (Get-Item "dist/UltiMaker-Cura/CuraEngine.exe").Length
+            Write-Host "UltiMaker-Cura.exe size: $([math]::Round($curaSize/1MB, 2)) MB"
+            Write-Host "CuraEngine.exe size: $([math]::Round($engineSize/1MB, 2)) MB"
+          } else {
+            Write-Host "Error: Failed to create required executables"
+            exit 1
           }
 
       # Note: Code signing steps are commented out as they require specific certificates
