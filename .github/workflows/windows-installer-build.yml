@@ -173,22 +173,55 @@ jobs:
           echo CURA_VERSION=5.11.0-alpha.0 >> %GITHUB_OUTPUT%
           echo CURA_VERSION_FULL=5.11.0-alpha.0 >> %GITHUB_OUTPUT%
 
-      - name: Add MSVC redistributables (Official Method)
+      - name: Add MSVC redistributables (Fixed for GitHub Actions)
         shell: powershell
         run: |
-          $MSDIR="C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Redist/MSVC"
-          if ( (dir -Exclude "v*" $MSDIR).Count -ne 1 ) {
-            Write-Host "Warning: Multiple or no MSVC versions found, skipping redistributables"
+          Write-Host "Looking for MSVC redistributables..."
+
+          # Try multiple possible paths for Visual Studio
+          $possiblePaths = @(
+            "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Redist/MSVC",
+            "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Redist/MSVC",
+            "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Redist/MSVC",
+            "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC"
+          )
+
+          $foundPath = $null
+          foreach ($path in $possiblePaths) {
+            if (Test-Path $path) {
+              $foundPath = $path
+              Write-Host "Found MSVC at: $path"
+              break
+            }
+          }
+
+          if ($foundPath -and (Test-Path $foundPath)) {
+            try {
+              $versions = dir -Exclude "v*" $foundPath -ErrorAction SilentlyContinue
+              if ($versions.Count -eq 1) {
+                $MSDIR_R = $versions[0].FullName
+                $crtDirs = dir "$MSDIR_R/x64/Microsoft.VC*.CRT" -ErrorAction SilentlyContinue
+                if ($crtDirs.Count -gt 0) {
+                  $MSDIR_DLLS = $crtDirs[0].FullName
+                  Write-Host "Copying MSVC redistributables from: $MSDIR_DLLS"
+                  copy "$MSDIR_DLLS/concrt140.dll" "dist/UltiMaker-Cura/." -ErrorAction SilentlyContinue
+                  copy "$MSDIR_DLLS/msvcp140.dll" "dist/UltiMaker-Cura/." -ErrorAction SilentlyContinue
+                  copy "$MSDIR_DLLS/msvcp140_1.dll" "dist/UltiMaker-Cura/." -ErrorAction SilentlyContinue
+                  copy "$MSDIR_DLLS/msvcp140_2.dll" "dist/UltiMaker-Cura/." -ErrorAction SilentlyContinue
+                  copy "$MSDIR_DLLS/vcruntime140.dll" "dist/UltiMaker-Cura/." -ErrorAction SilentlyContinue
+                  copy "$MSDIR_DLLS/vcruntime140_1.dll" "dist/UltiMaker-Cura/." -ErrorAction SilentlyContinue
+                  Write-Host "MSVC redistributables added successfully"
+                } else {
+                  Write-Host "Warning: No CRT directories found, skipping redistributables"
+                }
+              } else {
+                Write-Host "Warning: Multiple or no MSVC versions found, skipping redistributables"
+              }
+            } catch {
+              Write-Host "Warning: Error accessing MSVC redistributables, skipping: $($_.Exception.Message)"
+            }
           } else {
-            $MSDIR_R=(dir -Exclude "v*" $MSDIR)[0].FullName
-            $MSDIR_DLLS=(dir $MSDIR_R/x64/Microsoft.VC*.CRT)[0].FullName
-            copy $MSDIR_DLLS/concrt140.dll dist/UltiMaker-Cura/.
-            copy $MSDIR_DLLS/msvcp140.dll dist/UltiMaker-Cura/.
-            copy $MSDIR_DLLS/msvcp140_1.dll dist/UltiMaker-Cura/.
-            copy $MSDIR_DLLS/msvcp140_2.dll dist/UltiMaker-Cura/.
-            copy $MSDIR_DLLS/vcruntime140.dll dist/UltiMaker-Cura/.
-            copy $MSDIR_DLLS/vcruntime140_1.dll dist/UltiMaker-Cura/.
-            Write-Host "MSVC redistributables added"
+            Write-Host "Warning: No MSVC redistributables found, skipping"
           }
 
       - name: Add Python DLL workaround (Official Method)
