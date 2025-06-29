@@ -137,11 +137,13 @@ jobs:
           New-Item -ItemType Directory -Force -Path "dist/UltiMaker-Cura"
 
           # Copy the real CuraEngine.exe from repository
-          if (Test-Path "CuraEngine.exe") {
-            Copy-Item "CuraEngine.exe" "dist/UltiMaker-Cura/CuraEngine.exe"
+          if (Test-Path "_cura_sources/CuraEngine.exe") {
+            Copy-Item "_cura_sources/CuraEngine.exe" "dist/UltiMaker-Cura/CuraEngine.exe"
             Write-Host "CuraEngine.exe copied successfully"
           } else {
-            Write-Host "Error: CuraEngine.exe not found in repository"
+            Write-Host "Error: CuraEngine.exe not found in _cura_sources directory"
+            Write-Host "Listing contents of _cura_sources:"
+            Get-ChildItem "_cura_sources" | Select-Object Name, Length | Format-Table
             exit 1
           }
 
