@@ -266,23 +266,26 @@ jobs:
           foreach ($lib in $qtLibs) {
             if (Test-Path $lib) {
               $size = (Get-Item $lib).Length / 1MB
-              Write-Host "✓ Found $lib (${size:F2} MB)"
+              $sizeStr = "{0:F2}" -f $size
+              Write-Host "Found $lib ($sizeStr MB)"
             } else {
-              Write-Host "✗ Missing $lib"
+              Write-Host "Missing $lib"
             }
           }
 
           Write-Host "=== Checking CuraEngine ==="
           if (Test-Path "CuraEngine.exe") {
             $size = (Get-Item "CuraEngine.exe").Length / 1MB
-            Write-Host "✓ Found CuraEngine.exe (${size:F2} MB)"
+            $sizeStr = "{0:F2}" -f $size
+            Write-Host "Found CuraEngine.exe ($sizeStr MB)"
           } else {
-            Write-Host "✗ Missing CuraEngine.exe"
+            Write-Host "Missing CuraEngine.exe"
           }
 
           Write-Host "=== Total distribution size ==="
           $totalSize = (Get-ChildItem -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
-          Write-Host "Total size: ${totalSize:F2} MB"
+          $totalSizeStr = "{0:F2}" -f $totalSize
+          Write-Host "Total size: $totalSizeStr MB"
 
       - name: Create the Windows exe installer (Official Method)
         shell: powershell
