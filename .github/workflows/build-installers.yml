@@ -1,0 +1,228 @@
+name: Build Installers
+run-name: Build ${{ inputs.platforms }} installers by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Platforms to build (comma-separated: windows,macos,linux)'
+        default: 'windows,macos,linux'
+        type: string
+      cura_version:
+        description: 'Cura version to build'
+        default: 'main'
+        type: string
+      enterprise:
+        description: 'Build Cura as an Enterprise edition'
+        default: false
+        type: boolean
+      staging:
+        description: 'Use staging API'
+        default: false
+        type: boolean
+
+env:
+  CONAN_USER_HOME: "${{ github.workspace }}/conan-cache"
+  CONAN_HOME: "${{ github.workspace }}/conan-cache/.conan2"
+
+jobs:
+  build-windows:
+    if: contains(inputs.platforms, 'windows')
+    name: Build Windows Installer
+    runs-on: windows-2022
+    steps:
+      - name: Checkout Cura
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install conan==2.7.0
+          pip install wheel setuptools
+
+      - name: Setup Conan
+        run: |
+          conan profile detect --force
+          conan config install https://github.com/ultimaker/conan-config.git
+          conan config install https://github.com/ultimaker/conan-config.git -sf profiles/windows
+
+      - name: Cache Conan packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CONAN_HOME }}
+          key: conan-windows-${{ hashFiles('**/conanfile.py', '**/conandata.yml') }}
+          restore-keys: |
+            conan-windows-
+
+      - name: Install dependencies
+        run: |
+          conan install . --build=missing --update -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Build Cura
+        run: |
+          conan build . -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Create installer
+        run: |
+          conan create . --build=missing -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: |
+            build/Release/*.exe
+            build/Release/*.msi
+          retention-days: 30
+
+  build-macos:
+    if: contains(inputs.platforms, 'macos')
+    name: Build macOS Installer
+    runs-on: macos-12
+    steps:
+      - name: Checkout Cura
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install conan==2.7.0
+          pip install wheel setuptools
+
+      - name: Setup Conan
+        run: |
+          conan profile detect --force
+          conan config install https://github.com/ultimaker/conan-config.git
+          conan config install https://github.com/ultimaker/conan-config.git -sf profiles/macos
+
+      - name: Cache Conan packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CONAN_HOME }}
+          key: conan-macos-${{ hashFiles('**/conanfile.py', '**/conandata.yml') }}
+          restore-keys: |
+            conan-macos-
+
+      - name: Install dependencies
+        run: |
+          conan install . --build=missing --update -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Build Cura
+        run: |
+          conan build . -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Create installer
+        run: |
+          conan create . --build=missing -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Upload macOS installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-installer
+          path: |
+            build/Release/*.dmg
+            build/Release/*.pkg
+          retention-days: 30
+
+  build-linux:
+    if: contains(inputs.platforms, 'linux')
+    name: Build Linux Installer
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Cura
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            git \
+            libegl1-mesa-dev \
+            libfontconfig1-dev \
+            libfreetype6-dev \
+            libgl1-mesa-dev \
+            libglib2.0-dev \
+            libglu1-mesa-dev \
+            libharfbuzz-dev \
+            libicu-dev \
+            libnss3-dev \
+            libpng-dev \
+            libssl-dev \
+            libx11-dev \
+            libx11-xcb-dev \
+            libxcb1-dev \
+            libxext-dev \
+            libxfixes-dev \
+            libxi-dev \
+            libxrender-dev \
+            libxss1 \
+            libgstreamer-gl1.0-0 \
+            libgstreamer-plugins-base1.0-0
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install conan==2.7.0
+          pip install wheel setuptools
+
+      - name: Setup Conan
+        run: |
+          conan profile detect --force
+          conan config install https://github.com/ultimaker/conan-config.git
+          conan config install https://github.com/ultimaker/conan-config.git -sf profiles/linux
+
+      - name: Cache Conan packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CONAN_HOME }}
+          key: conan-linux-${{ hashFiles('**/conanfile.py', '**/conandata.yml') }}
+          restore-keys: |
+            conan-linux-
+
+      - name: Install dependencies
+        run: |
+          conan install . --build=missing --update -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Build Cura
+        run: |
+          conan build . -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Create installer
+        run: |
+          conan create . --build=missing -c user.cura:enterprise=${{ inputs.enterprise }} -c user.cura:staging=${{ inputs.staging }}
+
+      - name: Upload Linux installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-installer
+          path: |
+            build/Release/*.AppImage
+            build/Release/*.deb
+            build/Release/*.rpm
+          retention-days: 30
