@@ -65,40 +65,65 @@ jobs:
           
           Write-Host "Conan configuration completed successfully"
 
-      - name: Step 4 - Initialize Development Environment (Official Method with Workarounds)
+      - name: Step 4 - Initialize Development Environment with Arcus Fix
         shell: powershell
         run: |
-          Write-Host "=== Step 4: Initializing development environment with official command ==="
+          Write-Host "=== Step 4: Initializing development environment with arcus fix ==="
           Write-Host "Running: conan install . --build=missing --update -g VirtualPythonEnv"
 
           cura_venv\Scripts\Activate.ps1
 
-          # Try official command first, but handle arcus build failure
-          Write-Host "Attempting official Conan install..."
+          # First attempt - this will likely fail due to arcus build error
+          Write-Host "Attempting initial Conan install..."
+          $installResult = $null
           try {
-            conan install . --build=missing --update -g VirtualPythonEnv
-            Write-Host "Official Conan install succeeded!"
+            conan install . --build=missing --update -g VirtualPythonEnv 2>&1 | Tee-Object -Variable installResult
+            Write-Host "Conan install succeeded on first try!"
           } catch {
-            Write-Host "Full install failed (likely due to arcus build error), trying without problematic packages..."
+            Write-Host "Initial install failed as expected, proceeding with arcus fix..."
+          }
 
-            # Install individual components that work
-            conan install --requires "uranium/5.11.0-alpha.0@ultimaker/testing" --build=missing --update -g VirtualPythonEnv -of build_uranium
-            conan install --requires "cura_resources/5.11.0-alpha.0@ultimaker/testing" --build=missing --update -g VirtualPythonEnv -of build_resources
-            conan install --requires "cpython/3.12.2" --build=missing --update -g VirtualPythonEnv -of build_python
+          # Check if arcus build failed
+          if ($installResult -match "arcus.*build failed" -or $installResult -match "arcus.*Error") {
+            Write-Host "Detected arcus build failure, applying fix..."
 
-            # Merge the builds
-            if (Test-Path "build_uranium/generators") {
-              if (!(Test-Path "build/generators")) { New-Item -ItemType Directory -Path "build/generators" -Force }
-              Copy-Item "build_uranium/generators/*" "build/generators/" -Recurse -Force
-            }
-            if (Test-Path "build_resources/generators") {
-              Copy-Item "build_resources/generators/*" "build/generators/" -Recurse -Force
-            }
-            if (Test-Path "build_python/generators") {
-              Copy-Item "build_python/generators/*" "build/generators/" -Recurse -Force
+            # Find arcus source directory in Conan cache
+            $arcusDirs = Get-ChildItem -Path "$env:USERPROFILE\.conan2\p\b" -Directory -Name "arcus*" -ErrorAction SilentlyContinue
+            foreach ($arcusDir in $arcusDirs) {
+              $socketHeaderPath = "$env:USERPROFILE\.conan2\p\b\$arcusDir\b\src\Socket_p.h"
+              if (Test-Path $socketHeaderPath) {
+                Write-Host "Found Socket_p.h at: $socketHeaderPath"
+
+                # Read the file content
+                $content = Get-Content $socketHeaderPath -Raw
+
+                # Check if chrono include is already present
+                if ($content -notmatch "#include <chrono>") {
+                  Write-Host "Adding missing #include <chrono> to Socket_p.h..."
+
+                  # Add the include at the top after existing includes
+                  $newContent = $content -replace "(#include <[^>]+>\s*\n)", "`$1#include <chrono>`n"
+
+                  # If no includes found, add it at the very beginning
+                  if ($newContent -eq $content) {
+                    $newContent = "#include <chrono>`n" + $content
+                  }
+
+                  # Write the fixed content back
+                  Set-Content -Path $socketHeaderPath -Value $newContent -Encoding UTF8
+                  Write-Host "Successfully patched Socket_p.h with missing chrono include"
+                } else {
+                  Write-Host "Socket_p.h already has chrono include"
+                }
+              }
             }
 
-            Write-Host "Partial installation completed"
+            # Retry Conan install after fixing arcus
+            Write-Host "Retrying Conan install after arcus fix..."
+            conan install . --build=missing --update -g VirtualPythonEnv
+            Write-Host "Conan install succeeded after arcus fix!"
+          } else {
+            Write-Host "No arcus build failure detected, continuing..."
           }
 
           Write-Host "Development environment setup completed"
