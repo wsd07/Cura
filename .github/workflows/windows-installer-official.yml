@@ -103,39 +103,83 @@ jobs:
               Write-Host "Detected arcus build starting, applying fix..."
               Start-Sleep -Seconds 10  # Wait for source to be copied
 
-              # Find arcus source in Conan cache
+              # Find arcus source in Conan cache and patch all necessary files
               $arcusDirs = Get-ChildItem -Path "$env:USERPROFILE\.conan2\p\b" -Directory -Name "arcus*" -ErrorAction SilentlyContinue
               foreach ($arcusDir in $arcusDirs) {
-                $socketHeaderPath = "$env:USERPROFILE\.conan2\p\b\$arcusDir\b\src\Socket_p.h"
-                if (Test-Path $socketHeaderPath) {
-                  Write-Host "Found Socket_p.h at: $socketHeaderPath"
-                  $content = Get-Content $socketHeaderPath -Raw
+                $arcusSourcePath = "$env:USERPROFILE\.conan2\p\b\$arcusDir\b\src"
+                Write-Host "Checking arcus source directory: $arcusSourcePath"
 
-                  if ($content -notmatch "#include <chrono>") {
-                    Write-Host "Adding missing #include <chrono>..."
-                    $lines = Get-Content $socketHeaderPath
-                    $newLines = @()
-                    $chronoAdded = $false
+                if (Test-Path $arcusSourcePath) {
+                  # Patch Socket_p.h
+                  $socketHeaderPath = "$arcusSourcePath\Socket_p.h"
+                  if (Test-Path $socketHeaderPath) {
+                    Write-Host "Found Socket_p.h at: $socketHeaderPath"
+                    $content = Get-Content $socketHeaderPath -Raw
 
-                    foreach ($line in $lines) {
-                      $newLines += $line
-                      if ($line -match "#include" -and -not $chronoAdded) {
-                        $newLines += "#include <chrono>"
-                        $chronoAdded = $true
-                        Write-Host "Added #include <chrono> after: $line"
-                        break
+                    if ($content -notmatch "#include <chrono>") {
+                      Write-Host "Adding missing #include <chrono> to Socket_p.h..."
+                      $lines = Get-Content $socketHeaderPath
+                      $newLines = @()
+                      $chronoAdded = $false
+
+                      foreach ($line in $lines) {
+                        $newLines += $line
+                        if ($line -match "#include" -and -not $chronoAdded) {
+                          $newLines += "#include <chrono>"
+                          $chronoAdded = $true
+                          Write-Host "Added #include <chrono> after: $line"
+                          break
+                        }
                       }
-                    }
 
-                    if (-not $chronoAdded) {
-                      $newLines = @("#include <chrono>") + $newLines
-                      Write-Host "Added #include <chrono> at the beginning"
-                    }
+                      if (-not $chronoAdded) {
+                        $newLines = @("#include <chrono>") + $newLines
+                        Write-Host "Added #include <chrono> at the beginning"
+                      }
 
-                    Set-Content -Path $socketHeaderPath -Value $newLines -Encoding UTF8
-                    Write-Host "Successfully patched Socket_p.h"
-                    $arcusFixed = $true
+                      Set-Content -Path $socketHeaderPath -Value $newLines -Encoding UTF8
+                      Write-Host "Successfully patched Socket_p.h"
+                    } else {
+                      Write-Host "Socket_p.h already has chrono include"
+                    }
                   }
+
+                  # Also patch Socket.cpp if it exists and needs chrono
+                  $socketCppPath = "$arcusSourcePath\Socket.cpp"
+                  if (Test-Path $socketCppPath) {
+                    Write-Host "Found Socket.cpp at: $socketCppPath"
+                    $content = Get-Content $socketCppPath -Raw
+
+                    if ($content -notmatch "#include <chrono>") {
+                      Write-Host "Adding missing #include <chrono> to Socket.cpp..."
+                      $lines = Get-Content $socketCppPath
+                      $newLines = @()
+                      $chronoAdded = $false
+
+                      foreach ($line in $lines) {
+                        $newLines += $line
+                        if ($line -match "#include" -and -not $chronoAdded) {
+                          $newLines += "#include <chrono>"
+                          $chronoAdded = $true
+                          Write-Host "Added #include <chrono> to Socket.cpp after: $line"
+                          break
+                        }
+                      }
+
+                      if (-not $chronoAdded) {
+                        $newLines = @("#include <chrono>") + $newLines
+                        Write-Host "Added #include <chrono> to Socket.cpp at the beginning"
+                      }
+
+                      Set-Content -Path $socketCppPath -Value $newLines -Encoding UTF8
+                      Write-Host "Successfully patched Socket.cpp"
+                    } else {
+                      Write-Host "Socket.cpp already has chrono include"
+                    }
+                  }
+
+                  $arcusFixed = $true
+                  Write-Host "Arcus patching completed for directory: $arcusDir"
                 }
               }
             }
@@ -215,7 +259,7 @@ jobs:
             Write-Host "Checking if cura_app.py exists..."
             if (Test-Path "cura_app.py") {
               Write-Host "Found cura_app.py, testing basic execution..."
-              python cura_app.py --help || Write-Host "cura_app.py execution test completed"
+              try { python cura_app.py --help } catch { Write-Host "cura_app.py execution test completed" }
             } else {
               Write-Host "cura_app.py not found"
             }
