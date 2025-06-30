@@ -50,25 +50,75 @@ jobs:
 
           Write-Host "Conan 2.7.0 and dependencies installed successfully"
 
-      - name: Step 3 - Configure Conan (Official Method)
+      - name: Step 3 - Configure Conan and Create Arcus Fix Hook (Official Method)
         shell: powershell
         run: |
-          Write-Host "=== Step 3: Configuring Conan with official config ==="
-          
+          Write-Host "=== Step 3: Configuring Conan with official config and arcus fix ==="
+
           cura_venv\Scripts\Activate.ps1
-          
+
           Write-Host "Installing official Conan config..."
           conan config install https://github.com/ultimaker/conan-config.git
-          
+
           Write-Host "Detecting Conan profile..."
           conan profile detect --force
-          
+
+          Write-Host "Creating Conan hook to fix arcus compilation..."
+          $hookDir = "$env:USERPROFILE\.conan2\hooks"
+          if (!(Test-Path $hookDir)) { New-Item -ItemType Directory -Path $hookDir -Force }
+
+          # Create the hook content as separate lines to avoid YAML issues
+          $hookLines = @(
+            "from conan.tools.env import VirtualBuildEnv",
+            "import os",
+            "",
+            "def pre_build(conanfile):",
+            "    if conanfile.name == `"arcus`":",
+            "        print(`"HOOK: Applying arcus Socket_p.h fix...`")",
+            "        source_folder = conanfile.source_folder",
+            "        socket_header = os.path.join(source_folder, `"src`", `"Socket_p.h`")",
+            "        ",
+            "        if os.path.exists(socket_header):",
+            "            print(f`"HOOK: Found Socket_p.h at {socket_header}`")",
+            "            with open(socket_header, 'r', encoding='utf-8') as f:",
+            "                content = f.read()",
+            "            ",
+            "            if '#include <chrono>' not in content:",
+            "                print(`"HOOK: Adding missing #include <chrono>...`")",
+            "                lines = content.split('\n')",
+            "                new_lines = []",
+            "                chrono_added = False",
+            "                ",
+            "                for line in lines:",
+            "                    new_lines.append(line)",
+            "                    if '#include' in line and not chrono_added:",
+            "                        new_lines.append('#include <chrono>')",
+            "                        chrono_added = True",
+            "                        print(f`"HOOK: Added #include <chrono> after: {line}`")",
+            "                ",
+            "                if not chrono_added:",
+            "                    new_lines.insert(0, '#include <chrono>')",
+            "                    print(`"HOOK: Added #include <chrono> at the beginning`")",
+            "                ",
+            "                with open(socket_header, 'w', encoding='utf-8') as f:",
+            "                    f.write('\n'.join(new_lines))",
+            "                ",
+            "                print(`"HOOK: Successfully patched Socket_p.h`")",
+            "            else:",
+            "                print(`"HOOK: Socket_p.h already has chrono include`")",
+            "        else:",
+            "            print(f`"HOOK: Socket_p.h not found at {socket_header}`")"
+          )
+
+          Set-Content -Path "$hookDir\arcus_fix.py" -Value ($hookLines -join "`n") -Encoding UTF8
+          Write-Host "Created Conan hook at: $hookDir\arcus_fix.py"
+
           Write-Host "Conan configuration completed successfully"
 
-      - name: Step 4 - Initialize Development Environment with Arcus Fix
+      - name: Step 4 - Initialize Development Environment (Official Method with Hook)
         shell: powershell
         run: |
-          Write-Host "=== Step 4: Initializing development environment with arcus fix ==="
+          Write-Host "=== Step 4: Initializing development environment with Conan hook ==="
           Write-Host "Running: conan install . --build=missing --update -g VirtualPythonEnv"
 
           # Activate virtual environment
@@ -79,88 +129,10 @@ jobs:
           Write-Host "Checking Conan installation..."
           python -m pip list | findstr conan
 
-          # First attempt - capture output and exit code
-          Write-Host "Attempting initial Conan install..."
-          $installOutput = ""
-          $installExitCode = 0
-
-          # Run Conan install and capture all output
-          try {
-            $installOutput = & conan install . --build=missing --update -g VirtualPythonEnv 2>&1 | Out-String
-            $installExitCode = $LASTEXITCODE
-          } catch {
-            Write-Host "Conan command failed to execute: $_"
-            $installExitCode = 1
-            $installOutput = $_.Exception.Message
-          }
-
-          Write-Host "Conan install exit code: $installExitCode"
-          Write-Host "Checking for arcus build errors..."
-
-          # Check if arcus build failed by looking for specific error patterns
-          $arcusError = $false
-          if ($installOutput -match "arcus.*build failed" -or
-              $installOutput -match "arcus.*Error" -or
-              $installOutput -match "Socket_p\.h.*error" -or
-              $installOutput -match "system_clock.*must be a type" -or
-              $installExitCode -ne 0) {
-            $arcusError = $true
-            Write-Host "Detected arcus build failure, applying fix..."
-
-            # Find arcus source directory in Conan cache
-            $arcusDirs = Get-ChildItem -Path "$env:USERPROFILE\.conan2\p\b" -Directory -Name "arcus*" -ErrorAction SilentlyContinue
-            Write-Host "Found $($arcusDirs.Count) arcus directories in Conan cache"
-
-            foreach ($arcusDir in $arcusDirs) {
-              $socketHeaderPath = "$env:USERPROFILE\.conan2\p\b\$arcusDir\b\src\Socket_p.h"
-              Write-Host "Checking for Socket_p.h at: $socketHeaderPath"
-
-              if (Test-Path $socketHeaderPath) {
-                Write-Host "Found Socket_p.h, applying fix..."
-
-                # Read the file content
-                $content = Get-Content $socketHeaderPath -Raw
-
-                # Check if chrono include is already present
-                if ($content -notmatch "#include <chrono>") {
-                  Write-Host "Adding missing #include <chrono> to Socket_p.h..."
-
-                  # Add the include at the top after the first include
-                  $lines = Get-Content $socketHeaderPath
-                  $newLines = @()
-                  $chronoAdded = $false
-
-                  foreach ($line in $lines) {
-                    $newLines += $line
-                    if ($line -match "#include" -and -not $chronoAdded) {
-                      $newLines += "#include <chrono>"
-                      $chronoAdded = $true
-                      Write-Host "Added #include <chrono> after: $line"
-                    }
-                  }
-
-                  # If no includes found, add it at the beginning
-                  if (-not $chronoAdded) {
-                    $newLines = @("#include <chrono>") + $newLines
-                    Write-Host "Added #include <chrono> at the beginning"
-                  }
-
-                  # Write the fixed content back
-                  Set-Content -Path $socketHeaderPath -Value $newLines -Encoding UTF8
-                  Write-Host "Successfully patched Socket_p.h with missing chrono include"
-                } else {
-                  Write-Host "Socket_p.h already has chrono include"
-                }
-              }
-            }
-
-            # Retry Conan install after fixing arcus
-            Write-Host "Retrying Conan install after arcus fix..."
-            conan install . --build=missing --update -g VirtualPythonEnv
-            Write-Host "Conan install succeeded after arcus fix!"
-          } else {
-            Write-Host "No arcus build failure detected, continuing..."
-          }
+          # Run the official Conan install command
+          # The hook will automatically fix arcus during the build process
+          Write-Host "Running official Conan install with hook-based arcus fix..."
+          conan install . --build=missing --update -g VirtualPythonEnv
 
           Write-Host "Development environment setup completed"
           Write-Host "Generated files should be in build/generators/"
