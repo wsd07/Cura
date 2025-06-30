@@ -71,7 +71,13 @@ jobs:
           Write-Host "=== Step 4: Initializing development environment with arcus fix ==="
           Write-Host "Running: conan install . --build=missing --update -g VirtualPythonEnv"
 
-          cura_venv\Scripts\Activate.ps1
+          # Activate virtual environment
+          Write-Host "Activating Python virtual environment..."
+          & "cura_venv\Scripts\Activate.ps1"
+
+          # Verify Conan is available
+          Write-Host "Checking Conan installation..."
+          python -m pip list | findstr conan
 
           # First attempt - capture output and exit code
           Write-Host "Attempting initial Conan install..."
@@ -79,8 +85,14 @@ jobs:
           $installExitCode = 0
 
           # Run Conan install and capture all output
-          $installOutput = conan install . --build=missing --update -g VirtualPythonEnv 2>&1 | Out-String
-          $installExitCode = $LASTEXITCODE
+          try {
+            $installOutput = & conan install . --build=missing --update -g VirtualPythonEnv 2>&1 | Out-String
+            $installExitCode = $LASTEXITCODE
+          } catch {
+            Write-Host "Conan command failed to execute: $_"
+            $installExitCode = 1
+            $installOutput = $_.Exception.Message
+          }
 
           Write-Host "Conan install exit code: $installExitCode"
           Write-Host "Checking for arcus build errors..."
