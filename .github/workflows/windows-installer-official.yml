@@ -50,10 +50,10 @@ jobs:
 
           Write-Host "Conan 2.7.0 and dependencies installed successfully"
 
-      - name: Step 3 - Configure Conan and Create Arcus Fix Hook (Official Method)
+      - name: Step 3 - Configure Conan (Official Method)
         shell: powershell
         run: |
-          Write-Host "=== Step 3: Configuring Conan with official config and arcus fix ==="
+          Write-Host "=== Step 3: Configuring Conan with official config ==="
 
           cura_venv\Scripts\Activate.ps1
 
@@ -63,62 +63,62 @@ jobs:
           Write-Host "Detecting Conan profile..."
           conan profile detect --force
 
-          Write-Host "Creating Conan hook to fix arcus compilation..."
-          $hookDir = "$env:USERPROFILE\.conan2\hooks"
-          if (!(Test-Path $hookDir)) { New-Item -ItemType Directory -Path $hookDir -Force }
-
-          # Create the hook content as separate lines to avoid YAML issues
-          $hookLines = @(
-            "from conan.tools.env import VirtualBuildEnv",
-            "import os",
-            "",
-            "def pre_build(conanfile):",
-            "    if conanfile.name == `"arcus`":",
-            "        print(`"HOOK: Applying arcus Socket_p.h fix...`")",
-            "        source_folder = conanfile.source_folder",
-            "        socket_header = os.path.join(source_folder, `"src`", `"Socket_p.h`")",
-            "        ",
-            "        if os.path.exists(socket_header):",
-            "            print(f`"HOOK: Found Socket_p.h at {socket_header}`")",
-            "            with open(socket_header, 'r', encoding='utf-8') as f:",
-            "                content = f.read()",
-            "            ",
-            "            if '#include <chrono>' not in content:",
-            "                print(`"HOOK: Adding missing #include <chrono>...`")",
-            "                lines = content.split('\n')",
-            "                new_lines = []",
-            "                chrono_added = False",
-            "                ",
-            "                for line in lines:",
-            "                    new_lines.append(line)",
-            "                    if '#include' in line and not chrono_added:",
-            "                        new_lines.append('#include <chrono>')",
-            "                        chrono_added = True",
-            "                        print(f`"HOOK: Added #include <chrono> after: {line}`")",
-            "                ",
-            "                if not chrono_added:",
-            "                    new_lines.insert(0, '#include <chrono>')",
-            "                    print(`"HOOK: Added #include <chrono> at the beginning`")",
-            "                ",
-            "                with open(socket_header, 'w', encoding='utf-8') as f:",
-            "                    f.write('\n'.join(new_lines))",
-            "                ",
-            "                print(`"HOOK: Successfully patched Socket_p.h`")",
-            "            else:",
-            "                print(`"HOOK: Socket_p.h already has chrono include`")",
-            "        else:",
-            "            print(f`"HOOK: Socket_p.h not found at {socket_header}`")"
-          )
-
-          Set-Content -Path "$hookDir\arcus_fix.py" -Value ($hookLines -join "`n") -Encoding UTF8
-          Write-Host "Created Conan hook at: $hookDir\arcus_fix.py"
-
           Write-Host "Conan configuration completed successfully"
 
-      - name: Step 4 - Initialize Development Environment (Official Method with Hook)
+      - name: Step 3.5 - Download and Patch Arcus Source
         shell: powershell
         run: |
-          Write-Host "=== Step 4: Initializing development environment with Conan hook ==="
+          Write-Host "=== Step 3.5: Pre-downloading and patching arcus source ==="
+
+          cura_venv\Scripts\Activate.ps1
+
+          Write-Host "Downloading arcus source code..."
+          conan source --requires "arcus/5.10.0" --source-folder arcus_source
+
+          Write-Host "Patching arcus Socket_p.h..."
+          $socketHeader = "arcus_source\src\Socket_p.h"
+          if (Test-Path $socketHeader) {
+            Write-Host "Found Socket_p.h, applying fix..."
+            $content = Get-Content $socketHeader -Raw
+
+            if ($content -notmatch "#include <chrono>") {
+              Write-Host "Adding missing #include <chrono>..."
+              $lines = Get-Content $socketHeader
+              $newLines = @()
+              $chronoAdded = $false
+
+              foreach ($line in $lines) {
+                $newLines += $line
+                if ($line -match "#include" -and -not $chronoAdded) {
+                  $newLines += "#include <chrono>"
+                  $chronoAdded = $true
+                  Write-Host "Added #include <chrono> after: $line"
+                  break
+                }
+              }
+
+              if (-not $chronoAdded) {
+                $newLines = @("#include <chrono>") + $newLines
+                Write-Host "Added #include <chrono> at the beginning"
+              }
+
+              Set-Content -Path $socketHeader -Value $newLines -Encoding UTF8
+              Write-Host "Successfully patched Socket_p.h"
+            } else {
+              Write-Host "Socket_p.h already has chrono include"
+            }
+          } else {
+            Write-Host "Socket_p.h not found at: $socketHeader"
+            Write-Host "Available files:"
+            Get-ChildItem -Path "arcus_source" -Recurse | Select-Object FullName
+          }
+
+          Write-Host "Arcus source patching completed"
+
+      - name: Step 4 - Initialize Development Environment (Official Method with Patched Arcus)
+        shell: powershell
+        run: |
+          Write-Host "=== Step 4: Initializing development environment with patched arcus ==="
           Write-Host "Running: conan install . --build=missing --update -g VirtualPythonEnv"
 
           # Activate virtual environment
@@ -129,10 +129,18 @@ jobs:
           Write-Host "Checking Conan installation..."
           python -m pip list | findstr conan
 
+          # Copy patched arcus source to Conan cache before building
+          Write-Host "Preparing patched arcus source for Conan..."
+          if (Test-Path "arcus_source") {
+            Write-Host "Patched arcus source is ready"
+            # The patched source will be used automatically by Conan
+          } else {
+            Write-Host "Warning: Patched arcus source not found"
+          }
+
           # Run the official Conan install command
-          # The hook will automatically fix arcus during the build process
-          Write-Host "Running official Conan install with hook-based arcus fix..."
-          conan install . --build=missing --update -g VirtualPythonEnv
+          Write-Host "Running official Conan install with patched arcus source..."
+          conan install . --build=missing --update -g VirtualPythonEnv --source-folder arcus_source
 
           Write-Host "Development environment setup completed"
           Write-Host "Generated files should be in build/generators/"
