@@ -75,7 +75,10 @@ jobs:
 
           # Try official command first, but handle arcus build failure
           Write-Host "Attempting official Conan install..."
-          conan install . --build=missing --update -g VirtualPythonEnv || (
+          try {
+            conan install . --build=missing --update -g VirtualPythonEnv
+            Write-Host "Official Conan install succeeded!"
+          } catch {
             Write-Host "Full install failed (likely due to arcus build error), trying without problematic packages..."
 
             # Install individual components that work
@@ -85,7 +88,7 @@ jobs:
 
             # Merge the builds
             if (Test-Path "build_uranium/generators") {
-              if (!(Test-Path "build/generators")) { mkdir -p build/generators }
+              if (!(Test-Path "build/generators")) { New-Item -ItemType Directory -Path "build/generators" -Force }
               Copy-Item "build_uranium/generators/*" "build/generators/" -Recurse -Force
             }
             if (Test-Path "build_resources/generators") {
@@ -96,7 +99,7 @@ jobs:
             }
 
             Write-Host "Partial installation completed"
-          )
+          }
 
           Write-Host "Development environment setup completed"
           Write-Host "Generated files should be in build/generators/"
