@@ -40,14 +40,15 @@ jobs:
         shell: powershell
         run: |
           Write-Host "=== Step 2: Activating virtual environment and installing Conan 2.7.0 ==="
-          
+
           cura_venv\Scripts\Activate.ps1
-          
-          Write-Host "Installing Conan 2.7.0 (exact version from official docs)..."
+
+          Write-Host "Installing required dependencies..."
           python -m pip install --upgrade pip
           python -m pip install conan==2.7.0
-          
-          Write-Host "Conan 2.7.0 installed successfully"
+          python -m pip install GitPython
+
+          Write-Host "Conan 2.7.0 and dependencies installed successfully"
 
       - name: Step 3 - Configure Conan (Official Method)
         shell: powershell
