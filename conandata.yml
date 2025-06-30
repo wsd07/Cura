@@ -1,7 +1,8 @@
 version: "5.11.0-alpha.0"
 requirements:
   - "cura_resources/5.11.0-alpha.0@ultimaker/testing"
-  - "uranium/5.11.0-alpha.0@ultimaker/testing"
+  #- "uranium/5.11.0-alpha.0@ultimaker/testing"
+  - "uranium/5.11.0@wsd07/testing"
   - "curaengine/5.11.0-alpha.0@ultimaker/testing"
   - "cura_binary_data/5.11.0-alpha.0@ultimaker/testing"
   - "fdm_materials/5.11.0-alpha.0@ultimaker/testing"
