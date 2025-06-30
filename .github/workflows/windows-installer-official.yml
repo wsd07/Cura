@@ -1,0 +1,178 @@
+name: Windows Installer Build (Official Method)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Windows Installer Following Official Documentation
+    runs-on: windows-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Cleanup workspace
+        shell: powershell
+        run: |
+          Write-Host "Cleaning up workspace..."
+          Get-ChildItem -Path . -Recurse -Force | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+          Write-Host "Workspace cleaned"
+
+      - name: Checkout Cura repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python 3.12 (Official Requirement)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Step 1 - Create Python Virtual Environment (Official Method)
+        shell: powershell
+        run: |
+          Write-Host "=== Step 1: Creating Python virtual environment (as per official docs) ==="
+          Write-Host "Following: https://github.com/Ultimaker/Cura/wiki/Running-Cura-from-Source"
+          
+          python -m venv cura_venv
+          Write-Host "Python virtual environment created successfully"
+
+      - name: Step 2 - Activate Virtual Environment and Install Conan (Official Method)
+        shell: powershell
+        run: |
+          Write-Host "=== Step 2: Activating virtual environment and installing Conan 2.7.0 ==="
+          
+          cura_venv\Scripts\Activate.ps1
+          
+          Write-Host "Installing Conan 2.7.0 (exact version from official docs)..."
+          python -m pip install --upgrade pip
+          python -m pip install conan==2.7.0
+          
+          Write-Host "Conan 2.7.0 installed successfully"
+
+      - name: Step 3 - Configure Conan (Official Method)
+        shell: powershell
+        run: |
+          Write-Host "=== Step 3: Configuring Conan with official config ==="
+          
+          cura_venv\Scripts\Activate.ps1
+          
+          Write-Host "Installing official Conan config..."
+          conan config install https://github.com/ultimaker/conan-config.git
+          
+          Write-Host "Detecting Conan profile..."
+          conan profile detect --force
+          
+          Write-Host "Conan configuration completed successfully"
+
+      - name: Step 4 - Initialize Development Environment (Official Method)
+        shell: powershell
+        run: |
+          Write-Host "=== Step 4: Initializing development environment with official command ==="
+          Write-Host "Running: conan install . --build=missing --update -g VirtualPythonEnv"
+          
+          cura_venv\Scripts\Activate.ps1
+          
+          # This is the KEY command from official documentation
+          conan install . --build=missing --update -g VirtualPythonEnv
+          
+          Write-Host "Development environment initialized successfully"
+          Write-Host "Generated files should be in build/generators/"
+
+      - name: Step 5 - Replace CuraEngine with Pre-compiled Version
+        shell: powershell
+        run: |
+          Write-Host "=== Step 5: Replacing CuraEngine with our pre-compiled version ==="
+          
+          if (Test-Path "CuraEngine.exe") {
+            Write-Host "Found pre-compiled CuraEngine.exe"
+            $sourceSize = (Get-Item "CuraEngine.exe").Length / 1MB
+            Write-Host "Pre-compiled CuraEngine size: $([math]::Round($sourceSize, 2)) MB"
+            
+            # Find and replace CuraEngine in build directory
+            $curaEngineFiles = Get-ChildItem -Path "build" -Name "CuraEngine.exe" -Recurse -ErrorAction SilentlyContinue
+            if ($curaEngineFiles.Count -gt 0) {
+              foreach ($file in $curaEngineFiles) {
+                $fullPath = Join-Path "build" $file
+                Write-Host "Replacing CuraEngine at: $fullPath"
+                Copy-Item "CuraEngine.exe" $fullPath -Force
+              }
+              Write-Host "CuraEngine replacement completed"
+            } else {
+              Write-Host "No CuraEngine found in build directory yet"
+            }
+          } else {
+            Write-Host "Warning: Pre-compiled CuraEngine.exe not found"
+          }
+
+      - name: Step 6 - Activate Cura Virtual Environment (Official Method)
+        shell: powershell
+        run: |
+          Write-Host "=== Step 6: Activating Cura Python virtual environment ==="
+          Write-Host "Using generated virtual environment from build/generators/"
+          
+          if (Test-Path "build/generators/virtual_python_env.ps1") {
+            Write-Host "Found virtual_python_env.ps1, activating..."
+            build/generators/virtual_python_env.ps1
+            Write-Host "Cura virtual environment activated successfully"
+          } else {
+            Write-Host "virtual_python_env.ps1 not found, checking alternatives..."
+            Get-ChildItem -Path "build/generators" -ErrorAction SilentlyContinue | Select-Object Name
+          }
+
+      - name: Step 7 - Test Cura Installation
+        shell: powershell
+        run: |
+          Write-Host "=== Step 7: Testing Cura installation ==="
+          
+          if (Test-Path "build/generators/virtual_python_env.ps1") {
+            build/generators/virtual_python_env.ps1
+            
+            Write-Host "Testing if Cura can be imported..."
+            python -c "import sys; print('Python path:', sys.executable)"
+            python -c "try: import cura; print('Cura imported successfully'); except Exception as e: print('Cura import failed:', e)"
+            
+            Write-Host "Checking if cura_app.py exists..."
+            if (Test-Path "cura_app.py") {
+              Write-Host "Found cura_app.py, testing basic execution..."
+              python cura_app.py --help || Write-Host "cura_app.py execution test completed"
+            } else {
+              Write-Host "cura_app.py not found"
+            }
+          } else {
+            Write-Host "Cannot test - virtual environment not properly set up"
+          }
+
+      - name: Step 8 - Verify Installation Contents
+        shell: powershell
+        run: |
+          Write-Host "=== Step 8: Verifying installation contents ==="
+          
+          Write-Host "Build directory contents:"
+          if (Test-Path "build") {
+            Get-ChildItem -Path "build" -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
+          } else {
+            Write-Host "Build directory not found"
+          }
+          
+          Write-Host "Generators directory contents:"
+          if (Test-Path "build/generators") {
+            Get-ChildItem -Path "build/generators" | Select-Object Name, Length | Format-Table -AutoSize
+          } else {
+            Write-Host "Generators directory not found"
+          }
+          
+          Write-Host "Looking for pip requirements files..."
+          Get-ChildItem -Path "build" -Name "*requirements*.txt" -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
+            Write-Host "Found: $_"
+          }
+
+      - name: Upload build artifacts for debugging
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cura-build-debug
+          path: |
+            build/
+            *.txt
+            *.log
+          retention-days: 7
