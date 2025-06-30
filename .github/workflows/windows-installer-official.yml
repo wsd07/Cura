@@ -65,60 +65,12 @@ jobs:
 
           Write-Host "Conan configuration completed successfully"
 
-      - name: Step 3.5 - Download and Patch Arcus Source
+
+
+      - name: Step 4 - Initialize Development Environment with Real-time Arcus Fix
         shell: powershell
         run: |
-          Write-Host "=== Step 3.5: Pre-downloading and patching arcus source ==="
-
-          cura_venv\Scripts\Activate.ps1
-
-          Write-Host "Downloading arcus source code..."
-          conan source --requires "arcus/5.10.0" --source-folder arcus_source
-
-          Write-Host "Patching arcus Socket_p.h..."
-          $socketHeader = "arcus_source\src\Socket_p.h"
-          if (Test-Path $socketHeader) {
-            Write-Host "Found Socket_p.h, applying fix..."
-            $content = Get-Content $socketHeader -Raw
-
-            if ($content -notmatch "#include <chrono>") {
-              Write-Host "Adding missing #include <chrono>..."
-              $lines = Get-Content $socketHeader
-              $newLines = @()
-              $chronoAdded = $false
-
-              foreach ($line in $lines) {
-                $newLines += $line
-                if ($line -match "#include" -and -not $chronoAdded) {
-                  $newLines += "#include <chrono>"
-                  $chronoAdded = $true
-                  Write-Host "Added #include <chrono> after: $line"
-                  break
-                }
-              }
-
-              if (-not $chronoAdded) {
-                $newLines = @("#include <chrono>") + $newLines
-                Write-Host "Added #include <chrono> at the beginning"
-              }
-
-              Set-Content -Path $socketHeader -Value $newLines -Encoding UTF8
-              Write-Host "Successfully patched Socket_p.h"
-            } else {
-              Write-Host "Socket_p.h already has chrono include"
-            }
-          } else {
-            Write-Host "Socket_p.h not found at: $socketHeader"
-            Write-Host "Available files:"
-            Get-ChildItem -Path "arcus_source" -Recurse | Select-Object FullName
-          }
-
-          Write-Host "Arcus source patching completed"
-
-      - name: Step 4 - Initialize Development Environment (Official Method with Patched Arcus)
-        shell: powershell
-        run: |
-          Write-Host "=== Step 4: Initializing development environment with patched arcus ==="
+          Write-Host "=== Step 4: Initializing development environment with real-time arcus fix ==="
           Write-Host "Running: conan install . --build=missing --update -g VirtualPythonEnv"
 
           # Activate virtual environment
@@ -129,21 +81,83 @@ jobs:
           Write-Host "Checking Conan installation..."
           python -m pip list | findstr conan
 
-          # Copy patched arcus source to Conan cache before building
-          Write-Host "Preparing patched arcus source for Conan..."
-          if (Test-Path "arcus_source") {
-            Write-Host "Patched arcus source is ready"
-            # The patched source will be used automatically by Conan
-          } else {
-            Write-Host "Warning: Patched arcus source not found"
+          # Start Conan install in background and monitor for arcus
+          Write-Host "Starting Conan install with real-time arcus monitoring..."
+
+          # Create a PowerShell job to run Conan install
+          $job = Start-Job -ScriptBlock {
+            param($workingDir)
+            Set-Location $workingDir
+            & "cura_venv\Scripts\Activate.ps1"
+            conan install . --build=missing --update -g VirtualPythonEnv 2>&1
+          } -ArgumentList (Get-Location)
+
+          # Monitor the job and look for arcus build
+          $arcusFixed = $false
+          while ($job.State -eq "Running") {
+            Start-Sleep -Seconds 5
+            $output = Receive-Job $job -Keep
+
+            # Check if arcus is being built and fix it
+            if ($output -match "arcus.*Building from source" -and -not $arcusFixed) {
+              Write-Host "Detected arcus build starting, applying fix..."
+              Start-Sleep -Seconds 10  # Wait for source to be copied
+
+              # Find arcus source in Conan cache
+              $arcusDirs = Get-ChildItem -Path "$env:USERPROFILE\.conan2\p\b" -Directory -Name "arcus*" -ErrorAction SilentlyContinue
+              foreach ($arcusDir in $arcusDirs) {
+                $socketHeaderPath = "$env:USERPROFILE\.conan2\p\b\$arcusDir\b\src\Socket_p.h"
+                if (Test-Path $socketHeaderPath) {
+                  Write-Host "Found Socket_p.h at: $socketHeaderPath"
+                  $content = Get-Content $socketHeaderPath -Raw
+
+                  if ($content -notmatch "#include <chrono>") {
+                    Write-Host "Adding missing #include <chrono>..."
+                    $lines = Get-Content $socketHeaderPath
+                    $newLines = @()
+                    $chronoAdded = $false
+
+                    foreach ($line in $lines) {
+                      $newLines += $line
+                      if ($line -match "#include" -and -not $chronoAdded) {
+                        $newLines += "#include <chrono>"
+                        $chronoAdded = $true
+                        Write-Host "Added #include <chrono> after: $line"
+                        break
+                      }
+                    }
+
+                    if (-not $chronoAdded) {
+                      $newLines = @("#include <chrono>") + $newLines
+                      Write-Host "Added #include <chrono> at the beginning"
+                    }
+
+                    Set-Content -Path $socketHeaderPath -Value $newLines -Encoding UTF8
+                    Write-Host "Successfully patched Socket_p.h"
+                    $arcusFixed = $true
+                  }
+                }
+              }
+            }
           }
 
-          # Run the official Conan install command
-          Write-Host "Running official Conan install with patched arcus source..."
-          conan install . --build=missing --update -g VirtualPythonEnv --source-folder arcus_source
+          # Wait for job to complete and get final output
+          Wait-Job $job
+          $finalOutput = Receive-Job $job
+          Remove-Job $job
 
-          Write-Host "Development environment setup completed"
-          Write-Host "Generated files should be in build/generators/"
+          # Display the output
+          Write-Host "Conan install output:"
+          $finalOutput
+
+          # Check if successful
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Development environment setup completed successfully"
+            Write-Host "Generated files should be in build/generators/"
+          } else {
+            Write-Host "Conan install failed with exit code: $LASTEXITCODE"
+            exit 1
+          }
 
       - name: Step 5 - Replace CuraEngine with Pre-compiled Version
         shell: powershell
