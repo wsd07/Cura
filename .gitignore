@@ -2,7 +2,7 @@
 build
 *.pyc
 __pycache__
-*.mo
+# *.mo  # Commented out to allow translation files to be committed
 docs/html
 *.log
 resources/i18n/en_US
@@ -13,7 +13,7 @@ resources/materials
 resources/images/whats_new
 resources/texts/whats_new
 #CuraEngine.exe
-LC_MESSAGES
+# LC_MESSAGES  # Commented out to allow translation files to be committed
 .cache
 *.qmlc
 .mypy_cache
