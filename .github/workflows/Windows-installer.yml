@@ -87,17 +87,15 @@ jobs:
         pip install pyinstaller
         pyinstaller --clean --noconfirm --name "UltiMaker-Cura" --windowed --distpath dist/UltiMaker-Cura --workpath build/pyi_temp --specpath build/pyi_spec cura_app.py
     
-    # 第十步：调用 NSIS 脚本打包成 .exe 安装包
+    # 第十一步：调用 NSIS 脚本打包成 .exe 安装包
     - name: 📦 打包成安装程序（使用 NSIS）
-      working-directory: .
       run: |
         pip install jinja2 semver
-        if (!(Test-Path "dist/UltiMaker-Cura/UltiMaker-Cura.exe")) {
-            Write-Error "❌ 主程序未生成，请先确保 PyInstaller 构建完成。"
-            exit 1
+        $installer_path = "$env:GITHUB_WORKSPACE\\dist\\UltiMaker-Cura\\UltiMaker-Cura.exe"
+        if (!(Test-Path $installer_path)) {
+            Write-Error "❌ 主程序未生成：$installer_path"
         }
         python packaging/NSIS/create_windows_installer.py --source_path . --dist_path dist --filename "UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe" --version ${{ env.CURA_VERSION }}
-
     # 第十一步：上传构建产物（.exe 安装包）作为 GitHub Artifacts
     - name: ☁️ 上传安装包
       uses: actions/upload-artifact@v4
