@@ -45,6 +45,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install sip==6.5.1  # 安装官方要求版本的 sip
         pip install conan==2.7.0  # 安装 Conan 2.x（注意不要用旧版）
+        pip install gitpython
         conan config install https://github.com/wsd07/conan-config.git  # ✅ 拉取你的共享配置
         conan profile detect --force  # ✅ 自动生成默认 profile
 
