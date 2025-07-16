@@ -80,6 +80,14 @@ jobs:
         . $env:VENV_DIR\Scripts\activate.ps1
         conan build ..
 
+    # ✅ 新增：使用 PyInstaller 构建可执行文件
+    - name: 🧱 构建可执行文件（PyInstaller）
+      run: |
+        . $env:VENV_DIR\Scripts\activate.ps1
+        pip install -r requirements.txt
+        pip install pyinstaller
+        pyinstaller --clean --noconfirm --name "UltiMaker-Cura" --windowed --distpath dist/UltiMaker-Cura --workpath build/pyi_temp --specpath build/pyi_spec cura.py
+
     # 第十步：调用 NSIS 脚本打包成 .exe 安装包
     - name: 📦 打包成安装程序（使用 NSIS）
       working-directory: .
