@@ -89,11 +89,7 @@ jobs:
             Write-Error "❌ 主程序未生成，请先确保 PyInstaller 构建完成。"
             exit 1
         }
-        python packaging/NSIS/create_windows_installer.py ^
-          --source_path . ^
-          --dist_path dist ^
-          --filename "UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe" ^
-          --version ${{ env.CURA_VERSION }}
+        python packaging/NSIS/create_windows_installer.py --source_path . --dist_path dist --filename "UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe" --version ${{ env.CURA_VERSION }}
 
     # 第十一步：上传构建产物（.exe 安装包）作为 GitHub Artifacts
     - name: ☁️ 上传安装包
