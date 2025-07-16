@@ -66,14 +66,12 @@ jobs:
     - name: 📦 Conan 安装依赖（并生成 toolchain）
       working-directory: build
       run: |
-        . $env:VENV_DIR\Scripts\activate.ps1
         conan install .. --build=missing -s build_type=Release -c tools.cmake.cmaketoolchain:generator=Ninja
 
     # 第九步：执行 conan build 编译 Cura（调用 conanfile.py 中的 build 函数）
     - name: 🔨 构建 Cura 项目
       working-directory: build
       run: |
-        . $env:VENV_DIR\Scripts\activate.ps1
         conan build ..
 
     # 第十步：调用 NSIS 脚本打包成 .exe 安装包
