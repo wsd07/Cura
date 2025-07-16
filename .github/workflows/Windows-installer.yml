@@ -45,7 +45,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install sip==6.5.1  # 安装官方要求版本的 sip
         pip install conan==2.7.0  # 安装 Conan 2.x（注意不要用旧版）
-        pip install -r requirements.txt  # 安装 Cura 项目中定义的 Python 依赖
+        # pip install -r requirements.txt  # 安装 Cura 项目中定义的 Python 依赖
 
     # 第五步：克隆 Uranium 和 CuraEngine 仓库源码
     - name: 🔃 克隆 Uranium 和 CuraEngine
