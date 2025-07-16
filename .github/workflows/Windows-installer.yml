@@ -82,13 +82,22 @@ jobs:
 
     # 第十步：调用 NSIS 脚本打包成 .exe 安装包
     - name: 📦 打包成安装程序（使用 NSIS）
-      working-directory: packaging/NSIS
+      working-directory: .
       run: |
-        makensis.exe /DVERSION=${{ env.CURA_VERSION }} CuraInstaller.nsi
+        pip install jinja2 semver
+        if (!(Test-Path "dist/UltiMaker-Cura/UltiMaker-Cura.exe")) {
+            Write-Error "❌ 主程序未生成，请先确保 PyInstaller 构建完成。"
+            exit 1
+        }
+        python packaging/NSIS/create_windows_installer.py ^
+          --source_path . ^
+          --dist_path dist ^
+          --filename "UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe" ^
+          --version ${{ env.CURA_VERSION }}
 
     # 第十一步：上传构建产物（.exe 安装包）作为 GitHub Artifacts
     - name: ☁️ 上传安装包
       uses: actions/upload-artifact@v4
       with:
         name: cura-windows-installer
-        path: packaging/NSIS/Cura*.exe
+        path: dist/UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe
