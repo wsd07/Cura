@@ -1,0 +1,92 @@
+# 名称：在 GitHub Actions 页面显示的任务名称
+name: Build and Package Cura Installer (Windows)
+
+# 触发方式：手动触发 workflow（可选 future 扩展 push/tag 等触发）
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    # 指定运行平台为 GitHub 提供的最新 Windows 系统（Windows Server 2022）
+    runs-on: windows-latest
+
+    # 设置一些环境变量
+    env:
+      CURA_VERSION: 5.11.0  # 指定 Cura 的版本号
+      VENV_DIR: ${{ github.workspace }}\.venv  # Python 虚拟环境目录
+      CONAN_USER_HOME: ${{ github.workspace }}\.conan  # Conan 本地缓存目录
+
+    steps:
+    # 第一步：检出你当前 GitHub 仓库的代码（即 wsd07/Cura）
+    - name: 🧾 检出 Cura 源码
+      uses: actions/checkout@v3
+
+    # 第二步：安装 Python 3.12（Conan 2.x 需要 Python ≥ 3.8，推荐最新版）
+    - name: 🐍 安装 Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    # 第三步：安装 CMake、Ninja、NSIS、7zip、Visual Studio 构建工具等依赖
+    - name: 🛠 安装构建工具
+      run: |
+        choco install cmake --version=3.27.0 -y  # 安装 CMake，确保版本 ≥3.23
+        choco install ninja -y                  # 安装 Ninja，用于高效构建
+        choco install nsis -y                   # 安装 NSIS，用于生成安装包
+        choco install 7zip -y                   # 安装 7-Zip，打包或解压
+        choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools" -y
+        # 安装 Visual Studio 2022 的 C++ 工具链
+
+    # 第四步：创建虚拟环境并安装 Python 依赖，包括 Conan 2.x、sip 等
+    - name: 🧪 安装 Python 依赖
+      run: |
+        python -m venv $env:VENV_DIR  # 创建虚拟环境
+        $env:VENV_DIR\Scripts\activate.ps1  # 激活虚拟环境
+        python -m pip install --upgrade pip
+        pip install sip==6.5.1  # 安装官方要求版本的 sip
+        pip install conan>=2.7,<3.0  # 安装 Conan 2.x（注意不要用旧版）
+        pip install -r requirements.txt  # 安装 Cura 项目中定义的 Python 依赖
+
+    # 第五步：克隆 Uranium 和 CuraEngine 仓库源码
+    - name: 🔃 克隆 Uranium 和 CuraEngine
+      run: |
+        git clone https://github.com/wsd07/Uranium.git ../Uranium
+        git clone https://github.com/wsd07/CuraEngine.git ../CuraEngine
+
+    # 第六步：使用 conan editable 模式注册本地源码（新版语法）
+    - name: 🔗 注册 editable 源码依赖（Conan 2.x 正确语法）
+      run: |
+        $env:VENV_DIR\Scripts\activate.ps1
+        conan editable add ../Uranium --name=uranium --version=5.11.0 --user=wsd07
+        conan editable add ../CuraEngine --name=curaengine --version=5.11.0 --user=wsd07
+
+    # 第七步：创建构建目录
+    - name: 🏗 创建构建目录
+      run: mkdir build
+
+    # 第八步：运行 conan install 安装所有依赖，并生成构建配置
+    - name: 📦 Conan 安装依赖（并生成 toolchain）
+      working-directory: build
+      run: |
+        $env:VENV_DIR\Scripts\activate.ps1
+        conan install .. --build=missing -s build_type=Release -c tools.cmake.cmaketoolchain:generator=Ninja
+
+    # 第九步：执行 conan build 编译 Cura（调用 conanfile.py 中的 build 函数）
+    - name: 🔨 构建 Cura 项目
+      working-directory: build
+      run: |
+        $env:VENV_DIR\Scripts\activate.ps1
+        conan build ..
+
+    # 第十步：调用 NSIS 脚本打包成 .exe 安装包
+    - name: 📦 打包成安装程序（使用 NSIS）
+      working-directory: packaging/NSIS
+      run: |
+        makensis.exe /DVERSION=${{ env.CURA_VERSION }} CuraInstaller.nsi
+
+    # 第十一步：上传构建产物（.exe 安装包）作为 GitHub Artifacts
+    - name: ☁️ 上传安装包
+      uses: actions/upload-artifact@v4
+      with:
+        name: cura-windows-installer
+        path: packaging/NSIS/Cura*.exe
