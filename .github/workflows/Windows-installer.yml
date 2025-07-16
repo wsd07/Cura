@@ -41,7 +41,7 @@ jobs:
     - name: 🧪 安装 Python 依赖
       run: |
         python -m venv $env:VENV_DIR  # 创建虚拟环境
-        $env:VENV_DIR\Scripts\activate.ps1  # 激活虚拟环境
+        . "$env:VENV_DIR\Scripts\Activate.ps1"  # 激活虚拟环境
         python -m pip install --upgrade pip
         pip install sip==6.5.1  # 安装官方要求版本的 sip
         pip install conan>=2.7,<3.0  # 安装 Conan 2.x（注意不要用旧版）
@@ -56,7 +56,7 @@ jobs:
     # 第六步：使用 conan editable 模式注册本地源码（新版语法）
     - name: 🔗 注册 editable 源码依赖（Conan 2.x 正确语法）
       run: |
-        $env:VENV_DIR\Scripts\activate.ps1
+        . $env:VENV_DIR\Scripts\activate.ps1
         conan editable add ../Uranium --name=uranium --version=5.11.0 --user=wsd07
         conan editable add ../CuraEngine --name=curaengine --version=5.11.0 --user=wsd07
 
@@ -68,14 +68,14 @@ jobs:
     - name: 📦 Conan 安装依赖（并生成 toolchain）
       working-directory: build
       run: |
-        $env:VENV_DIR\Scripts\activate.ps1
+        . $env:VENV_DIR\Scripts\activate.ps1
         conan install .. --build=missing -s build_type=Release -c tools.cmake.cmaketoolchain:generator=Ninja
 
     # 第九步：执行 conan build 编译 Cura（调用 conanfile.py 中的 build 函数）
     - name: 🔨 构建 Cura 项目
       working-directory: build
       run: |
-        $env:VENV_DIR\Scripts\activate.ps1
+        . $env:VENV_DIR\Scripts\activate.ps1
         conan build ..
 
     # 第十步：调用 NSIS 脚本打包成 .exe 安装包
