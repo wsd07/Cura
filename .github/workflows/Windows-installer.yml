@@ -100,20 +100,86 @@ jobs:
         # 复制 cura_app.py 到 dist 目录
         Copy-Item "cura_app.py" "dist/" -Force
 
+        # 复制 CuraEngine.exe（应该在根目录，由 conan generate 步骤复制）
+        if (Test-Path "CuraEngine.exe") {
+            Copy-Item "CuraEngine.exe" "dist/" -Force
+            Write-Host "✅ CuraEngine.exe 已复制"
+        } else {
+            Write-Host "⚠️ 警告: CuraEngine.exe 未找到，尝试查找..."
+            Get-ChildItem -Recurse -Name "CuraEngine*" | ForEach-Object { Write-Host "找到: $_" }
+        }
+
         # 复制资源文件
         Copy-Item "resources" "dist/" -Recurse -Force
         Copy-Item "plugins" "dist/" -Recurse -Force
         Copy-Item "cura" "dist/" -Recurse -Force
         Copy-Item "packaging" "dist/" -Recurse -Force
 
-        # 使用 conanfile.py 中的 _generate_pyinstaller_spec 方法的逻辑创建 spec 文件
-        # 创建简化但功能完整的 PyInstaller spec 文件
-        echo '# -*- mode: python ; coding: utf-8 -*-' > dist/UltiMaker-Cura.spec
-        echo 'block_cipher = None' >> dist/UltiMaker-Cura.spec
-        echo 'a = Analysis([\"cura_app.py\"], pathex=[\"..\"], binaries=[], datas=[(\"resources\", \"share/cura/resources\"), (\"plugins\", \"share/cura/plugins\"), (\"packaging\", \"packaging\")], hiddenimports=[\"cura\", \"UM\", \"PyQt6\", \"PyQt6.QtCore\", \"PyQt6.QtWidgets\", \"PyQt6.QtQml\", \"PyQt6.QtQuick\", \"PyQt6.QtOpenGL\", \"PyQt6.QtNetwork\", \"PyQt6.QtSvg\", \"sip\", \"numpy\", \"scipy\", \"trimesh\", \"shapely\", \"cryptography\", \"keyring\", \"certifi\", \"requests\", \"urllib3\", \"charset_normalizer\", \"idna\"], hookspath=[], hooksconfig={}, runtime_hooks=[], excludes=[], win_no_prefer_redirects=False, win_private_assemblies=False, cipher=block_cipher, noarchive=False)' >> dist/UltiMaker-Cura.spec
-        echo 'pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)' >> dist/UltiMaker-Cura.spec
-        echo 'exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name=\"UltiMaker-Cura\", debug=False, bootloader_ignore_signals=False, strip=False, upx=True, console=False, disable_windowed_traceback=False, argv_emulation=False, target_arch=None, codesign_identity=None, entitlements_file=None, icon=\"packaging/icons/Cura.ico\")' >> dist/UltiMaker-Cura.spec
-        echo 'coll = COLLECT(exe, a.binaries, a.zipfiles, a.datas, strip=False, upx=True, upx_exclude=[], name=\"UltiMaker-Cura\")' >> dist/UltiMaker-Cura.spec
+        # 创建基于 conandata.yml 配置的完整 PyInstaller spec 文件
+        echo "# -*- mode: python ; coding: utf-8 -*-" > dist/UltiMaker-Cura.spec
+        echo "block_cipher = None" >> dist/UltiMaker-Cura.spec
+        echo "" >> dist/UltiMaker-Cura.spec
+        echo "a = Analysis(" >> dist/UltiMaker-Cura.spec
+        echo "    ['cura_app.py']," >> dist/UltiMaker-Cura.spec
+        echo "    pathex=['..']," >> dist/UltiMaker-Cura.spec
+        echo "    binaries=[" >> dist/UltiMaker-Cura.spec
+        echo "        ('CuraEngine.exe', '.')," >> dist/UltiMaker-Cura.spec
+        echo "    ]," >> dist/UltiMaker-Cura.spec
+        echo "    datas=[" >> dist/UltiMaker-Cura.spec
+        echo "        ('plugins', 'share/cura/plugins')," >> dist/UltiMaker-Cura.spec
+        echo "        ('resources', 'share/cura/resources')," >> dist/UltiMaker-Cura.spec
+        echo "        ('packaging', 'packaging')," >> dist/UltiMaker-Cura.spec
+        echo "    ]," >> dist/UltiMaker-Cura.spec
+        echo "    hiddenimports=[" >> dist/UltiMaker-Cura.spec
+        echo "        'pySavitar', 'pyArcus', 'pyDulcificum', 'pynest2d'," >> dist/UltiMaker-Cura.spec
+        echo "        'PyQt6', 'PyQt6.QtNetwork', 'PyQt6.sip', 'PyQt6.Qt', 'PyQt6.Qt6'," >> dist/UltiMaker-Cura.spec
+        echo "        'logging.handlers', 'zeroconf', 'fcntl', 'stl', 'serial'," >> dist/UltiMaker-Cura.spec
+        echo "        'win32cred', 'win32timezone', 'pkgutil'," >> dist/UltiMaker-Cura.spec
+        echo "        'cura', 'UM', 'numpy', 'scipy', 'trimesh', 'shapely'," >> dist/UltiMaker-Cura.spec
+        echo "        'cryptography', 'keyring', 'certifi', 'requests'," >> dist/UltiMaker-Cura.spec
+        echo "        'urllib3', 'charset_normalizer', 'idna'" >> dist/UltiMaker-Cura.spec
+        echo "    ]," >> dist/UltiMaker-Cura.spec
+        echo "    hookspath=[]," >> dist/UltiMaker-Cura.spec
+        echo "    hooksconfig={}," >> dist/UltiMaker-Cura.spec
+        echo "    runtime_hooks=[]," >> dist/UltiMaker-Cura.spec
+        echo "    excludes=[]," >> dist/UltiMaker-Cura.spec
+        echo "    win_no_prefer_redirects=False," >> dist/UltiMaker-Cura.spec
+        echo "    win_private_assemblies=False," >> dist/UltiMaker-Cura.spec
+        echo "    cipher=block_cipher," >> dist/UltiMaker-Cura.spec
+        echo "    noarchive=False," >> dist/UltiMaker-Cura.spec
+        echo ")" >> dist/UltiMaker-Cura.spec
+        echo "" >> dist/UltiMaker-Cura.spec
+        echo "pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)" >> dist/UltiMaker-Cura.spec
+        echo "" >> dist/UltiMaker-Cura.spec
+        echo "exe = EXE(" >> dist/UltiMaker-Cura.spec
+        echo "    pyz," >> dist/UltiMaker-Cura.spec
+        echo "    a.scripts," >> dist/UltiMaker-Cura.spec
+        echo "    []," >> dist/UltiMaker-Cura.spec
+        echo "    exclude_binaries=True," >> dist/UltiMaker-Cura.spec
+        echo "    name='UltiMaker-Cura'," >> dist/UltiMaker-Cura.spec
+        echo "    debug=False," >> dist/UltiMaker-Cura.spec
+        echo "    bootloader_ignore_signals=False," >> dist/UltiMaker-Cura.spec
+        echo "    strip=False," >> dist/UltiMaker-Cura.spec
+        echo "    upx=True," >> dist/UltiMaker-Cura.spec
+        echo "    console=False," >> dist/UltiMaker-Cura.spec
+        echo "    disable_windowed_traceback=False," >> dist/UltiMaker-Cura.spec
+        echo "    argv_emulation=False," >> dist/UltiMaker-Cura.spec
+        echo "    target_arch=None," >> dist/UltiMaker-Cura.spec
+        echo "    codesign_identity=None," >> dist/UltiMaker-Cura.spec
+        echo "    entitlements_file=None," >> dist/UltiMaker-Cura.spec
+        echo "    icon='packaging/icons/Cura.ico'" >> dist/UltiMaker-Cura.spec
+        echo ")" >> dist/UltiMaker-Cura.spec
+        echo "" >> dist/UltiMaker-Cura.spec
+        echo "coll = COLLECT(" >> dist/UltiMaker-Cura.spec
+        echo "    exe," >> dist/UltiMaker-Cura.spec
+        echo "    a.binaries," >> dist/UltiMaker-Cura.spec
+        echo "    a.zipfiles," >> dist/UltiMaker-Cura.spec
+        echo "    a.datas," >> dist/UltiMaker-Cura.spec
+        echo "    strip=False," >> dist/UltiMaker-Cura.spec
+        echo "    upx=True," >> dist/UltiMaker-Cura.spec
+        echo "    upx_exclude=[]," >> dist/UltiMaker-Cura.spec
+        echo "    name='UltiMaker-Cura'" >> dist/UltiMaker-Cura.spec
+        echo ")" >> dist/UltiMaker-Cura.spec
 
         # 验证文件结构
         Write-Host "=== 准备的文件结构 ==="
