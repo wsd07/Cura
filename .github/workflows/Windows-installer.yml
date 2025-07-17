@@ -86,36 +86,7 @@ jobs:
       run: |
         # 使用官方文档推荐的方法创建虚拟环境
         Write-Host "运行 conan install 创建虚拟环境..."
-        conan install . --build=missing --update -g VirtualPythonEnv -v --deployer-folder=.
-
-    - name: 🚀 运行 Conan deploy 生成 PyInstaller spec
-      run: |
-        # 在 Conan 2.x 中，deploy() 方法需要通过 conan create 来触发
-        Write-Host "运行 conan create 来触发 deploy() 方法生成 PyInstaller spec 文件..."
-
-        # 启用详细输出以便调试
-        try {
-          # 方法1: 尝试使用 conan create 来触发 deploy
-          Write-Host "尝试方法1: conan create"
-          conan create . --build=missing -tf="" -v
-        } catch {
-          Write-Host "方法1失败，尝试方法2: conan export-pkg + conan install"
-          try {
-            # 方法2: 先 export-pkg 然后 install
-            conan export-pkg . --force
-            conan install . --deployer-folder=. -v
-          } catch {
-            Write-Host "❌ 所有deploy方法都失败了: $($_.Exception.Message)"
-            Write-Host "尝试查看conan日志..."
-            if (Test-Path "$env:CONAN_USER_HOME\.conan2\logs") {
-              Get-ChildItem "$env:CONAN_USER_HOME\.conan2\logs" -Name "*.log" | ForEach-Object {
-                Write-Host "=== $_ ==="
-                Get-Content "$env:CONAN_USER_HOME\.conan2\logs\$_" | Select-Object -Last 50
-              }
-            }
-            throw
-          }
-        }
+        conan install . --build=missing --update -g VirtualPythonEnv -v --deployer-package="*" --deployer-folder=.
 
     - name: ✅ 验证虚拟环境和spec文件创建
       run: |
