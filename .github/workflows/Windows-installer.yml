@@ -90,7 +90,7 @@ jobs:
 
         # 启用详细输出以便调试
         try {
-          conan install . --build=missing --update -g VirtualPythonEnv --deployer-folder=. 
+          conan install . --build=missing --update -g VirtualPythonEnv --deployer-folder=. -v
         } catch {
           Write-Host "❌ conan install 执行失败: $($_.Exception.Message)"
           Write-Host "尝试查看conan日志..."
