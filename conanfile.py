@@ -655,7 +655,7 @@ class CuraConan(ConanFile):
         ''' Note: this deploy step is actually used to prepare for building a Cura distribution with pyinstaller, which is not
             the original purpose in the Conan philosophy '''
 
-        copy(self, "*", os.path.join(self.package_folder, self.cpp.package.resdirs[2]),
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[2]),
              os.path.join(self.deploy_folder, "packaging"), keep_path=True)
 
         # Copy resources of Cura (keep folder structure) needed by pyinstaller to determine the module structure
@@ -665,7 +665,7 @@ class CuraConan(ConanFile):
         copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[1]), str(self._share_dir.joinpath("cura", "plugins")), keep_path = True)
 
         # Copy the cura_resources resources from the package
-        rm(self, "conanfile.py", os.path.join(self.package_folder, self.cpp.package.resdirs[0]))
+        rm(self, "conanfile.py", os.path.join(self.package_folder, self.cpp_info.resdirs[0]))
         cura_resources = self.dependencies["cura_resources"].cpp_info
         for res_dir in cura_resources.resdirs:
             copy(self, "*", res_dir, str(self._share_dir.joinpath("cura", "resources", Path(res_dir).name)), keep_path = True)
@@ -710,6 +710,11 @@ class CuraConan(ConanFile):
     def package_info(self):
         self.runenv_info.append_path("PYTHONPATH", os.path.join(self.package_folder, "site-packages"))
         self.runenv_info.append_path("PYTHONPATH", os.path.join(self.package_folder, "plugins"))
+
+        # Set cpp_info for consumers (needed by deploy() method)
+        self.cpp_info.libdirs = [os.path.join("site-packages", "cura")]
+        self.cpp_info.bindirs = ["bin"]
+        self.cpp_info.resdirs = ["resources", "plugins", "packaging"]
 
     def package_id(self):
         self.info.options.rm_safe("i18n_extract")
