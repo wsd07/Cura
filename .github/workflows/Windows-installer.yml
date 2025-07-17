@@ -89,10 +89,8 @@ jobs:
         Write-Host "运行 conan install 创建虚拟环境并生成 PyInstaller spec 文件..."
 
         # 启用详细输出以便调试
-        $env:CONAN_LOG_LEVEL = "info"
-
         try {
-          conan install . --build=missing --update -g VirtualPythonEnv --deployer-folder=. -v
+          conan install . --build=missing --update -g VirtualPythonEnv --deployer-folder=. --log-level=info
         } catch {
           Write-Host "❌ conan install 执行失败: $($_.Exception.Message)"
           Write-Host "尝试查看conan日志..."
