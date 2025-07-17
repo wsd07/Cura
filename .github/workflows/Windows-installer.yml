@@ -81,13 +81,16 @@ jobs:
         conan editable add ../Uranium --name=uranium --version=5.11.0 --user=wsd07 --channel=testing
         conan editable add ../CuraEngine --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing
 
-    - name: 🏗 创建 Conan 虚拟环境
+    - name: 🏗 创建 Conan 虚拟环境并生成 PyInstaller spec
       run: |
         # 使用官方文档推荐的方法创建虚拟环境
-        conan install . --build=missing --update -g VirtualPythonEnv -o cura:enterprise=${{ inputs.enterprise }} -o cura:staging=${{ inputs.staging }} -o cura:internal=False
+        # 在 Conan 2.x 中，deploy() 方法会在 conan install 时自动调用生成 PyInstaller spec
+        Write-Host "运行 conan install 创建虚拟环境并生成 PyInstaller spec 文件..."
+        conan install . --build=missing --update -g VirtualPythonEnv --deployer-folder=.
 
-    - name: ✅ 验证虚拟环境创建
+    - name: ✅ 验证虚拟环境和spec文件创建
       run: |
+        # 检查虚拟环境脚本
         if (Test-Path "build\generators\virtual_python_env.ps1") {
           Write-Host "✅ 虚拟环境脚本已创建"
         } else {
@@ -97,6 +100,22 @@ jobs:
             Get-ChildItem "build\generators" | ForEach-Object { Write-Host "  - $($_.Name)" }
           } else {
             Write-Host "build/generators 目录不存在"
+          }
+          exit 1
+        }
+
+        # 检查PyInstaller spec文件是否已生成
+        if (Test-Path "UltiMaker-Cura.spec") {
+          Write-Host "✅ PyInstaller spec文件已生成"
+        } else {
+          Write-Host "❌ PyInstaller spec文件未生成"
+          Write-Host "当前目录内容："
+          Get-ChildItem | ForEach-Object { Write-Host "  - $($_.Name)" }
+
+          # 检查是否有.jinja模板文件
+          if (Test-Path "UltiMaker-Cura.spec.jinja") {
+            Write-Host "✅ 找到Jinja模板文件，但未渲染成spec文件"
+            Write-Host "这可能是因为deploy()方法中的错误"
           }
           exit 1
         }
@@ -116,17 +135,27 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller==6.3.0
 
-        # 检查 PyInstaller spec 文件
+        # 最终检查 PyInstaller spec 文件
         if (Test-Path "UltiMaker-Cura.spec") {
-          Write-Host "✅ PyInstaller spec 文件存在"
+          Write-Host "✅ PyInstaller spec 文件存在，准备构建"
+
+          # 显示spec文件的前几行以确认内容
+          Write-Host "Spec文件内容预览："
+          Get-Content "UltiMaker-Cura.spec" | Select-Object -First 5 | ForEach-Object { Write-Host "  $_" }
         } else {
-          Write-Host "❌ PyInstaller spec 文件不存在"
-          Write-Host "当前目录内容："
-          Get-ChildItem | ForEach-Object { Write-Host "  - $($_.Name)" }
+          Write-Host "❌ PyInstaller spec 文件仍然不存在"
+          Write-Host "这表明conan install的deploy()方法可能失败了"
+
+          # 尝试手动检查deploy文件夹
+          Write-Host "检查可能的deploy输出位置："
+          if (Test-Path "build") {
+            Get-ChildItem -Recurse "build" -Name "*.spec" | ForEach-Object { Write-Host "  找到spec文件: $_" }
+          }
           exit 1
         }
 
         # 运行 PyInstaller
+        Write-Host "开始运行 PyInstaller..."
         pyinstaller UltiMaker-Cura.spec --clean --noconfirm --log-level=INFO
 
         # 验证可执行文件生成
@@ -138,6 +167,14 @@ jobs:
           Write-Host "dist 目录内容："
           if (Test-Path "dist") {
             Get-ChildItem -Recurse "dist" | Select-Object -First 20 | ForEach-Object { Write-Host "  - $($_.FullName)" }
+          } else {
+            Write-Host "dist 目录不存在"
+          }
+
+          # 检查PyInstaller的工作目录
+          if (Test-Path "build") {
+            Write-Host "build 目录内容："
+            Get-ChildItem -Recurse "build" | Select-Object -First 10 | ForEach-Object { Write-Host "  - $($_.FullName)" }
           }
           exit 1
         }
