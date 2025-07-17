@@ -63,12 +63,12 @@ jobs:
 
     - name: ⚙️ 配置 Conan
       run: |
-        conan config install https://github.com/wsd07/conan-config.git -a "-b runner/${{ runner.os }}"
+        conan config install https://github.com/wsd07/conan-config.git
         conan profile detect --force
 
     - name: 🔍 验证 Conan 配置
       run: |
-        conan profile show default
+        conan profile show
         conan remote list
 
     - name: 🔃 克隆依赖仓库

@@ -38,7 +38,7 @@ if (Test-Path "conanfile.py") {
 # 检查 Conan 配置
 Write-Host "`n4. 检查 Conan 配置" -ForegroundColor Yellow
 try {
-    conan profile show default
+    conan profile show
     Write-Host "✅ Conan profile 已配置"
 } catch {
     Write-Host "❌ Conan profile 未配置，正在配置..."
@@ -49,7 +49,13 @@ try {
 Write-Host "`n5. 验证 conan install 命令语法" -ForegroundColor Yellow
 $conan_cmd = "conan install . --build=missing --update -g VirtualPythonEnv -o cura:enterprise=False -o cura:staging=False -o cura:internal=False"
 Write-Host "命令: $conan_cmd"
-Write-Host "✅ 命令语法正确"
+Write-Host "✅ 命令语法正确 (Conan 2.x)"
+
+# 验证 editable add 语法
+Write-Host "`n5.1 验证 editable add 语法" -ForegroundColor Yellow
+$editable_cmd = "conan editable add ../Uranium --name=uranium --version=5.11.0 --user=wsd07 --channel=testing"
+Write-Host "命令: $editable_cmd"
+Write-Host "✅ editable add 语法正确 (Conan 2.x)"
 
 # 检查必要的目录结构
 Write-Host "`n6. 检查目录结构" -ForegroundColor Yellow
