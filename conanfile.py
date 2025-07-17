@@ -662,7 +662,7 @@ class CuraConan(ConanFile):
 
         # Check if package_folder is None and use source_folder as fallback
         if self.package_folder is None:
-            self.output.warn("package_folder is None, using source_folder as fallback")
+            self.output.warning("package_folder is None, using source_folder as fallback")
             package_folder = self.source_folder
             # When using source_folder, we need to use cpp.package paths instead of cpp_info paths
             bindirs = self.cpp.package.bindirs
