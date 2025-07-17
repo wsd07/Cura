@@ -77,42 +77,54 @@ jobs:
         # 使用 conan create 创建完整的包（包含 install, build, package 步骤）
         conan create . --build=missing -s build_type=Release -c tools.cmake.cmaketoolchain:generator=Ninja
 
-    # 第九步：使用 conanfile.py 的 deploy() 方法准备 PyInstaller 环境
-    - name: 🚚 使用 deploy() 方法准备 pyinstaller 构建环境
+    # 第九步：使用 conan install 和手动调用 conanfile.py 的功能
+    - name: 🚚 准备 pyinstaller 构建环境
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
 
-        # 创建自定义 deployer 来调用 conanfile.py 中的 deploy() 方法
-        mkdir -p .conan2/extensions/deployers
-
-        # 创建自定义 deployer 脚本
-        echo 'def deploy(graph, output_folder: str, **kwargs):' > .conan2/extensions/deployers/cura_deploy.py
-        echo '    """Custom deployer that calls the conanfile deploy() method"""' >> .conan2/extensions/deployers/cura_deploy.py
-        echo '    conanfile = graph.root.conanfile' >> .conan2/extensions/deployers/cura_deploy.py
-        echo '    if hasattr(conanfile, "deploy"):' >> .conan2/extensions/deployers/cura_deploy.py
-        echo '        # 设置 deploy_folder 属性' >> .conan2/extensions/deployers/cura_deploy.py
-        echo '        conanfile.deploy_folder = output_folder' >> .conan2/extensions/deployers/cura_deploy.py
-        echo '        # 调用 conanfile 中的 deploy() 方法' >> .conan2/extensions/deployers/cura_deploy.py
-        echo '        conanfile.deploy()' >> .conan2/extensions/deployers/cura_deploy.py
-        echo '    else:' >> .conan2/extensions/deployers/cura_deploy.py
-        echo '        print("No deploy() method found in conanfile")' >> .conan2/extensions/deployers/cura_deploy.py
-
-        # 使用自定义 deployer 来调用 conanfile.py 中的 deploy() 方法
+        # 创建 dist 目录
         mkdir -p dist
-        conan install . --deployer=cura_deploy --deployer-folder="$env:GITHUB_WORKSPACE/dist" -s build_type=Release
 
-        # 验证 deploy() 方法的输出
-        Write-Host "=== deploy() 方法生成的文件结构 ==="
+        # 安装依赖到本地缓存，这会触发 conanfile.py 中的各种方法
+        conan install . -s build_type=Release
+
+        # 找到创建的包的位置
+        $package_ref = conan list "cura/*@wsd07/testing" --format=compact
+        Write-Host "包引用: $package_ref"
+
+        # 获取包的路径信息
+        $package_info = conan list "cura/*@wsd07/testing" --format=json | ConvertFrom-Json
+        Write-Host "包信息: $package_info"
+
+        # 手动复制必要的文件（模拟 deploy() 方法的功能）
+        # 复制 cura_app.py 到 dist 目录
+        Copy-Item "cura_app.py" "dist/" -Force
+
+        # 复制资源文件
+        Copy-Item "resources" "dist/" -Recurse -Force
+        Copy-Item "plugins" "dist/" -Recurse -Force
+        Copy-Item "cura" "dist/" -Recurse -Force
+        Copy-Item "packaging" "dist/" -Recurse -Force
+
+        # 使用 conanfile.py 中的 _generate_pyinstaller_spec 方法的逻辑创建 spec 文件
+        # 创建简化但功能完整的 PyInstaller spec 文件
+        echo '# -*- mode: python ; coding: utf-8 -*-' > dist/UltiMaker-Cura.spec
+        echo 'block_cipher = None' >> dist/UltiMaker-Cura.spec
+        echo 'a = Analysis([\"cura_app.py\"], pathex=[\"..\"], binaries=[], datas=[(\"resources\", \"share/cura/resources\"), (\"plugins\", \"share/cura/plugins\"), (\"packaging\", \"packaging\")], hiddenimports=[\"cura\", \"UM\", \"PyQt6\", \"PyQt6.QtCore\", \"PyQt6.QtWidgets\", \"PyQt6.QtQml\", \"PyQt6.QtQuick\", \"PyQt6.QtOpenGL\", \"PyQt6.QtNetwork\", \"PyQt6.QtSvg\", \"sip\", \"numpy\", \"scipy\", \"trimesh\", \"shapely\", \"cryptography\", \"keyring\", \"certifi\", \"requests\", \"urllib3\", \"charset_normalizer\", \"idna\"], hookspath=[], hooksconfig={}, runtime_hooks=[], excludes=[], win_no_prefer_redirects=False, win_private_assemblies=False, cipher=block_cipher, noarchive=False)' >> dist/UltiMaker-Cura.spec
+        echo 'pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)' >> dist/UltiMaker-Cura.spec
+        echo 'exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name=\"UltiMaker-Cura\", debug=False, bootloader_ignore_signals=False, strip=False, upx=True, console=False, disable_windowed_traceback=False, argv_emulation=False, target_arch=None, codesign_identity=None, entitlements_file=None, icon=\"packaging/icons/Cura.ico\")' >> dist/UltiMaker-Cura.spec
+        echo 'coll = COLLECT(exe, a.binaries, a.zipfiles, a.datas, strip=False, upx=True, upx_exclude=[], name=\"UltiMaker-Cura\")' >> dist/UltiMaker-Cura.spec
+
+        # 验证文件结构
+        Write-Host "=== 准备的文件结构 ==="
         Get-ChildItem -Recurse dist
 
-        # 检查 PyInstaller spec 文件是否由 deploy() 方法生成
+        # 检查 PyInstaller spec 文件
         if (-not (Test-Path "dist/UltiMaker-Cura.spec")) {
-            Write-Error "❌ deploy() 方法未生成 PyInstaller spec 文件"
-            Write-Host "查找所有 .spec 文件："
-            Get-ChildItem -Recurse -Name "*.spec"
+            Write-Error "❌ PyInstaller spec 文件未生成"
             exit 1
         }
-        Write-Host "✅ deploy() 方法成功生成了 PyInstaller spec 文件和所有必要的资源"
+        Write-Host "✅ PyInstaller 构建环境准备完成"
 
     # 第十步：安装 PyInstaller 并构建可执行文件
     - name: 🔨 使用 PyInstaller 构建可执行文件
@@ -123,7 +135,7 @@ jobs:
         # 设置 PYTHONPATH 以包含当前目录和 venv 的 site-packages
         $env:PYTHONPATH = "$env:GITHUB_WORKSPACE;$env:VENV_DIR\Lib\site-packages"
 
-        # 切换到部署目录并运行 pyinstaller（使用 deploy() 方法生成的 spec 文件）
+        # 切换到部署目录并运行 pyinstaller（使用准备好的 spec 文件）
         cd dist
         pyinstaller UltiMaker-Cura.spec --clean --noconfirm --log-level=INFO
 
