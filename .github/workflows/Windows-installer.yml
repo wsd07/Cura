@@ -91,8 +91,8 @@ jobs:
 
     - name: ✅ 验证虚拟环境和spec文件创建
       run: |
-        # 检查虚拟环境脚本
-        if (Test-Path "build\generators\virtual_python_env.ps1") {
+        # 检查虚拟环境脚本 (Windows使用.bat文件)
+        if (Test-Path "build\generators\virtual_python_env.bat") {
           Write-Host "✅ 虚拟环境脚本已创建"
         } else {
           Write-Host "❌ 虚拟环境脚本未找到"
@@ -129,8 +129,8 @@ jobs:
 
     - name: 🔨 使用 PyInstaller 构建可执行文件
       run: |
-        # 激活 Conan 创建的虚拟环境
-        & "build\generators\virtual_python_env.ps1"
+        # 激活 Conan 创建的虚拟环境 (Windows使用.bat文件)
+        & "build\generators\virtual_python_env.bat"
 
         # 安装 PyInstaller
         python -m pip install --upgrade pip
@@ -183,7 +183,7 @@ jobs:
     - name: 📦 创建 Windows 安装程序
       run: |
         # 激活虚拟环境
-        & "build\generators\virtual_python_env.ps1"
+        & "build\generators\virtual_python_env.bat"
 
         # 安装必要的依赖
         pip install jinja2 semver
