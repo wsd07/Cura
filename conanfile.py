@@ -682,11 +682,31 @@ class CuraConan(ConanFile):
         self._delete_unwanted_binaries(self._share_dir)
 
         entitlements_file = "'{}'".format(Path(self.deploy_folder, "packaging", "MacOS", "cura.entitlements"))
-        self._generate_pyinstaller_spec(location = self.deploy_folder,
-                                        entrypoint_location = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.bindirs[0], self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])).replace("\\", "\\\\"),
-                                        icon_path = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.resdirs[2], self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])).replace("\\", "\\\\"),
-                                        entitlements_file = entitlements_file if self.settings.os == "Macos" else "None",
-                                        cura_source_folder = self.package_folder)
+
+        # Debug information
+        self.output.info(f"Debug: package_folder = {self.package_folder}")
+        self.output.info(f"Debug: cpp_info.bindirs = {self.cpp_info.bindirs}")
+        self.output.info(f"Debug: cpp_info.resdirs = {self.cpp_info.resdirs}")
+        self.output.info(f"Debug: settings.os = {self.settings.os}")
+
+        try:
+            entrypoint_location = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.bindirs[0], self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])).replace("\\", "\\\\")
+            self.output.info(f"Debug: entrypoint_location = {entrypoint_location}")
+
+            icon_path = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.resdirs[2], self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])).replace("\\", "\\\\")
+            self.output.info(f"Debug: icon_path = {icon_path}")
+
+            self._generate_pyinstaller_spec(location = self.deploy_folder,
+                                            entrypoint_location = entrypoint_location,
+                                            icon_path = icon_path,
+                                            entitlements_file = entitlements_file if self.settings.os == "Macos" else "None",
+                                            cura_source_folder = self.package_folder)
+        except Exception as e:
+            self.output.error(f"Error in _generate_pyinstaller_spec: {str(e)}")
+            self.output.error(f"Error type: {type(e).__name__}")
+            import traceback
+            self.output.error(f"Traceback: {traceback.format_exc()}")
+            raise
 
     def package(self):
         copy(self, "cura_app.py", src = self.source_folder, dst = os.path.join(self.package_folder, self.cpp.package.bindirs[0]))
