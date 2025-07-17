@@ -82,17 +82,17 @@ jobs:
       working-directory: build
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        conan build ..
+        conan build .. --deploy-folder="$env:GITHUB_WORKSPACE\dist"
 
-    # ✅ 新增：使用 PyInstaller 构建可执行文件
-    - name: 🧱 构建可执行文件（PyInstaller）
+    # 第十步：验证构建输出
+    - name: 🔍 验证构建输出
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        pip install pyinstaller
-        # 使用 --onefile 生成单个可执行文件
-        pyinstaller --onefile --clean --noconfirm --name "UltiMaker-Cura" --windowed --distpath dist --workpath build/pyi_temp --specpath build/pyi_spec cura_app.py
-        # 验证输出
         Get-ChildItem -Recurse dist
+        if (-not (Test-Path dist\UltiMaker-Cura\UltiMaker-Cura.exe)) {
+            Write-Error "❌ 主程序未生成"
+            exit 1
+        }
 
     # 第十一步：调用 NSIS 脚本打包成 .exe 安装包
     - name: 📦 打包成安装程序（使用 NSIS）
@@ -101,8 +101,8 @@ jobs:
         pip install jinja2 semver pywin32 psutil
         
         # 检查可执行文件
-        $exe_path = "$env:GITHUB_WORKSPACE\dist\UltiMaker-Cura.exe"
-        if (!(Test-Path $exe_path)) {
+        $exe_path = "$env:GITHUB_WORKSPACE\dist\UltiMaker-Cura\UltiMaker-Cura.exe"
+        if (-not (Test-Path $exe_path)) {
             Write-Error "❌ 可执行文件未生成"
             Get-ChildItem -Recurse dist
             exit 1
@@ -110,27 +110,29 @@ jobs:
         
         # 检查NSIS脚本是否存在
         $nsis_script = "$env:GITHUB_WORKSPACE\packaging\NSIS\create_windows_installer.py"
-        if (!(Test-Path $nsis_script)) {
-            Write-Error "❌ NSIS脚本未找到: $nsis_script"
-            Get-ChildItem -Recurse packaging
+        if (-not (Test-Path $nsis_script)) {
+            Write-Error "❌ NSIS脚本未找到"
             exit 1
         }
         
         # 打印调试信息
+        Write-Host "=== NSIS 打包调试信息 ==="
         Write-Host "Python路径: $(which python)"
         Write-Host "Python版本: $(python --version)"
         Write-Host "正在执行NSIS脚本: $nsis_script"
         
         # 执行NSIS脚本并捕获输出
-        $output = python $nsis_script --source_path . --dist_path dist --filename "UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe" --version ${{ env.CURA_VERSION }} 2>&1
+        $output = python $nsis_script --source_path . --dist_path dist/UltiMaker-Cura --filename "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe" --version $env:CURA_VERSION 2>&1
         Write-Host "NSIS脚本输出: $output"
         
         # 检查输出文件
-        $installer_path = "$env:GITHUB_WORKSPACE\dist\UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe"
-        if (!(Test-Path $installer_path)) {
-            Write-Error "❌ 安装包未生成: $installer_path"
+        $installer_path = "$env:GITHUB_WORKSPACE\dist\UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe"
+        if (-not (Test-Path $installer_path)) {
+            Write-Error "❌ 安装包未生成"
             exit 1
         }
+        $size = (Get-Item $installer_path).Length/1MB
+        Write-Host "✅ 安装包生成成功 (大小: $size MB)"
 
     # 第十二步：上传构建产物（.exe 安装包）作为 GitHub Artifacts
     - name: ☁️ 上传安装包
