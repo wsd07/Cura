@@ -82,9 +82,15 @@ jobs:
       working-directory: build
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        conan build .. --deploy-folder="$env:GITHUB_WORKSPACE\dist"
+        conan build ..
 
-    # 第十步：验证构建输出
+    # 第十步：使用 conan export-pkg 导出构建结果
+    - name: 📤 导出构建包
+      run: |
+        . $env:VENV_DIR\Scripts\activate.ps1
+        conan export-pkg .. --force --package-folder="$env:GITHUB_WORKSPACE\dist"
+
+    # 第十一步：验证构建输出
     - name: 🔍 验证构建输出
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
@@ -94,7 +100,7 @@ jobs:
             exit 1
         }
 
-    # 第十一步：调用 NSIS 脚本打包成 .exe 安装包
+    # 第十二步：调用 NSIS 脚本打包成 .exe 安装包
     - name: 📦 打包成安装程序（使用 NSIS）
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
@@ -122,7 +128,11 @@ jobs:
         Write-Host "正在执行NSIS脚本: $nsis_script"
         
         # 执行NSIS脚本并捕获输出
-        $output = python $nsis_script --source_path . --dist_path dist/UltiMaker-Cura --filename "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe" --version $env:CURA_VERSION 2>&1
+        $output = python $nsis_script `
+          --source_path . `
+          --dist_path dist/UltiMaker-Cura `
+          --filename "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe" `
+          --version $env:CURA_VERSION 2>&1
         Write-Host "NSIS脚本输出: $output"
         
         # 检查输出文件
@@ -134,7 +144,7 @@ jobs:
         $size = (Get-Item $installer_path).Length/1MB
         Write-Host "✅ 安装包生成成功 (大小: $size MB)"
 
-    # 第十二步：上传构建产物（.exe 安装包）作为 GitHub Artifacts
+    # 第十三步：上传构建产物（.exe 安装包）作为 GitHub Artifacts
     - name: ☁️ 上传安装包
       uses: actions/upload-artifact@v4
       with:
