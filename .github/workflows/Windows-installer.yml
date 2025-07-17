@@ -63,8 +63,8 @@ jobs:
     - name: 🔗 注册 editable 源码依赖（Conan 2.x 正确语法）
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        conan editable add ../Uranium
-        conan editable add ../CuraEngine
+        conan editable add ../Uranium --name=uranium --version=5.11.0 --user=wsd07 --channel=testing
+        conan editable add ../CuraEngine --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing
 
     # 第七步：创建构建目录
     - name: 🏗 创建构建目录
