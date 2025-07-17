@@ -63,35 +63,56 @@ jobs:
     - name: 🔗 注册 editable 源码依赖（Conan 2.x 正确语法）
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        conan editable add ../Uranium --name=uranium --version=5.11.0 --user=wsd07 --channel=testing
-        conan editable add ../CuraEngine --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing
+        conan editable add ../Uranium
+        conan editable add ../CuraEngine
 
     # 第七步：创建构建目录
     - name: 🏗 创建构建目录
       run: mkdir build
 
-    # 第八步：使用 conan create 创建完整的 Cura 包（包含 install, build, package 步骤）
+    # 第八步：创建 Cura 包
     - name: 📦 创建 Cura 包
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
+        # 使用 conan create 创建完整的包（包含 install, build, package 步骤）
         conan create . --build=missing -s build_type=Release -c tools.cmake.cmaketoolchain:generator=Ninja
 
-    # 第九步：使用 conan deploy 准备 pyinstaller 构建文件
-    - name: 🚚 部署 pyinstaller 构建文件
+    # 第九步：使用 conanfile.py 的 deploy() 方法准备 PyInstaller 环境
+    - name: 🚚 使用 deploy() 方法准备 pyinstaller 构建环境
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        mkdir -p dist
-        conan deploy . --deploy-folder="$env:GITHUB_WORKSPACE/dist"
 
-        # 验证部署结果和 pyinstaller spec 文件
-        Write-Host "=== 部署文件结构 ==="
+        # 创建自定义 deployer 来调用 conanfile.py 中的 deploy() 方法
+        mkdir -p .conan2/extensions/deployers
+
+        # 创建自定义 deployer 脚本
+        echo 'def deploy(graph, output_folder: str, **kwargs):' > .conan2/extensions/deployers/cura_deploy.py
+        echo '    """Custom deployer that calls the conanfile deploy() method"""' >> .conan2/extensions/deployers/cura_deploy.py
+        echo '    conanfile = graph.root.conanfile' >> .conan2/extensions/deployers/cura_deploy.py
+        echo '    if hasattr(conanfile, "deploy"):' >> .conan2/extensions/deployers/cura_deploy.py
+        echo '        # 设置 deploy_folder 属性' >> .conan2/extensions/deployers/cura_deploy.py
+        echo '        conanfile.deploy_folder = output_folder' >> .conan2/extensions/deployers/cura_deploy.py
+        echo '        # 调用 conanfile 中的 deploy() 方法' >> .conan2/extensions/deployers/cura_deploy.py
+        echo '        conanfile.deploy()' >> .conan2/extensions/deployers/cura_deploy.py
+        echo '    else:' >> .conan2/extensions/deployers/cura_deploy.py
+        echo '        print("No deploy() method found in conanfile")' >> .conan2/extensions/deployers/cura_deploy.py
+
+        # 使用自定义 deployer 来调用 conanfile.py 中的 deploy() 方法
+        mkdir -p dist
+        conan install . --deployer=cura_deploy --deployer-folder="$env:GITHUB_WORKSPACE/dist" -s build_type=Release
+
+        # 验证 deploy() 方法的输出
+        Write-Host "=== deploy() 方法生成的文件结构 ==="
         Get-ChildItem -Recurse dist
 
+        # 检查 PyInstaller spec 文件是否由 deploy() 方法生成
         if (-not (Test-Path "dist/UltiMaker-Cura.spec")) {
-            Write-Error "❌ PyInstaller spec 文件未生成"
+            Write-Error "❌ deploy() 方法未生成 PyInstaller spec 文件"
+            Write-Host "查找所有 .spec 文件："
+            Get-ChildItem -Recurse -Name "*.spec"
             exit 1
         }
-        Write-Host "✅ PyInstaller spec 文件已生成"
+        Write-Host "✅ deploy() 方法成功生成了 PyInstaller spec 文件和所有必要的资源"
 
     # 第十步：安装 PyInstaller 并构建可执行文件
     - name: 🔨 使用 PyInstaller 构建可执行文件
@@ -99,13 +120,18 @@ jobs:
         . $env:VENV_DIR\Scripts\activate.ps1
         pip install pyinstaller==6.3.0
 
-        # 切换到部署目录并运行 pyinstaller
+        # 设置 PYTHONPATH 以包含当前目录和 venv 的 site-packages
+        $env:PYTHONPATH = "$env:GITHUB_WORKSPACE;$env:VENV_DIR\Lib\site-packages"
+
+        # 切换到部署目录并运行 pyinstaller（使用 deploy() 方法生成的 spec 文件）
         cd dist
-        pyinstaller UltiMaker-Cura.spec --clean --noconfirm
+        pyinstaller UltiMaker-Cura.spec --clean --noconfirm --log-level=INFO
 
         # 验证可执行文件生成
         if (-not (Test-Path "dist/UltiMaker-Cura/UltiMaker-Cura.exe")) {
             Write-Error "❌ PyInstaller 未生成可执行文件"
+            Write-Host "PyInstaller 输出目录内容："
+            Get-ChildItem -Recurse
             exit 1
         }
 
@@ -117,35 +143,30 @@ jobs:
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
         pip install jinja2 semver
-
-        # 检查NSIS脚本（从部署的 packaging 目录中获取）
-        $nsis_script = "$env:GITHUB_WORKSPACE/dist/packaging/NSIS/create_windows_installer.py"
+        
+        $nsis_script = "$env:GITHUB_WORKSPACE/packaging/NSIS/create_windows_installer.py"
         if (-not (Test-Path $nsis_script)) {
             Write-Error "❌ NSIS脚本未找到: $nsis_script"
-            Write-Host "尝试查找其他位置的NSIS脚本..."
             Get-ChildItem -Recurse -Name "*create_windows_installer.py" | ForEach-Object { Write-Host "找到: $_" }
             exit 1
         }
-
-        # 执行NSIS脚本，使用 PyInstaller 输出的路径
-        python $nsis_script `
-          --source_path "$env:GITHUB_WORKSPACE" `
-          --dist_path "$env:GITHUB_WORKSPACE/dist/dist/UltiMaker-Cura" `
-          --filename "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe" `
-          --version $env:CURA_VERSION
-
-        # 验证安装包
+        
+        python $nsis_script --source_path "$env:GITHUB_WORKSPACE" --dist_path "$env:GITHUB_WORKSPACE/dist/dist/UltiMaker-Cura" --filename "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe" --version $env:CURA_VERSION
+        
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "尝试使用备用路径..."
+            python $nsis_script --source_path "$env:GITHUB_WORKSPACE" --dist_path "$env:GITHUB_WORKSPACE/dist/UltiMaker-Cura" --filename "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe" --version $env:CURA_VERSION
+        }
+        
         $installer_path = "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe"
         if (-not (Test-Path $installer_path)) {
             Write-Error "❌ 安装包未生成: $installer_path"
-            Write-Host "当前目录内容："
             Get-ChildItem -Name
             exit 1
         }
         $size = (Get-Item $installer_path).Length/1MB
         Write-Host "✅ 安装包生成成功 (大小: $size MB)"
-
-        # 移动安装包到 dist 目录以便上传
+        
         Move-Item $installer_path "$env:GITHUB_WORKSPACE/dist/"
 
     # 第十二步：上传构建产物
