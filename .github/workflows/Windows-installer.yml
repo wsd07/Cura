@@ -52,6 +52,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install conan==2.7.0
         pip install sip==6.5.1
+        pip install gitpython 
 
     - name: 📦 缓存 Conan 包
       uses: actions/cache@v3
