@@ -70,62 +70,87 @@ jobs:
     - name: 🏗 创建构建目录
       run: mkdir build
 
-    # 第八步：运行 conan install 安装所有依赖，并生成构建配置
-    - name: 📦 Conan 安装依赖（并生成 toolchain）
-      working-directory: build
+    # 第八步：使用 conan create 创建完整的 Cura 包（包含 install, build, package 步骤）
+    - name: 📦 创建 Cura 包
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        conan install .. --build=missing -s build_type=Release -c tools.cmake.cmaketoolchain:generator=Ninja
+        conan create . --build=missing -s build_type=Release -c tools.cmake.cmaketoolchain:generator=Ninja
 
-    # 第九步：执行 conan build 编译 Cura（调用 conanfile.py 中的 build 函数）
-    - name: 🔨 构建 Cura 项目
-      working-directory: build
+    # 第九步：使用 conan deploy 准备 pyinstaller 构建文件
+    - name: 🚚 部署 pyinstaller 构建文件
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        conan build ..
+        mkdir -p dist
+        conan deploy . --deploy-folder="$env:GITHUB_WORKSPACE/dist"
 
-    # 第十步：验证构建输出
-    - name: 🔍 验证构建输出
+        # 验证部署结果和 pyinstaller spec 文件
+        Write-Host "=== 部署文件结构 ==="
+        Get-ChildItem -Recurse dist
+
+        if (-not (Test-Path "dist/UltiMaker-Cura.spec")) {
+            Write-Error "❌ PyInstaller spec 文件未生成"
+            exit 1
+        }
+        Write-Host "✅ PyInstaller spec 文件已生成"
+
+    # 第十步：安装 PyInstaller 并构建可执行文件
+    - name: 🔨 使用 PyInstaller 构建可执行文件
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
-        Write-Host "=== 构建输出结构 ==="
-        Get-ChildItem -Recurse build
-        if (-not (Test-Path build/bin/Release/UltiMaker-Cura.exe)) {
-            Write-Error "❌ 主程序未生成"
+        pip install pyinstaller==6.3.0
+
+        # 切换到部署目录并运行 pyinstaller
+        cd dist
+        pyinstaller UltiMaker-Cura.spec --clean --noconfirm
+
+        # 验证可执行文件生成
+        if (-not (Test-Path "dist/UltiMaker-Cura/UltiMaker-Cura.exe")) {
+            Write-Error "❌ PyInstaller 未生成可执行文件"
+            exit 1
         }
 
-    # 第十一步：调用 NSIS 脚本打包成 .exe 安装包
-    - name: 📦 打包成安装程序（使用 NSIS）
+        $exe_size = (Get-Item "dist/UltiMaker-Cura/UltiMaker-Cura.exe").Length/1MB
+        Write-Host "✅ 可执行文件生成成功 (大小: $exe_size MB)"
+
+    # 第十一步：调用 NSIS 脚本打包成安装包
+    - name: 📦 打包成安装程序
       run: |
         . $env:VENV_DIR\Scripts\activate.ps1
         pip install jinja2 semver
-        
-        # 检查NSIS脚本是否存在
-        $nsis_script = "$env:GITHUB_WORKSPACE/packaging/NSIS/create_windows_installer.py"
+
+        # 检查NSIS脚本（从部署的 packaging 目录中获取）
+        $nsis_script = "$env:GITHUB_WORKSPACE/dist/packaging/NSIS/create_windows_installer.py"
         if (-not (Test-Path $nsis_script)) {
-            Write-Error "❌ NSIS脚本未找到"
+            Write-Error "❌ NSIS脚本未找到: $nsis_script"
+            Write-Host "尝试查找其他位置的NSIS脚本..."
+            Get-ChildItem -Recurse -Name "*create_windows_installer.py" | ForEach-Object { Write-Host "找到: $_" }
+            exit 1
         }
-        
-        # 打印调试信息
-        Write-Host "=== NSIS 打包调试信息 ==="
-        Write-Host "Python路径: $(which python)"
-        Write-Host "Python版本: $(python --version)"
-        Write-Host "正在执行NSIS脚本: $nsis_script"
-        
-        # 执行NSIS脚本
-        python $nsis_script
-        
-        # 检查输出文件
-        $installer_path = "$env:GITHUB_WORKSPACE/build/bin/Release/UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe"
+
+        # 执行NSIS脚本，使用 PyInstaller 输出的路径
+        python $nsis_script `
+          --source_path "$env:GITHUB_WORKSPACE" `
+          --dist_path "$env:GITHUB_WORKSPACE/dist/dist/UltiMaker-Cura" `
+          --filename "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe" `
+          --version $env:CURA_VERSION
+
+        # 验证安装包
+        $installer_path = "UltiMaker-Cura-$env:CURA_VERSION-Windows-x64.exe"
         if (-not (Test-Path $installer_path)) {
-            Write-Error "❌ 安装包未生成"
+            Write-Error "❌ 安装包未生成: $installer_path"
+            Write-Host "当前目录内容："
+            Get-ChildItem -Name
+            exit 1
         }
         $size = (Get-Item $installer_path).Length/1MB
         Write-Host "✅ 安装包生成成功 (大小: $size MB)"
 
-    # 第十二步：上传构建产物（.exe 安装包）作为 GitHub Artifacts
+        # 移动安装包到 dist 目录以便上传
+        Move-Item $installer_path "$env:GITHUB_WORKSPACE/dist/"
+
+    # 第十二步：上传构建产物
     - name: ☁️ 上传安装包
       uses: actions/upload-artifact@v4
       with:
         name: cura-windows-installer
-        path: build/bin/Release/UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe
+        path: dist/UltiMaker-Cura-${{ env.CURA_VERSION }}-Windows-x64.exe
