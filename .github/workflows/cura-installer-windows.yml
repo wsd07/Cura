@@ -67,7 +67,7 @@ jobs:
     steps:
       - name: Setup the build environment
         id: setup-environment
-        uses: ./.github/actions/setup-build-environment
+        uses: wsd07/Cura/.github/actions/setup-build-environment@main
         with:
           conan_user: ${{ secrets.CONAN_USER }}
           conan_password: ${{ secrets.CONAN_PASS }}
@@ -78,7 +78,7 @@ jobs:
 
       - name: Set packages overrides
         id: set-overrides
-        uses: ./.github/actions/set-package-overrides
+        uses: wsd07/Cura/.github/actions/set-package-overrides@main
         with:
           package_overrides: ${{ inputs.package_overrides }}
           profile: installer.jinja
