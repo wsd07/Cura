@@ -135,23 +135,18 @@ runs:
         conan profile detect -f
         conan config install https://github.com/wsd07/conan-config.git -a "-b ${{ inputs.conan_config_branch }}"
 
-        # Set up editable packages for development (following 环境搭建指南.md)
-        echo "Setting up editable packages..."
-        echo "Current directory: $(pwd)"
-        echo "Available directories: $(ls -la)"
-
-        echo "Setting up CuraEngine as editable..."
+        # Build and create packages from your repositories
+        echo "Building CuraEngine from wsd07/CuraEngine..."
         cd CuraEngine
-        conan editable add . --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing
+        conan create . --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing --build=missing
         cd ..
 
-        echo "Setting up Uranium as editable..."
+        echo "Building Uranium from wsd07/Uranium..."
         cd Uranium
-        conan editable add . --name=uranium --version=5.11.0 --user=wsd07 --channel=testing
+        conan create . --name=uranium --version=5.11.0 --user=wsd07 --channel=testing --build=missing
         cd ..
 
-        echo "Editable packages setup completed!"
-        conan editable list
+        echo "Custom packages created successfully!"
 
         if [[ -f ${{ inputs.repository_path }}/conanfile.py ]]; then
           conan inspect ${{ inputs.repository_path }} > package_details.txt
