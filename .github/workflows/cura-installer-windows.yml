@@ -90,8 +90,8 @@ jobs:
             Write-Host "Conan version:"
             & "$pydir\python.exe" -m pip show conan
             cd _cura_sources
-            Write-Host "Running conan install..."
-            conan install . --build=missing --update -g VirtualPythonEnv -of ../cura_inst
+            Write-Host "Running conan install with deployer-package..."
+            conan install . --build=missing --update -g VirtualPythonEnv -of ../cura_inst --deployer-package=*
             if ($LASTEXITCODE -ne 0) {
                 Write-Error "Conan install failed with exit code $LASTEXITCODE"
                 exit $LASTEXITCODE
@@ -159,26 +159,21 @@ jobs:
             echo "Current PATH: %PATH%"
             echo "PYTHONPATH: %PYTHONPATH%"
 
-            echo "=== Checking if cura module is available ==="
-            python -c "import sys; print('Python sys.path:'); [print(f'  {p}') for p in sys.path]"
-            python -c "try: import cura; print('SUCCESS: cura module found'); except ImportError as e: print(f'ERROR: cura module not found: {e}')"
+            echo "=== Checking Python environment setup ==="
+            echo "Current working directory: %CD%"
+            echo "PYTHONPATH: %PYTHONPATH%"
 
             echo "=== Looking for cura module in file system ==="
-            if exist "cura_inst\build\generators\cura_venv" (
-                echo "Checking cura_venv directory:"
-                dir cura_inst\build\generators\cura_venv\Lib\site-packages | findstr /i cura
-            )
-            if exist "_cura_sources" (
-                echo "Checking _cura_sources directory:"
-                dir _cura_sources | findstr /i cura
+            if exist "_cura_sources\cura" (
+                echo "SUCCESS: cura directory found in _cura_sources"
+            ) else (
+                echo "ERROR: cura directory not found in _cura_sources"
+                exit /b 1
             )
 
             echo "=== Adding _cura_sources to PYTHONPATH ==="
             set PYTHONPATH=%CD%\_cura_sources;%PYTHONPATH%
             echo "Updated PYTHONPATH: %PYTHONPATH%"
-
-            echo "=== Testing cura import again ==="
-            python -c "try: import cura; print('SUCCESS: cura module found after PYTHONPATH update'); except ImportError as e: print('ERROR: cura module still not found:', str(e))"
 
             echo "=== Checking for pip requirements files ==="
             if exist "cura_inst\build\generators" (
@@ -200,7 +195,7 @@ jobs:
             )
 
             echo "=== Verifying cura module after pip installs ==="
-            python -c "try: import cura; print('SUCCESS: cura module still available'); except ImportError as e: print('ERROR: cura module lost:', str(e))"
+            echo "Cura module should be available via PYTHONPATH"
 
             echo "=== Running prepare_installer.py ==="
             echo "Current working directory: %CD%"
@@ -234,13 +229,19 @@ jobs:
             echo "prepare_installer.py completed successfully"
 
             echo "=== Checking for pyinstaller spec file ==="
+            echo "Contents of cura_inst after deploy:"
+            dir cura_inst
             if exist "cura_inst\UltiMaker-Cura.spec" (
                 echo "UltiMaker-Cura.spec found, running pyinstaller..."
                 pyinstaller cura_inst\UltiMaker-Cura.spec
             ) else (
                 echo "ERROR: UltiMaker-Cura.spec not found"
-                echo "Contents of cura_inst:"
-                dir cura_inst
+                echo "Checking if deploy() method was called..."
+                if exist "cura_inst\packaging" (
+                    echo "packaging directory found - deploy() was called"
+                ) else (
+                    echo "packaging directory not found - deploy() was NOT called"
+                )
                 exit /b 1
             )
 
