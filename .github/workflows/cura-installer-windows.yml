@@ -161,7 +161,7 @@ jobs:
 
             echo "=== Checking if cura module is available ==="
             python -c "import sys; print('Python sys.path:'); [print(f'  {p}') for p in sys.path]"
-            python -c "try: import cura; print('✓ cura module found'); except ImportError as e: print(f'✗ cura module not found: {e}')"
+            python -c "try: import cura; print('SUCCESS: cura module found'); except ImportError as e: print(f'ERROR: cura module not found: {e}')"
 
             echo "=== Looking for cura module in file system ==="
             if exist "cura_inst\build\generators\cura_venv" (
@@ -178,7 +178,7 @@ jobs:
             echo "Updated PYTHONPATH: %PYTHONPATH%"
 
             echo "=== Testing cura import again ==="
-            python -c "try: import cura; print('✓ cura module found after PYTHONPATH update'); except ImportError as e: print(f'✗ cura module still not found: {e}')"
+            python -c "try: import cura; print('SUCCESS: cura module found after PYTHONPATH update'); except ImportError as e: print('ERROR: cura module still not found:', str(e))"
 
             echo "=== Checking for pip requirements files ==="
             if exist "cura_inst\build\generators" (
@@ -200,14 +200,38 @@ jobs:
             )
 
             echo "=== Verifying cura module after pip installs ==="
-            python -c "try: import cura; print('✓ cura module still available'); except ImportError as e: print(f'✗ cura module lost: {e}')"
+            python -c "try: import cura; print('SUCCESS: cura module still available'); except ImportError as e: print('ERROR: cura module lost:', str(e))"
 
             echo "=== Running prepare_installer.py ==="
+            echo "Current working directory: %CD%"
+            echo "Checking if prepare_installer.py exists:"
+            if exist "Cura-workflows\runner_scripts\prepare_installer.py" (
+                echo "prepare_installer.py found"
+            ) else (
+                echo "ERROR: prepare_installer.py not found"
+                exit /b 1
+            )
+
+            echo "Final cura module test before running prepare_installer.py:"
+            python -c "import cura; print('SUCCESS: cura module ready for prepare_installer.py')"
+            if %ERRORLEVEL% neq 0 (
+                echo "ERROR: cura module not available for prepare_installer.py"
+                exit /b %ERRORLEVEL%
+            )
+
+            echo "Running prepare_installer.py with arguments:"
+            echo "  --os ${{ runner.os }}"
+            echo "  --architecture X64"
+            echo "  --summary-output %GITHUB_STEP_SUMMARY%"
+            echo "  --variables-output %GITHUB_OUTPUT%"
+
             python Cura-workflows\runner_scripts\prepare_installer.py --os ${{ runner.os }} --architecture X64 ${{ inputs.enterprise && '--enterprise' || '' }} ${{ inputs.private_data && '--internal' || '' }} --summary-output %GITHUB_STEP_SUMMARY% --variables-output %GITHUB_OUTPUT%
             if %ERRORLEVEL% neq 0 (
                 echo "prepare_installer.py failed with error level %ERRORLEVEL%"
                 exit /b %ERRORLEVEL%
             )
+
+            echo "prepare_installer.py completed successfully"
 
             echo "=== Checking for pyinstaller spec file ==="
             if exist "cura_inst\UltiMaker-Cura.spec" (
