@@ -138,13 +138,13 @@ runs:
         # Force Conan to use the correct Python version
         echo "Python version check:"
         python --version
-        which python || where python
+        which python
 
         # Set Python path for Conan
         if [[ "$RUNNER_OS" == "Windows" ]]; then
           echo "Setting Python path for Windows..."
           export CONAN_USER_HOME="$HOME"
-          python_path=$(which python || where python | head -1)
+          python_path=$(which python)
           echo "Using Python: $python_path"
         fi
 
