@@ -1,0 +1,1535 @@
+﻿2025-07-18T09:48:11.3603935Z ##[group]Run $pydir = type pydir.txt
+2025-07-18T09:48:11.3604311Z [36;1m$pydir = type pydir.txt[0m
+2025-07-18T09:48:11.3604588Z [36;1m$env:PATH = "$pydir;$pydir\Scripts;" + $env:PATH[0m
+2025-07-18T09:48:11.3604882Z [36;1mWrite-Host "Using Python from: $pydir"[0m
+2025-07-18T09:48:11.3605157Z [36;1mWrite-Host "Python version:"[0m
+2025-07-18T09:48:11.3605420Z [36;1m& "$pydir\python.exe" --version[0m
+2025-07-18T09:48:11.3605659Z [36;1mWrite-Host "Conan version:"[0m
+2025-07-18T09:48:11.3605907Z [36;1m& "$pydir\python.exe" -m pip show conan[0m
+2025-07-18T09:48:11.3606143Z [36;1mcd _cura_sources[0m
+2025-07-18T09:48:11.3606468Z [36;1mconan install . --build=missing --update -g VirtualPythonEnv -of ../cura_inst[0m
+2025-07-18T09:48:11.4796140Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2025-07-18T09:48:11.4796870Z env:
+2025-07-18T09:48:11.4797165Z   WIN_CERT_INSTALLER_CER: 
+2025-07-18T09:48:11.4797438Z   WIN_CERT_INSTALLER_CER_PASS: 
+2025-07-18T09:48:11.4797699Z   SENTRY_TOKEN: 
+2025-07-18T09:48:11.4797961Z ##[endgroup]
+2025-07-18T09:48:18.3443682Z Using Python from: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2025-07-18T09:48:18.3451235Z Python version:
+2025-07-18T09:48:19.0324467Z Python 3.13.5
+2025-07-18T09:48:19.0345160Z Conan version:
+2025-07-18T09:48:26.2521736Z WARNING: Package(s) not found: conan
+2025-07-18T09:48:26.6611442Z 
+2025-07-18T09:48:26.6612006Z ======== Input profiles ========
+2025-07-18T09:48:26.6612513Z Profile host:
+2025-07-18T09:48:26.6612819Z [settings]
+2025-07-18T09:48:26.6613095Z arch=x86_64
+2025-07-18T09:48:26.6613354Z build_type=Release
+2025-07-18T09:48:26.6613685Z compiler=msvc
+2025-07-18T09:48:26.6613990Z compiler.cppstd=17
+2025-07-18T09:48:26.6614335Z compiler.runtime=dynamic
+2025-07-18T09:48:26.6614950Z compiler.runtime_type=Release
+2025-07-18T09:48:26.6615427Z compiler.version=194
+2025-07-18T09:48:26.6615752Z os=Windows
+2025-07-18T09:48:26.6616092Z curaengine*:compiler.cppstd=20
+2025-07-18T09:48:26.6616438Z curaengine_plugin_infill_generate*:compiler.cppstd=20
+2025-07-18T09:48:26.6616853Z curaengine_plugin_gradual_flow*:compiler.cppstd=20
+2025-07-18T09:48:26.6617223Z curaengine_grpc_definitions*:compiler.cppstd=20
+2025-07-18T09:48:26.6617551Z scripta*:compiler.cppstd=20
+2025-07-18T09:48:26.6617802Z umspatial*:compiler.cppstd=20
+2025-07-18T09:48:26.6618098Z dulcificum*:compiler.cppstd=20
+2025-07-18T09:48:26.6618351Z curator/*:compiler.cppstd=20
+2025-07-18T09:48:26.6618580Z [options]
+2025-07-18T09:48:26.6618798Z asio-grpc/*:local_allocator=recycling_allocator
+2025-07-18T09:48:26.6619101Z boost/*:header_only=True
+2025-07-18T09:48:26.6619317Z clipper/*:shared=True
+2025-07-18T09:48:26.6619529Z cpython/*:shared=True
+2025-07-18T09:48:26.6619737Z cpython/*:with_curses=False
+2025-07-18T09:48:26.6619976Z cpython/*:with_tkinter=False
+2025-07-18T09:48:26.6620218Z dulcificum/*:shared=False
+2025-07-18T09:48:26.6620440Z grpc/*:csharp_plugin=False
+2025-07-18T09:48:26.6620678Z grpc/*:node_plugin=False
+2025-07-18T09:48:26.6620916Z grpc/*:objective_c_plugin=False
+2025-07-18T09:48:26.6621166Z grpc/*:php_plugin=False
+2025-07-18T09:48:26.6621383Z grpc/*:python_plugin=False
+2025-07-18T09:48:26.6621596Z grpc/*:ruby_plugin=False
+2025-07-18T09:48:26.6621764Z pyarcus/*:shared=True
+2025-07-18T09:48:26.6621937Z pynest2d/*:shared=True
+2025-07-18T09:48:26.6622106Z pysavitar/*:shared=True
+2025-07-18T09:48:26.6622274Z [conf]
+2025-07-18T09:48:26.6622423Z tools.build:skip_test=True
+2025-07-18T09:48:26.6622631Z tools.cmake.cmaketoolchain:generator=Ninja
+2025-07-18T09:48:26.6622880Z tools.gnu:define_libcxx11_abi=True
+2025-07-18T09:48:26.6623024Z 
+2025-07-18T09:48:26.6623084Z Profile build:
+2025-07-18T09:48:26.6623235Z [settings]
+2025-07-18T09:48:26.6623369Z arch=x86_64
+2025-07-18T09:48:26.6623510Z build_type=Release
+2025-07-18T09:48:26.6623661Z compiler=msvc
+2025-07-18T09:48:26.6623819Z compiler.cppstd=17
+2025-07-18T09:48:26.6623984Z compiler.runtime=dynamic
+2025-07-18T09:48:26.6624177Z compiler.runtime_type=Release
+2025-07-18T09:48:26.6626575Z compiler.version=194
+2025-07-18T09:48:26.6626751Z os=Windows
+2025-07-18T09:48:26.6626919Z curator/*:compiler.cppstd=20
+2025-07-18T09:48:26.6627109Z [conf]
+2025-07-18T09:48:26.6627264Z tools.build:skip_test=True
+2025-07-18T09:48:26.6627482Z tools.cmake.cmaketoolchain:generator=Ninja
+2025-07-18T09:48:26.6627737Z tools.gnu:define_libcxx11_abi=True
+2025-07-18T09:48:26.6627891Z 
+2025-07-18T09:48:27.3002850Z translationextractor/2.3.0: Checking remote: conancenter
+2025-07-18T09:48:27.3054644Z translationextractor/2.3.0: Checking remote: cura-conan2
+2025-07-18T09:48:27.4367178Z 
+2025-07-18T09:48:27.4367726Z ======== Computing dependency graph ========
+2025-07-18T09:48:27.4391345Z gettext/0.22.5: Not found in local cache, looking in remotes...
+2025-07-18T09:48:27.4392377Z gettext/0.22.5: Checking remote: conancenter
+2025-07-18T09:48:27.5325153Z gettext/0.22.5: Checking remote: cura-conan2
+2025-07-18T09:48:28.3098686Z gettext/0.22.5: Downloaded recipe revision a1f31cc77dee0345699745ef39686dd0
+2025-07-18T09:48:28.3190846Z libiconv/1.17: Not found in local cache, looking in remotes...
+2025-07-18T09:48:28.3191521Z libiconv/1.17: Checking remote: conancenter
+2025-07-18T09:48:28.3247221Z libiconv/1.17: Checking remote: cura-conan2
+2025-07-18T09:48:28.6078018Z libiconv/1.17: Downloaded recipe revision 1e65319e945f2d31941a9d28cc13c058
+2025-07-18T09:48:28.6121818Z msys2/cci.latest: Not found in local cache, looking in remotes...
+2025-07-18T09:48:28.6122466Z msys2/cci.latest: Checking remote: conancenter
+2025-07-18T09:48:28.6179140Z msys2/cci.latest: Checking remote: cura-conan2
+2025-07-18T09:48:28.9423234Z msys2/cci.latest: Downloaded recipe revision 5b73b10144f73cc5bfe0572ed9be39e1
+2025-07-18T09:48:28.9478578Z automake/1.16.5: Not found in local cache, looking in remotes...
+2025-07-18T09:48:28.9479231Z automake/1.16.5: Checking remote: conancenter
+2025-07-18T09:48:28.9532591Z automake/1.16.5: Checking remote: cura-conan2
+2025-07-18T09:48:29.2141710Z automake/1.16.5: Downloaded recipe revision 058bda3e21c36c9aa8425daf3c1faf50
+2025-07-18T09:48:29.2194240Z autoconf/2.71: Not found in local cache, looking in remotes...
+2025-07-18T09:48:29.2195026Z autoconf/2.71: Checking remote: conancenter
+2025-07-18T09:48:29.2246901Z autoconf/2.71: Checking remote: cura-conan2
+2025-07-18T09:48:29.4858311Z autoconf/2.71: Downloaded recipe revision 51077f068e61700d65bb05541ea1e4b0
+2025-07-18T09:48:29.4908241Z m4/1.4.19: Not found in local cache, looking in remotes...
+2025-07-18T09:48:29.4909005Z m4/1.4.19: Checking remote: conancenter
+2025-07-18T09:48:29.4962726Z m4/1.4.19: Checking remote: cura-conan2
+2025-07-18T09:48:29.7525700Z m4/1.4.19: Downloaded recipe revision b38ced39a01e31fef5435bc634461fd2
+2025-07-18T09:48:29.7696758Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Not found in local cache, looking in remotes...
+2025-07-18T09:48:29.7697345Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Checking remote: conancenter
+2025-07-18T09:48:29.7749255Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Checking remote: cura-conan2
+2025-07-18T09:48:30.4964089Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Downloaded recipe revision c934fc503b648101b5cf0fba2ff8b967
+2025-07-18T09:48:30.4995084Z uranium/5.11.0-alpha.0@ultimaker/testing: Not found in local cache, looking in remotes...
+2025-07-18T09:48:30.4995762Z uranium/5.11.0-alpha.0@ultimaker/testing: Checking remote: conancenter
+2025-07-18T09:48:30.5049143Z uranium/5.11.0-alpha.0@ultimaker/testing: Checking remote: cura-conan2
+2025-07-18T09:48:30.8797477Z uranium/5.11.0-alpha.0@ultimaker/testing: Downloaded recipe revision dce26ec9cf2518396e13e24cb30b4f75
+2025-07-18T09:48:31.0800006Z translationextractor/2.3.0: Checking remote: conancenter
+2025-07-18T09:48:31.0853488Z translationextractor/2.3.0: Checking remote: cura-conan2
+2025-07-18T09:48:31.2193332Z pyarcus/5.10.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:31.2193860Z pyarcus/5.10.0: Checking remote: conancenter
+2025-07-18T09:48:31.2249518Z pyarcus/5.10.0: Checking remote: cura-conan2
+2025-07-18T09:48:31.4767859Z pyarcus/5.10.0: Downloaded recipe revision 45dd0835e9e65d080faa27e5669a957f
+2025-07-18T09:48:31.6379284Z pyprojecttoolchain/0.2.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:31.6379804Z pyprojecttoolchain/0.2.0: Checking remote: conancenter
+2025-07-18T09:48:31.6433053Z pyprojecttoolchain/0.2.0: Checking remote: cura-conan2
+2025-07-18T09:48:31.9091296Z pyprojecttoolchain/0.2.0: Downloaded recipe revision d0d0d74876a9061a767bb2153c7952e3
+2025-07-18T09:48:32.0687179Z sipbuildtool/0.3.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:32.0687688Z sipbuildtool/0.3.0: Checking remote: conancenter
+2025-07-18T09:48:32.0739125Z sipbuildtool/0.3.0: Checking remote: cura-conan2
+2025-07-18T09:48:32.3320850Z sipbuildtool/0.3.0: Downloaded recipe revision 262477bdb72ff6a09737695673de2b62
+2025-07-18T09:48:32.3353957Z arcus/5.10.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:32.3354479Z arcus/5.10.0: Checking remote: conancenter
+2025-07-18T09:48:32.3406952Z arcus/5.10.0: Checking remote: cura-conan2
+2025-07-18T09:48:32.6081271Z arcus/5.10.0: Downloaded recipe revision 6f50e0bcb3455e530c9834cfe62f9017
+2025-07-18T09:48:32.6103575Z sentrylibrary/1.0.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:32.6104127Z sentrylibrary/1.0.0: Checking remote: conancenter
+2025-07-18T09:48:32.6155855Z sentrylibrary/1.0.0: Checking remote: cura-conan2
+2025-07-18T09:48:32.8810223Z sentrylibrary/1.0.0: Downloaded recipe revision 004cb2aaa533fb28697dd9a302d652e8
+2025-07-18T09:48:32.8847107Z protobuf/3.21.12: Not found in local cache, looking in remotes...
+2025-07-18T09:48:32.8847672Z protobuf/3.21.12: Checking remote: conancenter
+2025-07-18T09:48:32.8913600Z protobuf/3.21.12: Checking remote: cura-conan2
+2025-07-18T09:48:33.2212004Z protobuf/3.21.12: Downloaded recipe revision d927114e28de9f4691a6bbcdd9a529d1
+2025-07-18T09:48:33.3764056Z zlib/1.3.1: Not found in local cache, looking in remotes...
+2025-07-18T09:48:33.3764500Z zlib/1.3.1: Checking remote: conancenter
+2025-07-18T09:48:33.3814013Z zlib/1.3.1: Checking remote: cura-conan2
+2025-07-18T09:48:33.6413380Z zlib/1.3.1: Downloaded recipe revision b8bc2603263cf7eccbd6e17e66b0ed76
+2025-07-18T09:48:33.8028409Z standardprojectsettings/0.2.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:33.8029008Z standardprojectsettings/0.2.0: Checking remote: conancenter
+2025-07-18T09:48:33.8080272Z standardprojectsettings/0.2.0: Checking remote: cura-conan2
+2025-07-18T09:48:34.1032573Z standardprojectsettings/0.2.0: Downloaded recipe revision af70631ee980187032a76e136b293365
+2025-07-18T09:48:34.1076844Z cpython/3.12.2: Not found in local cache, looking in remotes...
+2025-07-18T09:48:34.1077397Z cpython/3.12.2: Checking remote: conancenter
+2025-07-18T09:48:34.1131459Z cpython/3.12.2: Checking remote: cura-conan2
+2025-07-18T09:48:34.4752922Z cpython/3.12.2: Downloaded recipe revision 68cb44d6d7eeb24578b1c942ce16a8cd
+2025-07-18T09:48:34.6465625Z openssl/3.5.1: Not found in local cache, looking in remotes...
+2025-07-18T09:48:34.6466251Z openssl/3.5.1: Checking remote: conancenter
+2025-07-18T09:48:34.6518896Z openssl/3.5.1: Checking remote: cura-conan2
+2025-07-18T09:48:34.9525886Z openssl/3.5.1: Downloaded recipe revision 7884fb47cae4130ac03814e53e3c7167
+2025-07-18T09:48:34.9594892Z nasm/2.16.01: Not found in local cache, looking in remotes...
+2025-07-18T09:48:34.9595406Z nasm/2.16.01: Checking remote: conancenter
+2025-07-18T09:48:34.9649842Z nasm/2.16.01: Checking remote: cura-conan2
+2025-07-18T09:48:35.2279636Z nasm/2.16.01: Downloaded recipe revision 31e26f2ee3c4346ecd347911bd126904
+2025-07-18T09:48:35.2324313Z strawberryperl/5.32.1.1: Not found in local cache, looking in remotes...
+2025-07-18T09:48:35.2324931Z strawberryperl/5.32.1.1: Checking remote: conancenter
+2025-07-18T09:48:35.2376500Z strawberryperl/5.32.1.1: Checking remote: cura-conan2
+2025-07-18T09:48:35.4981783Z strawberryperl/5.32.1.1: Downloaded recipe revision 8d114504d172cfea8ea1662d09b6333e
+2025-07-18T09:48:35.6596310Z expat/2.7.1: Not found in local cache, looking in remotes...
+2025-07-18T09:48:35.6596787Z expat/2.7.1: Checking remote: conancenter
+2025-07-18T09:48:35.6648178Z expat/2.7.1: Checking remote: cura-conan2
+2025-07-18T09:48:35.9374712Z expat/2.7.1: Downloaded recipe revision b0b67ba910c5147271b444139ca06953
+2025-07-18T09:48:35.9408539Z libffi/3.4.4: Not found in local cache, looking in remotes...
+2025-07-18T09:48:35.9409060Z libffi/3.4.4: Checking remote: conancenter
+2025-07-18T09:48:35.9461875Z libffi/3.4.4: Checking remote: cura-conan2
+2025-07-18T09:48:36.2737247Z libffi/3.4.4: Downloaded recipe revision a1442e924f14664d9545dfcfe66d751f
+2025-07-18T09:48:36.2954941Z mpdecimal/2.5.1: Not found in local cache, looking in remotes...
+2025-07-18T09:48:36.2955468Z mpdecimal/2.5.1: Checking remote: conancenter
+2025-07-18T09:48:36.3011407Z mpdecimal/2.5.1: Checking remote: cura-conan2
+2025-07-18T09:48:36.6223841Z mpdecimal/2.5.1: Downloaded recipe revision cad87046d76460b8e2fc159194e50e7e
+2025-07-18T09:48:36.6273651Z bzip2/1.0.8: Not found in local cache, looking in remotes...
+2025-07-18T09:48:36.6274167Z bzip2/1.0.8: Checking remote: conancenter
+2025-07-18T09:48:36.6337159Z bzip2/1.0.8: Checking remote: cura-conan2
+2025-07-18T09:48:36.9012932Z bzip2/1.0.8: Downloaded recipe revision 00b4a4658791c1f06914e087f0e792f5
+2025-07-18T09:48:36.9048552Z sqlite3/3.45.2: Not found in local cache, looking in remotes...
+2025-07-18T09:48:36.9049098Z sqlite3/3.45.2: Checking remote: conancenter
+2025-07-18T09:48:36.9105174Z sqlite3/3.45.2: Checking remote: cura-conan2
+2025-07-18T09:48:37.2227378Z sqlite3/3.45.2: Downloaded recipe revision 60f2d3278e7bc12c8ef02ac75119c137
+2025-07-18T09:48:37.2276938Z xz_utils/5.4.5: Not found in local cache, looking in remotes...
+2025-07-18T09:48:37.2277467Z xz_utils/5.4.5: Checking remote: conancenter
+2025-07-18T09:48:37.2331768Z xz_utils/5.4.5: Checking remote: cura-conan2
+2025-07-18T09:48:37.5707638Z xz_utils/5.4.5: Downloaded recipe revision b885d1d79c9d30cff3803f7f551dbe66
+2025-07-18T09:48:37.5768778Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Not found in local cache, looking in remotes...
+2025-07-18T09:48:37.5769590Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Checking remote: conancenter
+2025-07-18T09:48:37.5860571Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Checking remote: cura-conan2
+2025-07-18T09:48:37.8923663Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Downloaded recipe revision 760976726c555ed281aa0b64cdf893db
+2025-07-18T09:48:37.8952217Z fdm_materials/5.11.0-alpha.0@ultimaker/testing: Not found in local cache, looking in remotes...
+2025-07-18T09:48:37.8952894Z fdm_materials/5.11.0-alpha.0@ultimaker/testing: Checking remote: conancenter
+2025-07-18T09:48:37.9007725Z fdm_materials/5.11.0-alpha.0@ultimaker/testing: Checking remote: cura-conan2
+2025-07-18T09:48:38.2088036Z fdm_materials/5.11.0-alpha.0@ultimaker/testing: Downloaded recipe revision b12456ad8f9d9464e1d5db569cacef3c
+2025-07-18T09:48:38.2115235Z dulcificum/5.10.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:38.2115775Z dulcificum/5.10.0: Checking remote: conancenter
+2025-07-18T09:48:38.2173543Z dulcificum/5.10.0: Checking remote: cura-conan2
+2025-07-18T09:48:38.5243747Z dulcificum/5.10.0: Downloaded recipe revision d7796f570134346c8cf8a45b2b677d63
+2025-07-18T09:48:38.6772548Z npmpackage/1.1.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:38.6773038Z npmpackage/1.1.0: Checking remote: conancenter
+2025-07-18T09:48:38.6827095Z npmpackage/1.1.0: Checking remote: cura-conan2
+2025-07-18T09:48:38.9371529Z npmpackage/1.1.0: Downloaded recipe revision 4ee756f0e6532594bc38577aab07344a
+2025-07-18T09:48:38.9404204Z nlohmann_json/3.11.2: Not found in local cache, looking in remotes...
+2025-07-18T09:48:38.9404684Z nlohmann_json/3.11.2: Checking remote: conancenter
+2025-07-18T09:48:38.9457789Z nlohmann_json/3.11.2: Checking remote: cura-conan2
+2025-07-18T09:48:39.2204861Z nlohmann_json/3.11.2: Downloaded recipe revision 1ded6ae5d200a68ac17c51d528b945e2
+2025-07-18T09:48:39.2235812Z range-v3/0.12.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:39.2236354Z range-v3/0.12.0: Checking remote: conancenter
+2025-07-18T09:48:39.2289640Z range-v3/0.12.0: Checking remote: cura-conan2
+2025-07-18T09:48:39.4839788Z range-v3/0.12.0: Downloaded recipe revision 4c05d91d7b40e6b91b44b5345ac64408
+2025-07-18T09:48:39.6600716Z spdlog/1.15.3: Not found in local cache, looking in remotes...
+2025-07-18T09:48:39.6601180Z spdlog/1.15.3: Checking remote: conancenter
+2025-07-18T09:48:39.6650615Z spdlog/1.15.3: Checking remote: cura-conan2
+2025-07-18T09:48:39.9922358Z spdlog/1.15.3: Downloaded recipe revision 3ca0e9e6b83af4d0151e26541d140c86
+2025-07-18T09:48:39.9964828Z fmt/11.2.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:39.9965380Z fmt/11.2.0: Checking remote: conancenter
+2025-07-18T09:48:40.0019283Z fmt/11.2.0: Checking remote: cura-conan2
+2025-07-18T09:48:40.2610024Z fmt/11.2.0: Downloaded recipe revision 579bb2cdf4a7607621beea4eb4651e0f
+2025-07-18T09:48:40.2648886Z ctre/3.7.2: Not found in local cache, looking in remotes...
+2025-07-18T09:48:40.2649391Z ctre/3.7.2: Checking remote: conancenter
+2025-07-18T09:48:40.2701286Z ctre/3.7.2: Checking remote: cura-conan2
+2025-07-18T09:48:40.5313426Z ctre/3.7.2: Downloaded recipe revision 86bd3592feebcdafd2ab7b8a1aad0c80
+2025-07-18T09:48:40.5348075Z pybind11/2.11.1: Not found in local cache, looking in remotes...
+2025-07-18T09:48:40.5348616Z pybind11/2.11.1: Checking remote: conancenter
+2025-07-18T09:48:40.5408486Z pybind11/2.11.1: Checking remote: cura-conan2
+2025-07-18T09:48:40.7946160Z pybind11/2.11.1: Downloaded recipe revision 9ac24fa2b6323656659eaf4e44fb7e0b
+2025-07-18T09:48:40.7985976Z pysavitar/5.11.0-alpha.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:40.7987060Z pysavitar/5.11.0-alpha.0: Checking remote: conancenter
+2025-07-18T09:48:40.8039709Z pysavitar/5.11.0-alpha.0: Checking remote: cura-conan2
+2025-07-18T09:48:41.0694135Z pysavitar/5.11.0-alpha.0: Downloaded recipe revision 683aa6a69435b316536c272b7807b883
+2025-07-18T09:48:41.0732643Z savitar/5.11.0-alpha.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:41.0733703Z savitar/5.11.0-alpha.0: Checking remote: conancenter
+2025-07-18T09:48:41.0786154Z savitar/5.11.0-alpha.0: Checking remote: cura-conan2
+2025-07-18T09:48:41.3466755Z savitar/5.11.0-alpha.0: Downloaded recipe revision 3a382967d301e3aae78b23a7f9080012
+2025-07-18T09:48:41.3501041Z pugixml/1.14: Not found in local cache, looking in remotes...
+2025-07-18T09:48:41.3501658Z pugixml/1.14: Checking remote: conancenter
+2025-07-18T09:48:41.3555637Z pugixml/1.14: Checking remote: cura-conan2
+2025-07-18T09:48:41.6149814Z pugixml/1.14: Downloaded recipe revision c6afdcf73d71858303d8260b0d76ff91
+2025-07-18T09:48:41.6208521Z pynest2d/5.10.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:41.6209390Z pynest2d/5.10.0: Checking remote: conancenter
+2025-07-18T09:48:41.6280947Z pynest2d/5.10.0: Checking remote: cura-conan2
+2025-07-18T09:48:41.8852479Z pynest2d/5.10.0: Downloaded recipe revision ff5d39339d68c1cb296f83563e3eeacd
+2025-07-18T09:48:41.8888763Z nest2d/5.10.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:41.8889564Z nest2d/5.10.0: Checking remote: conancenter
+2025-07-18T09:48:41.8940802Z nest2d/5.10.0: Checking remote: cura-conan2
+2025-07-18T09:48:42.2089999Z nest2d/5.10.0: Downloaded recipe revision 6f430e9fa21c308e0e6234649a6116ed
+2025-07-18T09:48:42.2128653Z clipper/6.4.2@ultimaker/stable: Not found in local cache, looking in remotes...
+2025-07-18T09:48:42.2129307Z clipper/6.4.2@ultimaker/stable: Checking remote: conancenter
+2025-07-18T09:48:42.2183500Z clipper/6.4.2@ultimaker/stable: Checking remote: cura-conan2
+2025-07-18T09:48:42.4811750Z clipper/6.4.2@ultimaker/stable: Downloaded recipe revision 95d9dd0b845ba2b4337f9a3fd331fa47
+2025-07-18T09:48:42.4855544Z boost/1.86.0: Not found in local cache, looking in remotes...
+2025-07-18T09:48:42.4857569Z boost/1.86.0: Checking remote: conancenter
+2025-07-18T09:48:42.4910173Z boost/1.86.0: Checking remote: cura-conan2
+2025-07-18T09:48:42.9207648Z boost/1.86.0: Downloaded recipe revision 5af697a73801bfd7ee2186f6556bd0aa
+2025-07-18T09:48:42.9537189Z nlopt/2.7.1: Not found in local cache, looking in remotes...
+2025-07-18T09:48:42.9537940Z nlopt/2.7.1: Checking remote: conancenter
+2025-07-18T09:48:42.9593297Z nlopt/2.7.1: Checking remote: cura-conan2
+2025-07-18T09:48:43.2097812Z nlopt/2.7.1: Downloaded recipe revision 61296485856e44d13b39346ef54325f1
+2025-07-18T09:48:43.2166307Z Graph root
+2025-07-18T09:48:43.2166866Z     conanfile.py (cura/5.11.0-alpha.0): D:\a\Cura\Cura\_cura_sources\conanfile.py
+2025-07-18T09:48:43.2167286Z Requirements
+2025-07-18T09:48:43.2168145Z     arcus/5.10.0#6f50e0bcb3455e530c9834cfe62f9017 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2169065Z     boost/1.86.0#5af697a73801bfd7ee2186f6556bd0aa - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2169880Z     bzip2/1.0.8#00b4a4658791c1f06914e087f0e792f5 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2170833Z     clipper/6.4.2@ultimaker/stable#95d9dd0b845ba2b4337f9a3fd331fa47 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2171782Z     cpython/3.12.2#68cb44d6d7eeb24578b1c942ce16a8cd - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2172905Z     ctre/3.7.2#86bd3592feebcdafd2ab7b8a1aad0c80 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2173888Z     cura_binary_data/5.11.0-alpha.0@ultimaker/testing#760976726c555ed281aa0b64cdf893db - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2175100Z     cura_resources/5.11.0-alpha.0@ultimaker/testing#c934fc503b648101b5cf0fba2ff8b967 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2176126Z     dulcificum/5.10.0#d7796f570134346c8cf8a45b2b677d63 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2176964Z     expat/2.7.1#b0b67ba910c5147271b444139ca06953 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2177956Z     fdm_materials/5.11.0-alpha.0@ultimaker/testing#b12456ad8f9d9464e1d5db569cacef3c - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2179038Z     fmt/11.2.0#579bb2cdf4a7607621beea4eb4651e0f - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2179595Z     libffi/3.4.4#a1442e924f14664d9545dfcfe66d751f - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2180101Z     mpdecimal/2.5.1#cad87046d76460b8e2fc159194e50e7e - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2180612Z     nest2d/5.10.0#6f430e9fa21c308e0e6234649a6116ed - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2181128Z     nlohmann_json/3.11.2#1ded6ae5d200a68ac17c51d528b945e2 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2181641Z     nlopt/2.7.1#61296485856e44d13b39346ef54325f1 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2182125Z     openssl/3.5.1#7884fb47cae4130ac03814e53e3c7167 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2182641Z     protobuf/3.21.12#d927114e28de9f4691a6bbcdd9a529d1 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2183289Z     pugixml/1.14#c6afdcf73d71858303d8260b0d76ff91 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2183831Z     pyarcus/5.10.0#45dd0835e9e65d080faa27e5669a957f - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2184346Z     pybind11/2.11.1#9ac24fa2b6323656659eaf4e44fb7e0b - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2184869Z     pynest2d/5.10.0#ff5d39339d68c1cb296f83563e3eeacd - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2185394Z     pysavitar/5.11.0-alpha.0#683aa6a69435b316536c272b7807b883 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2185835Z     range-v3/0.12.0#4c05d91d7b40e6b91b44b5345ac64408 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2186264Z     savitar/5.11.0-alpha.0#3a382967d301e3aae78b23a7f9080012 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2186697Z     spdlog/1.15.3#3ca0e9e6b83af4d0151e26541d140c86 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2187093Z     sqlite3/3.45.2#60f2d3278e7bc12c8ef02ac75119c137 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2187587Z     uranium/5.11.0-alpha.0@ultimaker/testing#dce26ec9cf2518396e13e24cb30b4f75 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2188231Z     xz_utils/5.4.5#b885d1d79c9d30cff3803f7f551dbe66 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2188638Z     zlib/1.3.1#b8bc2603263cf7eccbd6e17e66b0ed76 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2188939Z Test requirements
+2025-07-18T09:48:43.2189233Z     sipbuildtool/0.3.0#262477bdb72ff6a09737695673de2b62 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2189749Z     standardprojectsettings/0.2.0#af70631ee980187032a76e136b293365 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2190122Z Build requirements
+2025-07-18T09:48:43.2190387Z     autoconf/2.71#51077f068e61700d65bb05541ea1e4b0 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2190806Z     automake/1.16.5#058bda3e21c36c9aa8425daf3c1faf50 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2191235Z     gettext/0.22.5#a1f31cc77dee0345699745ef39686dd0 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2191651Z     libiconv/1.17#1e65319e945f2d31941a9d28cc13c058 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2192043Z     m4/1.4.19#b38ced39a01e31fef5435bc634461fd2 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2192469Z     msys2/cci.latest#5b73b10144f73cc5bfe0572ed9be39e1 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2192887Z     nasm/2.16.01#31e26f2ee3c4346ecd347911bd126904 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2193304Z     protobuf/3.21.12#d927114e28de9f4691a6bbcdd9a529d1 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2193829Z     strawberryperl/5.32.1.1#8d114504d172cfea8ea1662d09b6333e - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2194267Z     zlib/1.3.1#b8bc2603263cf7eccbd6e17e66b0ed76 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2194596Z Python requires
+2025-07-18T09:48:43.2204992Z     npmpackage/1.1.0#4ee756f0e6532594bc38577aab07344a - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2205968Z     pyprojecttoolchain/0.2.0#d0d0d74876a9061a767bb2153c7952e3 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2206760Z     sentrylibrary/1.0.0#004cb2aaa533fb28697dd9a302d652e8 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2207471Z     sipbuildtool/0.3.0#262477bdb72ff6a09737695673de2b62 - Downloaded (cura-conan2)
+2025-07-18T09:48:43.2207967Z     translationextractor/2.3.0#d504876a4742c1b92bcd6e1d5ba7509a - Cache (cura-conan2)
+2025-07-18T09:48:43.2208327Z Resolved version ranges
+2025-07-18T09:48:43.2208516Z     expat/[>=2.6.2 <3]: expat/2.7.1
+2025-07-18T09:48:43.2208743Z     npmpackage/[>=1.0.0]: npmpackage/1.1.0
+2025-07-18T09:48:43.2208974Z     openssl/[>=1.1 <4]: openssl/3.5.1
+2025-07-18T09:48:43.2209242Z     pyprojecttoolchain/[>=0.2.0]: pyprojecttoolchain/0.2.0
+2025-07-18T09:48:43.2209543Z     sipbuildtool/[>=0.3.0]: sipbuildtool/0.3.0
+2025-07-18T09:48:43.2209786Z     spdlog/[>=1.14.1]: spdlog/1.15.3
+2025-07-18T09:48:43.2210083Z     standardprojectsettings/[>=0.1.0]: standardprojectsettings/0.2.0
+2025-07-18T09:48:43.2210481Z     standardprojectsettings/[>=0.2.0]: standardprojectsettings/0.2.0
+2025-07-18T09:48:43.2210850Z     translationextractor/[>=2.2.0]: translationextractor/2.3.0
+2025-07-18T09:48:43.2211139Z     zlib/[>=1.2.11 <2]: zlib/1.3.1
+2025-07-18T09:48:43.2211354Z 
+2025-07-18T09:48:43.2211444Z ======== Computing necessary packages ========
+2025-07-18T09:48:44.8873734Z bzip2/1.0.8: Main binary package '885590b8d4960dd9be0d7cd4c17646ce20f8a9aa' missing
+2025-07-18T09:48:44.8874345Z bzip2/1.0.8: Checking 1 compatible configurations
+2025-07-18T09:48:44.8874956Z bzip2/1.0.8: '67bfcb7b4b78262b9d05495e479dcd92f747316b': compiler.version=193
+2025-07-18T09:48:45.3258046Z bzip2/1.0.8: Found compatible package '67bfcb7b4b78262b9d05495e479dcd92f747316b': compiler.version=193
+2025-07-18T09:48:45.5023364Z clipper/6.4.2@ultimaker/stable: Main binary package '47bd81b46b559e92986fc10f1f7af429cc421737' missing
+2025-07-18T09:48:45.5024154Z clipper/6.4.2@ultimaker/stable: Checking 7 compatible configurations
+2025-07-18T09:48:45.5024806Z clipper/6.4.2@ultimaker/stable: 'c3916db771e887141e724b7417a3957fe23f121e': compiler.cppstd=14
+2025-07-18T09:48:45.6090637Z clipper/6.4.2@ultimaker/stable: '073e41f2aaef724a51f1af58ded0b7e7d5ae7bbb': compiler.cppstd=20
+2025-07-18T09:48:45.8460938Z clipper/6.4.2@ultimaker/stable: 'f0f71dc6967e4b6a5f421c6d1ed006ce3899746d': compiler.cppstd=23
+2025-07-18T09:48:46.0815840Z clipper/6.4.2@ultimaker/stable: '931b65de947bc52a6cbd2cba7850a35d6ca0abb4': compiler.cppstd=14, compiler.version=193
+2025-07-18T09:48:46.3236595Z clipper/6.4.2@ultimaker/stable: '23fa6ef46e5cd22163078270af5e60d36260266a': compiler.version=193
+2025-07-18T09:48:46.5120936Z clipper/6.4.2@ultimaker/stable: '630c2c2bc7264de7f7a1d64051082cd3b7531671': compiler.cppstd=20, compiler.version=193
+2025-07-18T09:48:46.7365793Z clipper/6.4.2@ultimaker/stable: '2e458ca9828b477dd7be6b8b0a6fd717163208f3': compiler.cppstd=23, compiler.version=193
+2025-07-18T09:48:47.4880056Z expat/2.7.1: Main binary package 'd385a29d71dff7bba92594fd8a6fb81c4a953c1e' missing
+2025-07-18T09:48:47.4880667Z expat/2.7.1: Checking 1 compatible configurations
+2025-07-18T09:48:47.4881161Z expat/2.7.1: 'd3187ddb7b7977db6ec22bda308e3bc6c2b7aa94': compiler.version=193
+2025-07-18T09:48:47.7779965Z expat/2.7.1: Found compatible package 'd3187ddb7b7977db6ec22bda308e3bc6c2b7aa94': compiler.version=193
+2025-07-18T09:48:48.2252388Z fmt/11.2.0: Main binary package '85363c8e7e7e43027bf93aac0c394853de6923e0' missing
+2025-07-18T09:48:48.2252981Z fmt/11.2.0: Checking 7 compatible configurations
+2025-07-18T09:48:48.2254726Z fmt/11.2.0: '159b372171ff86fd7630aefcf978b21a606abf85': compiler.cppstd=14
+2025-07-18T09:48:48.4198319Z fmt/11.2.0: '08b69459280382fe10b7f14106609c64382fd1c9': compiler.cppstd=20
+2025-07-18T09:48:48.5165274Z fmt/11.2.0: '3362a765a1cc91bd7c27e248521ae22dddaae29c': compiler.cppstd=23
+2025-07-18T09:48:48.6663267Z fmt/11.2.0: '1cf057972569a3a443d5b36ba81814a72a6467c9': compiler.cppstd=14, compiler.version=193
+2025-07-18T09:48:48.8061966Z fmt/11.2.0: Found compatible package '1cf057972569a3a443d5b36ba81814a72a6467c9': compiler.cppstd=14, compiler.version=193
+2025-07-18T09:48:50.0351576Z libiconv/1.17: Main binary package '0d6dd492a7d31822b2f2686ec67bbaef586416a3' missing
+2025-07-18T09:48:50.0352571Z libiconv/1.17: Checking 1 compatible configurations
+2025-07-18T09:48:50.0353059Z libiconv/1.17: '7bfde258ff4f62f75668d0896dbddedaa7480a0f': compiler.version=193
+2025-07-18T09:48:50.1117012Z libiconv/1.17: Found compatible package '7bfde258ff4f62f75668d0896dbddedaa7480a0f': compiler.version=193
+2025-07-18T09:48:50.3554327Z nest2d/5.10.0: Main binary package '3d73e4b036647309b4a3cf8e44d2e73041f853d0' missing
+2025-07-18T09:48:50.3555117Z nest2d/5.10.0: Checking 5 compatible configurations
+2025-07-18T09:48:50.3556278Z nest2d/5.10.0: 'c9a8a407ef8045450c85fcc7d82b1dea6e27ce66': compiler.cppstd=20
+2025-07-18T09:48:50.4477121Z nest2d/5.10.0: '43b9383e16d019081a225a9e22dc45a49a4738cf': compiler.cppstd=23
+2025-07-18T09:48:50.5373460Z nest2d/5.10.0: '48042b4751bc20b6577b3947f378fdddf9f48b10': compiler.version=193
+2025-07-18T09:48:50.6153227Z nest2d/5.10.0: '47bed887fd26157ad0da6899bc09268aadcf6609': compiler.cppstd=20, compiler.version=193
+2025-07-18T09:48:50.6924181Z nest2d/5.10.0: 'c48801a54327c94703b2ad18da3cb6a1e038cf56': compiler.cppstd=23, compiler.version=193
+2025-07-18T09:48:50.8878159Z protobuf/3.21.12: Main binary package '060bc52938c46ea659465e42a1cc81f1f1bbc95a' missing
+2025-07-18T09:48:50.8878898Z protobuf/3.21.12: Checking 7 compatible configurations
+2025-07-18T09:48:50.8879438Z protobuf/3.21.12: '56bbedca476ff446f359462bbff7e85fed6ddb3a': compiler.cppstd=14
+2025-07-18T09:48:50.9788503Z protobuf/3.21.12: 'ccb5548dc0852866d6137b64f6ed8827d79588d6': compiler.cppstd=20
+2025-07-18T09:48:51.0536928Z protobuf/3.21.12: '84c246e8c1e49d610544890476f9792e656afc10': compiler.cppstd=23
+2025-07-18T09:48:51.1357984Z protobuf/3.21.12: '9a546d3c2c7b2b02ebec30698e8536173849d86f': compiler.cppstd=14, compiler.version=193
+2025-07-18T09:48:51.2197299Z protobuf/3.21.12: Found compatible package '9a546d3c2c7b2b02ebec30698e8536173849d86f': compiler.cppstd=14, compiler.version=193
+2025-07-18T09:48:51.4966092Z spdlog/1.15.3: Main binary package 'fb2f5b978b82f3988b7318c594f68e4e649caf5f' missing
+2025-07-18T09:48:51.4967308Z spdlog/1.15.3: Checking 7 compatible configurations
+2025-07-18T09:48:51.4967805Z spdlog/1.15.3: 'a317e794427ad15127558aece8ae65b2a5042a4e': compiler.cppstd=14
+2025-07-18T09:48:51.6463312Z spdlog/1.15.3: '230903e5f5a232e4c520f4ca7d25bc0718b52319': compiler.cppstd=20
+2025-07-18T09:48:51.7635295Z spdlog/1.15.3: '50cb18c495541217ffab7ed14dea30ecfb2d34fc': compiler.cppstd=23
+2025-07-18T09:48:51.9190441Z spdlog/1.15.3: 'ecd8d935a27d0aacad68297799b92b17007acc03': compiler.cppstd=14, compiler.version=193
+2025-07-18T09:48:52.0618534Z spdlog/1.15.3: Found compatible package 'ecd8d935a27d0aacad68297799b92b17007acc03': compiler.cppstd=14, compiler.version=193
+2025-07-18T09:48:52.1491189Z arcus/5.10.0: Main binary package 'd719caab426bcdc1d76c5415239243e1bc080307' missing
+2025-07-18T09:48:52.1491973Z arcus/5.10.0: Checking 5 compatible configurations
+2025-07-18T09:48:52.1492446Z arcus/5.10.0: 'd887bb573ac558358c76cd5e5dfd928fa09af4ab': compiler.cppstd=20
+2025-07-18T09:48:52.2234735Z arcus/5.10.0: 'dddd6617154d6a2ab0b41d99379870bdd66123ae': compiler.cppstd=23
+2025-07-18T09:48:52.3148405Z arcus/5.10.0: '0a2fefd28cb36a1491bdc39b647c46ee451a10ef': compiler.version=193
+2025-07-18T09:48:52.3997498Z arcus/5.10.0: '2a15b029e545e4c822b443c3f41b380abd328e0d': compiler.cppstd=20, compiler.version=193
+2025-07-18T09:48:52.4846047Z arcus/5.10.0: 'd2562f2d0b7c3633f0bb6e8feec479431a14c997': compiler.cppstd=23, compiler.version=193
+2025-07-18T09:48:52.8172758Z openssl/3.5.1: Main binary package '28abdbfc5f7554635c526cc38d233f2beb62ab28' missing
+2025-07-18T09:48:52.8174547Z openssl/3.5.1: Checking 1 compatible configurations
+2025-07-18T09:48:52.8175755Z openssl/3.5.1: '2bcf959ecd653496ee2aa793e11b67c013b3b876': compiler.version=193
+2025-07-18T09:48:52.8977836Z openssl/3.5.1: Found compatible package '2bcf959ecd653496ee2aa793e11b67c013b3b876': compiler.version=193
+2025-07-18T09:48:53.1536254Z libffi/3.4.4: Main binary package '0d6dd492a7d31822b2f2686ec67bbaef586416a3' missing
+2025-07-18T09:48:53.1536857Z libffi/3.4.4: Checking 1 compatible configurations
+2025-07-18T09:48:53.1537315Z libffi/3.4.4: '7bfde258ff4f62f75668d0896dbddedaa7480a0f': compiler.version=193
+2025-07-18T09:48:53.2332408Z libffi/3.4.4: Found compatible package '7bfde258ff4f62f75668d0896dbddedaa7480a0f': compiler.version=193
+2025-07-18T09:48:53.5198121Z dulcificum/5.10.0: Main binary package 'efcfe47ca89d938f44a45f189f81fe7265bb38cf' missing
+2025-07-18T09:48:53.5198817Z dulcificum/5.10.0: Checking 3 compatible configurations
+2025-07-18T09:48:53.5199447Z dulcificum/5.10.0: '34731995f180c5d9aae2f954fcb462157f8103c5': compiler.cppstd=23
+2025-07-18T09:48:53.6825573Z dulcificum/5.10.0: 'cfe8bc1b2d620bc2361cf05670a98bf1a4ba8ffb': compiler.version=193
+2025-07-18T09:48:53.8450251Z dulcificum/5.10.0: 'a9d761b2b1226065f0f30685401a4c9c4bbd35ed': compiler.cppstd=23, compiler.version=193
+2025-07-18T09:48:54.1502312Z pynest2d/5.10.0: Main binary package '52d801d180d193c4263315f833f3dda04d223fbf' missing
+2025-07-18T09:48:54.1503031Z pynest2d/5.10.0: Checking 5 compatible configurations
+2025-07-18T09:48:54.1503817Z pynest2d/5.10.0: '38b32a8eadb40fad04c3ae15c0cf52f1a6f73cd7': compiler.cppstd=20
+2025-07-18T09:48:54.2272858Z pynest2d/5.10.0: '50064c8022265fd691761d1384b9b0a3488556a5': compiler.cppstd=23
+2025-07-18T09:48:54.3113686Z pynest2d/5.10.0: '145228fd80dbac2f7ed59ed5e87d1141e4c40668': compiler.version=193
+2025-07-18T09:48:54.4082847Z pynest2d/5.10.0: '044be66636edfe54325c493c65cffbff606a5e0b': compiler.cppstd=20, compiler.version=193
+2025-07-18T09:48:54.4891769Z pynest2d/5.10.0: '8c0e98e8e06faa07bf4f8d28160a32958ae3e1fe': compiler.cppstd=23, compiler.version=193
+2025-07-18T09:48:54.8572653Z Requirements
+2025-07-18T09:48:54.8574971Z     arcus/5.10.0#6f50e0bcb3455e530c9834cfe62f9017:d719caab426bcdc1d76c5415239243e1bc080307 - Build
+2025-07-18T09:48:54.8576705Z     boost/1.86.0#5af697a73801bfd7ee2186f6556bd0aa:da39a3ee5e6b4b0d3255bfef95601890afd80709#8932d10a88896f0bc49cde93c0045d3e - Download (cura-conan2)
+2025-07-18T09:48:54.8579989Z     clipper/6.4.2@ultimaker/stable#95d9dd0b845ba2b4337f9a3fd331fa47:47bd81b46b559e92986fc10f1f7af429cc421737 - Build
+2025-07-18T09:48:54.8581592Z     cpython/3.12.2#68cb44d6d7eeb24578b1c942ce16a8cd:4d7e72a2cf2169eb45803ec67e455d9042b1fd34#9f06bb718d1c2f1a612cc6d9c737c460 - Download (cura-conan2)
+2025-07-18T09:48:54.8582949Z     ctre/3.7.2#86bd3592feebcdafd2ab7b8a1aad0c80:da39a3ee5e6b4b0d3255bfef95601890afd80709#a42728bed0e6742bba8e9f978ebaca8a - Download (cura-conan2)
+2025-07-18T09:48:54.8584664Z     cura_binary_data/5.11.0-alpha.0@ultimaker/testing#760976726c555ed281aa0b64cdf893db:a1f52e713523df598e5e3d5ed88ff3cf1d05b2b4#8ea8c75197d6ea80b3789785448bb425 - Download (cura-conan2)
+2025-07-18T09:48:54.8586242Z     cura_resources/5.11.0-alpha.0@ultimaker/testing#c934fc503b648101b5cf0fba2ff8b967:da39a3ee5e6b4b0d3255bfef95601890afd80709#62b2cefb87d8cc5323a219974377d4f2 - Download (cura-conan2)
+2025-07-18T09:48:54.8587427Z     dulcificum/5.10.0#d7796f570134346c8cf8a45b2b677d63:efcfe47ca89d938f44a45f189f81fe7265bb38cf - Build
+2025-07-18T09:48:54.8588616Z     fdm_materials/5.11.0-alpha.0@ultimaker/testing#b12456ad8f9d9464e1d5db569cacef3c:da39a3ee5e6b4b0d3255bfef95601890afd80709#a804b57beecad14bcd83016beb2d1f66 - Download (cura-conan2)
+2025-07-18T09:48:54.8590003Z     fmt/11.2.0#579bb2cdf4a7607621beea4eb4651e0f:1cf057972569a3a443d5b36ba81814a72a6467c9#9db4185010fb24f5e4e4a2fb393f925f - Download (conancenter)
+2025-07-18T09:48:54.8591170Z     nest2d/5.10.0#6f430e9fa21c308e0e6234649a6116ed:3d73e4b036647309b4a3cf8e44d2e73041f853d0 - Build
+2025-07-18T09:48:54.8592222Z     nlohmann_json/3.11.2#1ded6ae5d200a68ac17c51d528b945e2:da39a3ee5e6b4b0d3255bfef95601890afd80709#2d1a5b1f5d673e1dab536bed20ce000b - Download (cura-conan2)
+2025-07-18T09:48:54.8593353Z     nlopt/2.7.1#61296485856e44d13b39346ef54325f1:cd935443872d568459d3025e3faa35dc171dde00#f4577b7a92680d8ea9e8e8fd04b88c5e - Download (cura-conan2)
+2025-07-18T09:48:54.8594266Z     protobuf/3.21.12#d927114e28de9f4691a6bbcdd9a529d1:9a546d3c2c7b2b02ebec30698e8536173849d86f#6e0f2fde297ee154616f7292a1a75952 - Download (cura-conan2)
+2025-07-18T09:48:54.8595193Z     pyarcus/5.10.0#45dd0835e9e65d080faa27e5669a957f:50fc116c22cfaac95bc3b773cf8133a79b222eb5#d26e244db5e7988ac077dbf83b20d86f - Download (cura-conan2)
+2025-07-18T09:48:54.8596116Z     pybind11/2.11.1#9ac24fa2b6323656659eaf4e44fb7e0b:da39a3ee5e6b4b0d3255bfef95601890afd80709#6e4692644a05d1d1622e4fec74091232 - Download (cura-conan2)
+2025-07-18T09:48:54.8596865Z     pynest2d/5.10.0#ff5d39339d68c1cb296f83563e3eeacd:52d801d180d193c4263315f833f3dda04d223fbf - Build
+2025-07-18T09:48:54.8597636Z     pysavitar/5.11.0-alpha.0#683aa6a69435b316536c272b7807b883:80c74c9ecafe45cb1ab2009d3865869502209489#222645c026ca44ac599fa1c9f98fab90 - Download (cura-conan2)
+2025-07-18T09:48:54.8598578Z     range-v3/0.12.0#4c05d91d7b40e6b91b44b5345ac64408:da39a3ee5e6b4b0d3255bfef95601890afd80709#ecc6172c3cd6694c36d1cd98a702deb0 - Download (cura-conan2)
+2025-07-18T09:48:54.8599507Z     savitar/5.11.0-alpha.0#3a382967d301e3aae78b23a7f9080012:be39fd2694d344939541bde80471894e5d70c5be#fbb59a0d7c760dcc63beb9ea3773f770 - Download (cura-conan2)
+2025-07-18T09:48:54.8600446Z     spdlog/1.15.3#3ca0e9e6b83af4d0151e26541d140c86:ecd8d935a27d0aacad68297799b92b17007acc03#58bf29f8d07213aec50e0df4b84fe9ab - Download (conancenter)
+2025-07-18T09:48:54.8601274Z     uranium/5.11.0-alpha.0@ultimaker/testing#dce26ec9cf2518396e13e24cb30b4f75:da39a3ee5e6b4b0d3255bfef95601890afd80709 - Build
+2025-07-18T09:48:54.8602087Z     zlib/1.3.1#b8bc2603263cf7eccbd6e17e66b0ed76:0d6dd492a7d31822b2f2686ec67bbaef586416a3#509112491d46775c8a2c3a99aeaa303a - Download (cura-conan2)
+2025-07-18T09:48:54.8602640Z Test requirements
+2025-07-18T09:48:54.8603172Z     sipbuildtool/0.3.0#262477bdb72ff6a09737695673de2b62:da39a3ee5e6b4b0d3255bfef95601890afd80709#3e8dce2119ddc1074e3863c15e8d63ff - Download (cura-conan2)
+2025-07-18T09:48:54.8604173Z     standardprojectsettings/0.2.0#af70631ee980187032a76e136b293365:da39a3ee5e6b4b0d3255bfef95601890afd80709#11a0ba14a3eaa94059396f4af59df2c5 - Download (cura-conan2)
+2025-07-18T09:48:54.8604890Z Build requirements
+2025-07-18T09:48:54.8605410Z     gettext/0.22.5#a1f31cc77dee0345699745ef39686dd0:2bfb02b2e0f6845b87c0c6b18635edd5a1b0dc56#035b5bdcfbdb6dcddb270e31901e0369 - Download (cura-conan2)
+2025-07-18T09:48:54.8606360Z     protobuf/3.21.12#d927114e28de9f4691a6bbcdd9a529d1:9a546d3c2c7b2b02ebec30698e8536173849d86f#6e0f2fde297ee154616f7292a1a75952 - Download (cura-conan2)
+2025-07-18T09:48:54.8606938Z Skipped binaries
+2025-07-18T09:48:54.8607590Z     bzip2/1.0.8, expat/2.7.1, libffi/3.4.4, mpdecimal/2.5.1, openssl/3.5.1, pugixml/1.14, sqlite3/3.45.2, xz_utils/5.4.5, autoconf/2.71, automake/1.16.5, libiconv/1.17, m4/1.4.19, msys2/cci.latest, nasm/2.16.01, strawberryperl/5.32.1.1, zlib/1.3.1
+2025-07-18T09:48:54.8613156Z 
+2025-07-18T09:48:54.8613485Z ======== Installing packages ========
+2025-07-18T09:48:54.8613787Z 
+2025-07-18T09:48:54.8613937Z -------- Downloading 20 packages --------
+2025-07-18T09:48:54.8614697Z boost/1.86.0: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:48:56.1423558Z boost/1.86.0: Downloading 16.0MB conan_package.tgz
+2025-07-18T09:48:56.3345187Z boost/1.86.0: Decompressing 16.0MB conan_package.tgz
+2025-07-18T09:50:03.5613727Z boost/1.86.0: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:03.5614853Z boost/1.86.0: Downloaded package revision 8932d10a88896f0bc49cde93c0045d3e
+2025-07-18T09:50:03.5616209Z ctre/3.7.2: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:50:04.4065461Z ctre/3.7.2: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:04.4066117Z ctre/3.7.2: Downloaded package revision a42728bed0e6742bba8e9f978ebaca8a
+2025-07-18T09:50:04.4067052Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Retrieving package a1f52e713523df598e5e3d5ed88ff3cf1d05b2b4 from remote 'cura-conan2' 
+2025-07-18T09:50:05.0693550Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Downloading 14.2MB conan_package.tgz
+2025-07-18T09:50:05.3494239Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Decompressing 14.2MB conan_package.tgz
+2025-07-18T09:50:06.2588604Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Package installed a1f52e713523df598e5e3d5ed88ff3cf1d05b2b4
+2025-07-18T09:50:06.2589639Z cura_binary_data/5.11.0-alpha.0@ultimaker/testing: Downloaded package revision 8ea8c75197d6ea80b3789785448bb425
+2025-07-18T09:50:06.2590890Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:50:07.2211229Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Downloading 32.7MB conan_package.tgz
+2025-07-18T09:50:07.8550311Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Decompressing 32.7MB conan_package.tgz
+2025-07-18T09:50:51.1013124Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:51.1014279Z cura_resources/5.11.0-alpha.0@ultimaker/testing: Downloaded package revision 62b2cefb87d8cc5323a219974377d4f2
+2025-07-18T09:50:51.1015292Z fdm_materials/5.11.0-alpha.0@ultimaker/testing: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:50:51.9877354Z fdm_materials/5.11.0-alpha.0@ultimaker/testing: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:51.9878282Z fdm_materials/5.11.0-alpha.0@ultimaker/testing: Downloaded package revision a804b57beecad14bcd83016beb2d1f66
+2025-07-18T09:50:51.9879282Z fmt/11.2.0: Retrieving package 1cf057972569a3a443d5b36ba81814a72a6467c9 from remote 'conancenter' 
+2025-07-18T09:50:52.1973032Z fmt/11.2.0: Package installed 1cf057972569a3a443d5b36ba81814a72a6467c9
+2025-07-18T09:50:52.1973653Z fmt/11.2.0: Downloaded package revision 9db4185010fb24f5e4e4a2fb393f925f
+2025-07-18T09:50:52.1975117Z nlohmann_json/3.11.2: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:50:52.7063137Z nlohmann_json/3.11.2: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:52.7063790Z nlohmann_json/3.11.2: Downloaded package revision 2d1a5b1f5d673e1dab536bed20ce000b
+2025-07-18T09:50:52.7064563Z nlopt/2.7.1: Retrieving package cd935443872d568459d3025e3faa35dc171dde00 from remote 'cura-conan2' 
+2025-07-18T09:50:53.4046081Z nlopt/2.7.1: Package installed cd935443872d568459d3025e3faa35dc171dde00
+2025-07-18T09:50:53.4046753Z nlopt/2.7.1: Downloaded package revision f4577b7a92680d8ea9e8e8fd04b88c5e
+2025-07-18T09:50:53.4048458Z pybind11/2.11.1: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:50:53.8446096Z pybind11/2.11.1: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:53.8446772Z pybind11/2.11.1: Downloaded package revision 6e4692644a05d1d1622e4fec74091232
+2025-07-18T09:50:53.8448574Z range-v3/0.12.0: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:50:54.8515778Z range-v3/0.12.0: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:54.8516438Z range-v3/0.12.0: Downloaded package revision ecc6172c3cd6694c36d1cd98a702deb0
+2025-07-18T09:50:54.8517686Z sipbuildtool/0.3.0: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:50:55.1916066Z sipbuildtool/0.3.0: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:55.1916749Z sipbuildtool/0.3.0: Downloaded package revision 3e8dce2119ddc1074e3863c15e8d63ff
+2025-07-18T09:50:55.1917662Z standardprojectsettings/0.2.0: Retrieving package da39a3ee5e6b4b0d3255bfef95601890afd80709 from remote 'cura-conan2' 
+2025-07-18T09:50:55.5335903Z standardprojectsettings/0.2.0: Package installed da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:50:55.5336669Z standardprojectsettings/0.2.0: Downloaded package revision 11a0ba14a3eaa94059396f4af59df2c5
+2025-07-18T09:50:55.5337589Z zlib/1.3.1: Retrieving package 0d6dd492a7d31822b2f2686ec67bbaef586416a3 from remote 'cura-conan2' 
+2025-07-18T09:50:55.9817593Z zlib/1.3.1: Package installed 0d6dd492a7d31822b2f2686ec67bbaef586416a3
+2025-07-18T09:50:55.9818222Z zlib/1.3.1: Downloaded package revision 509112491d46775c8a2c3a99aeaa303a
+2025-07-18T09:50:55.9820219Z savitar/5.11.0-alpha.0: Retrieving package be39fd2694d344939541bde80471894e5d70c5be from remote 'cura-conan2' 
+2025-07-18T09:50:56.6266308Z savitar/5.11.0-alpha.0: Package installed be39fd2694d344939541bde80471894e5d70c5be
+2025-07-18T09:50:56.6267021Z savitar/5.11.0-alpha.0: Downloaded package revision fbb59a0d7c760dcc63beb9ea3773f770
+2025-07-18T09:50:56.6268774Z gettext/0.22.5: Retrieving package 2bfb02b2e0f6845b87c0c6b18635edd5a1b0dc56 from remote 'cura-conan2' 
+2025-07-18T09:50:57.2439457Z gettext/0.22.5: Downloading 20.4MB conan_package.tgz
+2025-07-18T09:50:57.6311247Z gettext/0.22.5: Decompressing 20.4MB conan_package.tgz
+2025-07-18T09:51:05.5960402Z gettext/0.22.5: Package installed 2bfb02b2e0f6845b87c0c6b18635edd5a1b0dc56
+2025-07-18T09:51:05.5961093Z gettext/0.22.5: Downloaded package revision 035b5bdcfbdb6dcddb270e31901e0369
+2025-07-18T09:51:05.5962873Z protobuf/3.21.12: Retrieving package 9a546d3c2c7b2b02ebec30698e8536173849d86f from remote 'cura-conan2' 
+2025-07-18T09:51:07.3038411Z protobuf/3.21.12: Package installed 9a546d3c2c7b2b02ebec30698e8536173849d86f
+2025-07-18T09:51:07.3039122Z protobuf/3.21.12: Downloaded package revision 6e0f2fde297ee154616f7292a1a75952
+2025-07-18T09:51:07.3041057Z spdlog/1.15.3: Retrieving package ecd8d935a27d0aacad68297799b92b17007acc03 from remote 'conancenter' 
+2025-07-18T09:51:07.8398093Z spdlog/1.15.3: Package installed ecd8d935a27d0aacad68297799b92b17007acc03
+2025-07-18T09:51:07.8398781Z spdlog/1.15.3: Downloaded package revision 58bf29f8d07213aec50e0df4b84fe9ab
+2025-07-18T09:51:07.8399639Z cpython/3.12.2: Retrieving package 4d7e72a2cf2169eb45803ec67e455d9042b1fd34 from remote 'cura-conan2' 
+2025-07-18T09:51:08.7153873Z cpython/3.12.2: Downloading 29.1MB conan_package.tgz
+2025-07-18T09:51:09.0950714Z cpython/3.12.2: Decompressing 29.1MB conan_package.tgz
+2025-07-18T09:51:33.7850431Z cpython/3.12.2: Package installed 4d7e72a2cf2169eb45803ec67e455d9042b1fd34
+2025-07-18T09:51:33.7850973Z cpython/3.12.2: Downloaded package revision 9f06bb718d1c2f1a612cc6d9c737c460
+2025-07-18T09:51:33.7852480Z pysavitar/5.11.0-alpha.0: Retrieving package 80c74c9ecafe45cb1ab2009d3865869502209489 from remote 'cura-conan2' 
+2025-07-18T09:51:34.2951816Z pysavitar/5.11.0-alpha.0: Package installed 80c74c9ecafe45cb1ab2009d3865869502209489
+2025-07-18T09:51:34.2952459Z pysavitar/5.11.0-alpha.0: Downloaded package revision 222645c026ca44ac599fa1c9f98fab90
+2025-07-18T09:51:34.2953524Z pyarcus/5.10.0: Retrieving package 50fc116c22cfaac95bc3b773cf8133a79b222eb5 from remote 'cura-conan2' 
+2025-07-18T09:51:34.9904747Z pyarcus/5.10.0: Package installed 50fc116c22cfaac95bc3b773cf8133a79b222eb5
+2025-07-18T09:51:34.9905294Z pyarcus/5.10.0: Downloaded package revision d26e244db5e7988ac077dbf83b20d86f
+2025-07-18T09:51:35.1721689Z clipper/6.4.2@ultimaker/stable: Sources downloaded from 'cura-conan2'
+2025-07-18T09:51:35.2045492Z clipper/6.4.2@ultimaker/stable: Calling source() in C:\Users\runneradmin\.conan2\p\clippcc42eb1e30ea2\s\src
+2025-07-18T09:51:35.8890492Z clipper/6.4.2@ultimaker/stable: Unzipping clipper_ver6.4.2.zip to .
+2025-07-18T09:51:35.8917748Z clipper/6.4.2@ultimaker/stable: Unzipping 5.2MB, this can take a while
+2025-07-18T09:51:36.4405136Z 
+2025-07-18T09:51:36.4411137Z 
+2025-07-18T09:51:36.4411868Z -------- Installing package clipper/6.4.2@ultimaker/stable (2 of 26) --------
+2025-07-18T09:51:36.4412603Z clipper/6.4.2@ultimaker/stable: Building from source
+2025-07-18T09:51:36.4413462Z clipper/6.4.2@ultimaker/stable: Package clipper/6.4.2@ultimaker/stable:47bd81b46b559e92986fc10f1f7af429cc421737
+2025-07-18T09:51:36.4593471Z clipper/6.4.2@ultimaker/stable: Copying sources to build folder
+2025-07-18T09:51:36.9041665Z clipper/6.4.2@ultimaker/stable: Building your package in C:\Users\runneradmin\.conan2\p\b\clipp738c8b1e7104a\b
+2025-07-18T09:51:36.9085744Z clipper/6.4.2@ultimaker/stable: Calling generate()
+2025-07-18T09:51:36.9086603Z clipper/6.4.2@ultimaker/stable: Generators folder: C:\Users\runneradmin\.conan2\p\b\clipp738c8b1e7104a\b\build\Release\generators
+2025-07-18T09:51:36.9445815Z clipper/6.4.2@ultimaker/stable: CMakeToolchain generated: conan_toolchain.cmake
+2025-07-18T09:51:37.0070930Z clipper/6.4.2@ultimaker/stable: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\clipp738c8b1e7104a\b\build\Release\generators\CMakePresets.json
+2025-07-18T09:51:37.0106126Z clipper/6.4.2@ultimaker/stable: Generating aggregated env files
+2025-07-18T09:51:37.0106777Z clipper/6.4.2@ultimaker/stable: Generated aggregated env files: ['conanbuild.bat', 'conanrun.bat']
+2025-07-18T09:51:37.0133389Z clipper/6.4.2@ultimaker/stable: Calling build()
+2025-07-18T09:51:37.0134113Z clipper/6.4.2@ultimaker/stable: Apply patch (file): patches/0001-include-install-directory-6.x.patch
+2025-07-18T09:51:37.0158345Z clipper/6.4.2@ultimaker/stable: Apply patch (file): patches/0002-build-debug-symbols-on-windows-6.x.patch
+2025-07-18T09:51:37.0173722Z clipper/6.4.2@ultimaker/stable: Running CMake.configure()
+2025-07-18T09:51:37.0178670Z clipper/6.4.2@ultimaker/stable: RUN: cmake -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="generators/conan_toolchain.cmake" -DCMAKE_INSTALL_PREFIX="C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p" -DCMAKE_POLICY_DEFAULT_CMP0042="NEW" -DCMAKE_POLICY_VERSION_MINIMUM="3.5" -DCMAKE_POLICY_DEFAULT_CMP0091="NEW" -DBUILD_TESTING="OFF" -DCMAKE_BUILD_TYPE="Release" "C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/b/src/cpp"
+2025-07-18T09:51:37.0284808Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:51:42.0440416Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:51:43.7712573Z CMake Deprecation Warning at CMakeLists.txt:1 (CMAKE_MINIMUM_REQUIRED):
+2025-07-18T09:51:43.7713817Z   Compatibility with CMake < 3.10 will be removed from a future version of
+2025-07-18T09:51:43.7714392Z   CMake.
+2025-07-18T09:51:43.7714537Z 
+2025-07-18T09:51:43.7714833Z   Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+2025-07-18T09:51:43.7715568Z   to tell CMake that the project requires at least <min> but has been updated
+2025-07-18T09:51:43.7716373Z   to work with policies introduced by <max> or earlier.
+2025-07-18T09:51:43.7716625Z 
+2025-07-18T09:51:43.7716631Z 
+2025-07-18T09:51:43.8803322Z -- Using Conan toolchain: C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/b/build/Release/generators/conan_toolchain.cmake
+2025-07-18T09:51:43.8953883Z -- Conan toolchain: Setting CMAKE_MSVC_RUNTIME_LIBRARY=$<$<CONFIG:Release>:MultiThreadedDLL>
+2025-07-18T09:51:43.8955979Z -- Conan toolchain: C++ Standard 17 with extensions OFF
+2025-07-18T09:51:43.9421291Z -- Conan toolchain: Setting BUILD_SHARED_LIBS = ON
+2025-07-18T09:52:00.1054457Z -- The C compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:52:02.2180428Z -- The CXX compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:52:02.7975386Z -- Detecting C compiler ABI info
+2025-07-18T09:52:07.6503839Z -- Detecting C compiler ABI info - done
+2025-07-18T09:52:07.6795598Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:52:07.6804054Z -- Detecting C compile features
+2025-07-18T09:52:07.6814634Z -- Detecting C compile features - done
+2025-07-18T09:52:07.7926297Z -- Detecting CXX compiler ABI info
+2025-07-18T09:52:08.8638914Z -- Detecting CXX compiler ABI info - done
+2025-07-18T09:52:08.8934778Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:52:08.8938928Z -- Detecting CXX compile features
+2025-07-18T09:52:08.9260356Z -- Detecting CXX compile features - done
+2025-07-18T09:52:08.9612331Z -- Configuring done (25.3s)
+2025-07-18T09:52:09.0402047Z -- Generating done (0.1s)
+2025-07-18T09:52:09.0402491Z CMake Warning:
+2025-07-18T09:52:09.0402929Z   Manually-specified variables were not used by the project:
+2025-07-18T09:52:09.0403337Z 
+2025-07-18T09:52:09.0403511Z     BUILD_TESTING
+2025-07-18T09:52:09.0403878Z     CMAKE_POLICY_VERSION_MINIMUM
+2025-07-18T09:52:09.0404182Z 
+2025-07-18T09:52:09.0404192Z 
+2025-07-18T09:52:09.0417716Z -- Build files have been written to: C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/b/build/Release
+2025-07-18T09:52:09.0498298Z 
+2025-07-18T09:52:09.0499394Z clipper/6.4.2@ultimaker/stable: Running CMake.build()
+2025-07-18T09:52:09.0503253Z clipper/6.4.2@ultimaker/stable: RUN: cmake --build "C:\Users\runneradmin\.conan2\p\b\clipp738c8b1e7104a\b\build\Release" -- -j4
+2025-07-18T09:52:09.0613400Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:52:10.2130423Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:52:16.6110605Z [1/2] Building CXX object CMakeFiles\polyclipping.dir\clipper.cpp.obj
+2025-07-18T09:52:17.7962242Z [2/2] Linking CXX shared library polyclipping.dll
+2025-07-18T09:52:17.8039066Z 
+2025-07-18T09:52:17.8041043Z clipper/6.4.2@ultimaker/stable: Package '47bd81b46b559e92986fc10f1f7af429cc421737' built
+2025-07-18T09:52:17.8041749Z clipper/6.4.2@ultimaker/stable: Build folder C:\Users\runneradmin\.conan2\p\b\clipp738c8b1e7104a\b\build\Release
+2025-07-18T09:52:17.8051555Z clipper/6.4.2@ultimaker/stable: Generating the package
+2025-07-18T09:52:17.8052388Z clipper/6.4.2@ultimaker/stable: Packaging in folder C:\Users\runneradmin\.conan2\p\b\clipp738c8b1e7104a\p
+2025-07-18T09:52:17.8053184Z clipper/6.4.2@ultimaker/stable: Calling package()
+2025-07-18T09:52:17.8196929Z clipper/6.4.2@ultimaker/stable: Running CMake.install()
+2025-07-18T09:52:17.8199631Z clipper/6.4.2@ultimaker/stable: RUN: cmake --install "C:\Users\runneradmin\.conan2\p\b\clipp738c8b1e7104a\b\build\Release" --prefix "C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p"
+2025-07-18T09:52:17.8311677Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:52:18.9973541Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:52:19.0305887Z -- Install configuration: "Release"
+2025-07-18T09:52:19.0312448Z -- Installing: C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p/include/polyclipping/clipper.hpp
+2025-07-18T09:52:19.0324388Z -- Installing: C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p/lib/polyclipping.lib
+2025-07-18T09:52:19.0349000Z -- Installing: C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p/bin/polyclipping.dll
+2025-07-18T09:52:19.0368095Z -- Installing: C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p/share/pkgconfig/polyclipping.pc
+2025-07-18T09:52:19.0416622Z 
+2025-07-18T09:52:19.0486090Z clipper/6.4.2@ultimaker/stable: package(): Packaged 1 '.dll' file: polyclipping.dll
+2025-07-18T09:52:19.0487146Z clipper/6.4.2@ultimaker/stable: package(): Packaged 1 '.hpp' file: clipper.hpp
+2025-07-18T09:52:19.0487760Z clipper/6.4.2@ultimaker/stable: package(): Packaged 1 '.lib' file: polyclipping.lib
+2025-07-18T09:52:19.0488330Z clipper/6.4.2@ultimaker/stable: package(): Packaged 1 '.txt' file: License.txt
+2025-07-18T09:52:19.0489168Z clipper/6.4.2@ultimaker/stable: Created package revision 1e0b77e87adb4619be0642f370ec86dc
+2025-07-18T09:52:19.0489812Z clipper/6.4.2@ultimaker/stable: Package '47bd81b46b559e92986fc10f1f7af429cc421737' created
+2025-07-18T09:52:19.0490889Z clipper/6.4.2@ultimaker/stable: Full package reference: clipper/6.4.2@ultimaker/stable#95d9dd0b845ba2b4337f9a3fd331fa47:47bd81b46b559e92986fc10f1f7af429cc421737#1e0b77e87adb4619be0642f370ec86dc
+2025-07-18T09:52:19.0866370Z clipper/6.4.2@ultimaker/stable: Package folder C:\Users\runneradmin\.conan2\p\b\clipp738c8b1e7104a\p
+2025-07-18T09:52:19.0958803Z gettext/0.22.5: WARN: The use of 'unix_path_legacy_compat' is deprecated in Conan 2.0 and does not perform path conversions. This is retained for compatibility with Conan 1.x and will be removed in a future version.
+2025-07-18T09:52:19.0960845Z gettext/0.22.5: WARN: The use of 'unix_path_legacy_compat' is deprecated in Conan 2.0 and does not perform path conversions. This is retained for compatibility with Conan 1.x and will be removed in a future version.
+2025-07-18T09:52:19.0962695Z gettext/0.22.5: WARN: The use of 'unix_path_legacy_compat' is deprecated in Conan 2.0 and does not perform path conversions. This is retained for compatibility with Conan 1.x and will be removed in a future version.
+2025-07-18T09:52:19.0964518Z gettext/0.22.5: WARN: The use of 'unix_path_legacy_compat' is deprecated in Conan 2.0 and does not perform path conversions. This is retained for compatibility with Conan 1.x and will be removed in a future version.
+2025-07-18T09:52:19.4955128Z nest2d/5.10.0: Sources downloaded from 'cura-conan2'
+2025-07-18T09:52:19.5713814Z 
+2025-07-18T09:52:19.5714650Z -------- Installing package nest2d/5.10.0 (17 of 26) --------
+2025-07-18T09:52:19.5715033Z nest2d/5.10.0: Building from source
+2025-07-18T09:52:19.5715408Z nest2d/5.10.0: Package nest2d/5.10.0:3d73e4b036647309b4a3cf8e44d2e73041f853d0
+2025-07-18T09:52:19.5732738Z nest2d/5.10.0: Copying sources to build folder
+2025-07-18T09:52:19.6432206Z nest2d/5.10.0: Building your package in C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b
+2025-07-18T09:52:19.6477768Z nest2d/5.10.0: Calling generate()
+2025-07-18T09:52:19.6478358Z nest2d/5.10.0: Generators folder: C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\build\Release\generators
+2025-07-18T09:52:19.7815524Z nest2d/5.10.0: CMakeToolchain generated: conan_toolchain.cmake
+2025-07-18T09:52:19.8473388Z nest2d/5.10.0: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\build\Release\generators\CMakePresets.json
+2025-07-18T09:52:19.8475771Z nest2d/5.10.0: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\CMakeUserPresets.json
+2025-07-18T09:52:19.8518933Z nest2d/5.10.0: Generating aggregated env files
+2025-07-18T09:52:19.8519482Z nest2d/5.10.0: Generated aggregated env files: ['conanbuild.bat', 'conanrun.bat']
+2025-07-18T09:52:19.8545357Z nest2d/5.10.0: Calling build()
+2025-07-18T09:52:19.8547759Z nest2d/5.10.0: Running CMake.configure()
+2025-07-18T09:52:19.8552205Z nest2d/5.10.0: RUN: cmake -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="generators/conan_toolchain.cmake" -DCMAKE_INSTALL_PREFIX="C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/p" -DCMAKE_POLICY_DEFAULT_CMP0091="NEW" -DBUILD_TESTING="OFF" -DCMAKE_BUILD_TYPE="Release" "C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/b"
+2025-07-18T09:52:19.8658698Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:52:20.9821442Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:52:21.0207956Z -- Using Conan toolchain: C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/b/build/Release/generators/conan_toolchain.cmake
+2025-07-18T09:52:21.0208953Z -- Conan toolchain: Setting CMAKE_MSVC_RUNTIME_LIBRARY=$<$<CONFIG:Release>:MultiThreadedDLL>
+2025-07-18T09:52:21.0209543Z -- Conan toolchain: C++ Standard 17 with extensions OFF
+2025-07-18T09:52:21.0210564Z -- Conan toolchain: Setting BUILD_SHARED_LIBS = ON
+2025-07-18T09:52:21.2737437Z -- The C compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:52:21.4430181Z -- The CXX compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:52:21.4601032Z -- Detecting C compiler ABI info
+2025-07-18T09:52:22.1252954Z -- Detecting C compiler ABI info - done
+2025-07-18T09:52:22.1539847Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:52:22.1544891Z -- Detecting C compile features
+2025-07-18T09:52:22.1551448Z -- Detecting C compile features - done
+2025-07-18T09:52:22.1643741Z -- Detecting CXX compiler ABI info
+2025-07-18T09:52:22.7823934Z -- Detecting CXX compiler ABI info - done
+2025-07-18T09:52:22.8103231Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:52:22.8107336Z -- Detecting CXX compile features
+2025-07-18T09:52:22.8119105Z -- Detecting CXX compile features - done
+2025-07-18T09:52:22.8174208Z -- Conan: Target declared 'standardprojectsettings::standardprojectsettings'
+2025-07-18T09:52:22.8325077Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/standb1cf9a2ad7ef9/p/res/cmake/StandardProjectSettings.cmake'
+2025-07-18T09:52:22.8657127Z -- Generating compile commands to C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/b/build/Release/compile_commands.json
+2025-07-18T09:52:22.8658951Z -- Setting warnings for project_options
+2025-07-18T09:52:22.8679520Z -- Conan: Target declared 'clipper::clipper'
+2025-07-18T09:52:22.8713465Z -- Conan: Component target declared 'Boost::headers'
+2025-07-18T09:52:22.8714255Z -- Conan: Component target declared 'Boost::boost'
+2025-07-18T09:52:22.8714725Z -- Conan: Target declared 'boost::boost'
+2025-07-18T09:52:22.8746750Z -- Conan: Component target declared 'NLopt::nlopt'
+2025-07-18T09:52:22.8764980Z -- Enabling threading support for project_options
+2025-07-18T09:52:25.1193163Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+2025-07-18T09:52:26.1862634Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+2025-07-18T09:52:26.1863283Z -- Looking for pthread_create in pthreads
+2025-07-18T09:52:26.4790189Z -- Looking for pthread_create in pthreads - not found
+2025-07-18T09:52:26.4791130Z -- Looking for pthread_create in pthread
+2025-07-18T09:52:26.7407928Z -- Looking for pthread_create in pthread - not found
+2025-07-18T09:52:26.7743708Z -- Found Threads: TRUE
+2025-07-18T09:52:26.7748577Z -- Configuring done (5.8s)
+2025-07-18T09:52:26.8683976Z -- Generating done (0.1s)
+2025-07-18T09:52:26.8684412Z CMake Warning:
+2025-07-18T09:52:26.8685026Z   Manually-specified variables were not used by the project:
+2025-07-18T09:52:26.8685262Z 
+2025-07-18T09:52:26.8685331Z     BUILD_TESTING
+2025-07-18T09:52:26.8685430Z 
+2025-07-18T09:52:26.8685435Z 
+2025-07-18T09:52:26.8698347Z -- Build files have been written to: C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/b/build/Release
+2025-07-18T09:52:26.8789547Z 
+2025-07-18T09:52:26.8790013Z nest2d/5.10.0: Running CMake.build()
+2025-07-18T09:52:26.8794325Z nest2d/5.10.0: RUN: cmake --build "C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\build\Release" -- -j4
+2025-07-18T09:52:26.8897715Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:52:28.0161708Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:52:40.2156224Z [1/2] Building CXX object CMakeFiles\nest2d.dir\src\libnest2d.cpp.obj
+2025-07-18T09:52:40.2157166Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/utils/boost_alg.hpp(477): warning C4100: 'str': unreferenced parameter
+2025-07-18T09:52:40.2158056Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/utils/boost_alg.hpp(476): warning C4100: 'sh': unreferenced parameter
+2025-07-18T09:52:40.2158862Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/common.hpp(49): warning C4100: 'd': unreferenced parameter
+2025-07-18T09:52:40.2159952Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/common.hpp(49): note: the template instantiation context (the oldest one first) is
+2025-07-18T09:52:40.2161246Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/backends/clipper/geometries.hpp(114): note: see reference to function template instantiation 'libnest2d::DOut &&libnest2d::operator <<<const char(&)[39]>(libnest2d::DOut &&,T)' being compiled
+2025-07-18T09:52:40.2162171Z         with
+2025-07-18T09:52:40.2162309Z         [
+2025-07-18T09:52:40.2162469Z             T=const char (&)[39]
+2025-07-18T09:52:40.2162657Z         ]
+2025-07-18T09:52:40.2163086Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/common.hpp(57): warning C4100: 'd': unreferenced parameter
+2025-07-18T09:52:40.2163915Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/common.hpp(57): note: the template instantiation context (the oldest one first) is
+2025-07-18T09:52:40.2165558Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\src\libnest2d.cpp(8): note: see reference to function template instantiation 'size_t libnest2d::_Nester<libnest2d::NfpPlacer,libnest2d::FirstFitSelection>::execute<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>>(std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>)' being compiled
+2025-07-18T09:52:40.2166847Z         with
+2025-07-18T09:52:40.2166993Z         [
+2025-07-18T09:52:40.2167135Z             _Ty=libnest2d::Item
+2025-07-18T09:52:40.2167313Z         ]
+2025-07-18T09:52:40.2168513Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/nester.hpp(856): note: see reference to function template instantiation 'void libnest2d::SelectionStrategyLike<SelectionStrategy>::packItems<libnest2d::NfpPlacer,It,libnest2d::_Box<libnest2d::PointImpl>&,libnest2d::placers::NfpPConfig<RawShape>&>(TIterator,TIterator,TBin,PConfig)' being compiled
+2025-07-18T09:52:40.2169754Z         with
+2025-07-18T09:52:40.2169887Z         [
+2025-07-18T09:52:40.2170074Z             SelectionStrategy=libnest2d::FirstFitSelection,
+2025-07-18T09:52:40.2170448Z             It=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<libnest2d::Item>>>,
+2025-07-18T09:52:40.2170790Z             RawShape=libnest2d::PolygonImpl,
+2025-07-18T09:52:40.2171155Z             TIterator=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<libnest2d::Item>>>,
+2025-07-18T09:52:40.2171548Z             TBin=libnest2d::_Box<libnest2d::PointImpl> &,
+2025-07-18T09:52:40.2171878Z             PConfig=libnest2d::placers::NfpPConfig<libnest2d::PolygonImpl> &
+2025-07-18T09:52:40.2172984Z         ]
+2025-07-18T09:52:40.2174242Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/nester.hpp(747): note: see reference to function template instantiation 'void libnest2d::selections::_FirstFitSelection<libnest2d::PolygonImpl>::packItems<libnest2d::NfpPlacer,TIterator,libnest2d::_Box<libnest2d::PointImpl>&,libnest2d::placers::NfpPConfig<RawShape>&>(TIterator,TIterator,TBin,PConfig)' being compiled
+2025-07-18T09:52:40.2175557Z         with
+2025-07-18T09:52:40.2175698Z         [
+2025-07-18T09:52:40.2175975Z             TIterator=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<libnest2d::Item>>>,
+2025-07-18T09:52:40.2176355Z             RawShape=libnest2d::PolygonImpl,
+2025-07-18T09:52:40.2176606Z             TBin=libnest2d::_Box<libnest2d::PointImpl> &,
+2025-07-18T09:52:40.2176939Z             PConfig=libnest2d::placers::NfpPConfig<libnest2d::PolygonImpl> &
+2025-07-18T09:52:40.2177229Z         ]
+2025-07-18T09:52:40.2178446Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/selections/firstfit.hpp(90): note: see reference to function template instantiation 'bool libnest2d::PlacementStrategyLike<PlacementStrategy>::pack<libnest2d::ConstItemRange<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>>>(libnest2d::_Item<libnest2d::PolygonImpl> &,const Range &)' being compiled
+2025-07-18T09:52:40.2179791Z         with
+2025-07-18T09:52:40.2179921Z         [
+2025-07-18T09:52:40.2180092Z             PlacementStrategy=libnest2d::NfpPlacer,
+2025-07-18T09:52:40.2180423Z             _Ty=std::reference_wrapper<libnest2d::_Item<libnest2d::PolygonImpl>>,
+2025-07-18T09:52:40.2181090Z             Range=libnest2d::ConstItemRange<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<std::reference_wrapper<libnest2d::_Item<libnest2d::PolygonImpl>>>>>>
+2025-07-18T09:52:40.2181654Z         ]
+2025-07-18T09:52:40.2182879Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/nester.hpp(656): note: see reference to function template instantiation 'bool libnest2d::placers::PlacerBoilerplate<libnest2d::placers::_NofitPolyPlacer<libnest2d::PolygonImpl,libnest2d::Box>,RawShape,TBin,libnest2d::placers::NfpPConfig<RawShape>>::pack<Range>(libnest2d::_Item<RawShape> &,const Range &)' being compiled
+2025-07-18T09:52:40.2184175Z         with
+2025-07-18T09:52:40.2184312Z         [
+2025-07-18T09:52:40.2184462Z             RawShape=libnest2d::PolygonImpl,
+2025-07-18T09:52:40.2184694Z             TBin=libnest2d::Box,
+2025-07-18T09:52:40.2185246Z             Range=libnest2d::ConstItemRange<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<std::reference_wrapper<libnest2d::_Item<libnest2d::PolygonImpl>>>>>>
+2025-07-18T09:52:40.2185806Z         ]
+2025-07-18T09:52:40.2188391Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d\placers\placer_boilerplate.hpp(63): note: see reference to function template instantiation 'libnest2d::placers::PlacerBoilerplate<libnest2d::placers::_NofitPolyPlacer<libnest2d::PolygonImpl,libnest2d::Box>,RawShape,TBin,libnest2d::placers::NfpPConfig<RawShape>>::PackResult libnest2d::placers::_NofitPolyPlacer<RawShape,TBin>::trypack<Range>(libnest2d::_Item<RawShape> &,const Range &)' being compiled
+2025-07-18T09:52:40.2189995Z         with
+2025-07-18T09:52:40.2190142Z         [
+2025-07-18T09:52:40.2190309Z             RawShape=libnest2d::PolygonImpl,
+2025-07-18T09:52:40.2190536Z             TBin=libnest2d::Box,
+2025-07-18T09:52:40.2191100Z             Range=libnest2d::ConstItemRange<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<std::reference_wrapper<libnest2d::_Item<libnest2d::PolygonImpl>>>>>>
+2025-07-18T09:52:40.2191656Z         ]
+2025-07-18T09:52:40.2193144Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/placers/nfpplacer.hpp(509): note: see reference to function template instantiation 'libnest2d::placers::PlacerBoilerplate<libnest2d::placers::_NofitPolyPlacer<libnest2d::PolygonImpl,libnest2d::Box>,RawShape,TBin,libnest2d::placers::NfpPConfig<RawShape>>::PackResult libnest2d::placers::_NofitPolyPlacer<RawShape,TBin>::_trypack<Range>(libnest2d::_Item<RawShape> &,const Range &)' being compiled
+2025-07-18T09:52:40.2194804Z         with
+2025-07-18T09:52:40.2194936Z         [
+2025-07-18T09:52:40.2195109Z             RawShape=libnest2d::PolygonImpl,
+2025-07-18T09:52:40.2195328Z             TBin=libnest2d::Box,
+2025-07-18T09:52:40.2195888Z             Range=libnest2d::ConstItemRange<std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<std::reference_wrapper<libnest2d::_Item<libnest2d::PolygonImpl>>>>>>
+2025-07-18T09:52:40.2196456Z         ]
+2025-07-18T09:52:40.2197231Z C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\include\libnest2d/placers/nfpplacer.hpp(910): note: see reference to function template instantiation 'libnest2d::DErr &&libnest2d::operator <<<const char(&)[8]>(libnest2d::DErr &&,T)' being compiled
+2025-07-18T09:52:40.2198065Z         with
+2025-07-18T09:52:40.2198194Z         [
+2025-07-18T09:52:40.2198339Z             T=const char (&)[8]
+2025-07-18T09:52:40.2198513Z         ]
+2025-07-18T09:52:40.7345042Z [2/2] Linking CXX shared library nest2d.dll
+2025-07-18T09:52:40.7419380Z 
+2025-07-18T09:52:40.7419823Z nest2d/5.10.0: Running CMake.install()
+2025-07-18T09:52:40.7425003Z nest2d/5.10.0: RUN: cmake --install "C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\build\Release" --prefix "C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/p"
+2025-07-18T09:52:40.7529812Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:52:41.8632515Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:52:41.8959725Z -- Install configuration: "Release"
+2025-07-18T09:52:41.8998948Z 
+2025-07-18T09:52:41.9000576Z nest2d/5.10.0: Package '3d73e4b036647309b4a3cf8e44d2e73041f853d0' built
+2025-07-18T09:52:41.9001741Z nest2d/5.10.0: Build folder C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\b\build\Release
+2025-07-18T09:52:41.9009992Z nest2d/5.10.0: Generating the package
+2025-07-18T09:52:41.9010715Z nest2d/5.10.0: Packaging in folder C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\p
+2025-07-18T09:52:41.9011337Z nest2d/5.10.0: Calling package()
+2025-07-18T09:52:41.9014107Z nest2d/5.10.0: WARN: deprecated: AutoPackager is **** deprecated ****
+2025-07-18T09:52:41.9014860Z nest2d/5.10.0: WARN: deprecated: AutoPackager **** will be removed ****
+2025-07-18T09:52:41.9015552Z nest2d/5.10.0: WARN: deprecated: Use explicit copy() calls instead
+2025-07-18T09:52:41.9991412Z nest2d/5.10.0: package(): Packaged 1 '.dll' file: nest2d.dll
+2025-07-18T09:52:41.9992393Z nest2d/5.10.0: package(): Packaged 2 '.exe' files: CMakeCCompilerId.exe, CMakeCXXCompilerId.exe
+2025-07-18T09:52:41.9992939Z nest2d/5.10.0: package(): Packaged 26 '.hpp' files
+2025-07-18T09:52:41.9993347Z nest2d/5.10.0: package(): Packaged 1 '.lib' file: nest2d.lib
+2025-07-18T09:52:41.9993828Z nest2d/5.10.0: Created package revision d5004c92f38347b5f6019d6a5a22ce4d
+2025-07-18T09:52:41.9994306Z nest2d/5.10.0: Package '3d73e4b036647309b4a3cf8e44d2e73041f853d0' created
+2025-07-18T09:52:41.9995132Z nest2d/5.10.0: Full package reference: nest2d/5.10.0#6f430e9fa21c308e0e6234649a6116ed:3d73e4b036647309b4a3cf8e44d2e73041f853d0#d5004c92f38347b5f6019d6a5a22ce4d
+2025-07-18T09:52:42.0406338Z nest2d/5.10.0: Package folder C:\Users\runneradmin\.conan2\p\b\nest2040dd1a0311b1\p
+2025-07-18T09:52:42.0437262Z cpython/3.12.2: Appending PATH environment variable: C:\Users\runneradmin\.conan2\p\cpyth130b4b9567088\p\bin
+2025-07-18T09:52:42.0438831Z cpython/3.12.2: Appending PYTHON environment variable: C:\Users\runneradmin\.conan2\p\cpyth130b4b9567088\p\bin\python.exe
+2025-07-18T09:52:42.0440262Z cpython/3.12.2: Setting PYTHONHOME environment variable: C:\Users\runneradmin\.conan2\p\cpyth130b4b9567088\p\bin
+2025-07-18T09:52:42.0441171Z cpython/3.12.2: Setting PYTHON_ROOT environment variable: C:\Users\runneradmin\.conan2\p\cpyth130b4b9567088\p
+2025-07-18T09:52:42.2754955Z arcus/5.10.0: Sources downloaded from 'cura-conan2'
+2025-07-18T09:52:42.2978466Z 
+2025-07-18T09:52:42.2978905Z -------- Installing package arcus/5.10.0 (21 of 26) --------
+2025-07-18T09:52:42.2979334Z arcus/5.10.0: Building from source
+2025-07-18T09:52:42.2979739Z arcus/5.10.0: Package arcus/5.10.0:d719caab426bcdc1d76c5415239243e1bc080307
+2025-07-18T09:52:42.2997710Z arcus/5.10.0: Copying sources to build folder
+2025-07-18T09:52:42.3293573Z arcus/5.10.0: Building your package in C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b
+2025-07-18T09:52:42.3337304Z arcus/5.10.0: Calling generate()
+2025-07-18T09:52:42.3701091Z arcus/5.10.0: Generators folder: C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\build\Release\generators
+2025-07-18T09:52:42.3701777Z arcus/5.10.0: CMakeToolchain generated: conan_toolchain.cmake
+2025-07-18T09:52:42.4333875Z arcus/5.10.0: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\build\Release\generators\CMakePresets.json
+2025-07-18T09:52:42.4336045Z arcus/5.10.0: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\CMakeUserPresets.json
+2025-07-18T09:52:42.4865648Z arcus/5.10.0: Generating aggregated env files
+2025-07-18T09:52:42.4866532Z arcus/5.10.0: Generated aggregated env files: ['conanbuild.bat', 'conanrun.bat']
+2025-07-18T09:52:42.4894414Z arcus/5.10.0: Calling build()
+2025-07-18T09:52:42.4896548Z arcus/5.10.0: Running CMake.configure()
+2025-07-18T09:52:42.4900383Z arcus/5.10.0: RUN: cmake -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="generators/conan_toolchain.cmake" -DCMAKE_INSTALL_PREFIX="C:/Users/runneradmin/.conan2/p/b/arcusfc7e624a8f06e/p" -DCMAKE_POLICY_DEFAULT_CMP0077="NEW" -DCMAKE_POLICY_DEFAULT_CMP0091="NEW" -DBUILD_TESTING="OFF" -DCMAKE_BUILD_TYPE="Release" "C:/Users/runneradmin/.conan2/p/b/arcusfc7e624a8f06e/b"
+2025-07-18T09:52:42.5006921Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:52:43.6108043Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:52:43.6572045Z CMake Warning (dev) at CMakeLists.txt:2 (project):
+2025-07-18T09:52:43.6572598Z   cmake_minimum_required() should be called prior to this top-level project()
+2025-07-18T09:52:43.6573097Z   call.  Please see the cmake-commands(7) manual for usage documentation of
+2025-07-18T09:52:43.6573484Z   both commands.
+2025-07-18T09:52:43.6573838Z This warning is for project developers.  Use -Wno-dev to suppress it.
+2025-07-18T09:52:43.6574109Z 
+2025-07-18T09:52:43.6582953Z -- Using Conan toolchain: C:/Users/runneradmin/.conan2/p/b/arcusfc7e624a8f06e/b/build/Release/generators/conan_toolchain.cmake
+2025-07-18T09:52:43.6583977Z -- Conan toolchain: Setting CMAKE_MSVC_RUNTIME_LIBRARY=$<$<CONFIG:Release>:MultiThreadedDLL>
+2025-07-18T09:52:43.6584517Z -- Conan toolchain: C++ Standard 17 with extensions OFF
+2025-07-18T09:52:43.6586352Z -- Conan toolchain: Setting BUILD_SHARED_LIBS = ON
+2025-07-18T09:52:43.9107047Z -- The C compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:52:44.0834004Z -- The CXX compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:52:44.1040104Z -- Detecting C compiler ABI info
+2025-07-18T09:52:44.7365300Z -- Detecting C compiler ABI info - done
+2025-07-18T09:52:44.7660002Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:52:44.7664617Z -- Detecting C compile features
+2025-07-18T09:52:44.7672255Z -- Detecting C compile features - done
+2025-07-18T09:52:44.7785654Z -- Detecting CXX compiler ABI info
+2025-07-18T09:52:45.4299423Z -- Detecting CXX compiler ABI info - done
+2025-07-18T09:52:45.4594705Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:52:45.4599443Z -- Detecting CXX compile features
+2025-07-18T09:52:45.4613397Z -- Detecting CXX compile features - done
+2025-07-18T09:52:45.4671389Z -- Conan: Target declared 'standardprojectsettings::standardprojectsettings'
+2025-07-18T09:52:45.4680837Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/standb1cf9a2ad7ef9/p/res/cmake/StandardProjectSettings.cmake'
+2025-07-18T09:52:45.4707399Z -- Generating compile commands to C:/Users/runneradmin/.conan2/p/b/arcusfc7e624a8f06e/b/build/Release/compile_commands.json
+2025-07-18T09:52:45.4730614Z -- Conan: Component target declared 'protobuf::libprotobuf'
+2025-07-18T09:52:45.4731400Z -- Conan: Component target declared 'protobuf::libprotoc'
+2025-07-18T09:52:45.4731946Z -- Conan: Target declared 'protobuf::protobuf'
+2025-07-18T09:52:45.4773024Z -- Conan: Target declared 'ZLIB::ZLIB'
+2025-07-18T09:52:45.4789439Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/proto47a676cb9257b/p/lib/cmake/protobuf/protobuf-generate.cmake'
+2025-07-18T09:52:45.4794809Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/proto47a676cb9257b/p/lib/cmake/protobuf/protobuf-module.cmake'
+2025-07-18T09:52:45.4800708Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/proto47a676cb9257b/p/lib/cmake/protobuf/protobuf-options.cmake'
+2025-07-18T09:52:45.4802755Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/proto47a676cb9257b/p/lib/cmake/protobuf/protobuf-conan-protoc-target.cmake'
+2025-07-18T09:52:45.4822500Z -- Setting warnings for Arcus
+2025-07-18T09:52:45.4823820Z -- Enabling threading support for Arcus
+2025-07-18T09:52:45.5803340Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+2025-07-18T09:52:45.7966886Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+2025-07-18T09:52:45.7968354Z -- Looking for pthread_create in pthreads
+2025-07-18T09:52:46.0701230Z -- Looking for pthread_create in pthreads - not found
+2025-07-18T09:52:46.0702062Z -- Looking for pthread_create in pthread
+2025-07-18T09:52:46.3753279Z -- Looking for pthread_create in pthread - not found
+2025-07-18T09:52:46.3778479Z -- Found Threads: TRUE
+2025-07-18T09:52:46.3781917Z -- Configuring done (2.7s)
+2025-07-18T09:52:46.4608155Z -- Generating done (0.1s)
+2025-07-18T09:52:46.4608553Z CMake Warning:
+2025-07-18T09:52:46.4608842Z   Manually-specified variables were not used by the project:
+2025-07-18T09:52:46.4609090Z 
+2025-07-18T09:52:46.4609216Z     BUILD_TESTING
+2025-07-18T09:52:46.4609417Z     CMAKE_POLICY_DEFAULT_CMP0077
+2025-07-18T09:52:46.4609572Z 
+2025-07-18T09:52:46.4609578Z 
+2025-07-18T09:52:46.4622541Z -- Build files have been written to: C:/Users/runneradmin/.conan2/p/b/arcusfc7e624a8f06e/b/build/Release
+2025-07-18T09:52:46.4711377Z 
+2025-07-18T09:52:46.4712539Z arcus/5.10.0: Running CMake.build()
+2025-07-18T09:52:46.4716681Z arcus/5.10.0: RUN: cmake --build "C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\build\Release" -- -j4
+2025-07-18T09:52:46.4830248Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:52:47.5981662Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:52:48.2943220Z [1/6] Building CXX object CMakeFiles\Arcus.dir\src\SocketListener.cpp.obj
+2025-07-18T09:52:48.2944995Z cl : Command line warning D9025 : overriding '/W3' with '/W4'
+2025-07-18T09:52:49.2726479Z [2/6] Building CXX object CMakeFiles\Arcus.dir\src\Error.cpp.obj
+2025-07-18T09:52:49.2727017Z cl : Command line warning D9025 : overriding '/W3' with '/W4'
+2025-07-18T09:52:50.1174983Z [3/6] Building CXX object CMakeFiles\Arcus.dir\src\MessageTypeStore.cpp.obj
+2025-07-18T09:52:50.1175570Z cl : Command line warning D9025 : overriding '/W3' with '/W4'
+2025-07-18T09:52:50.1176309Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\MessageTypeStore.cpp(25): warning C4267: 'initializing': conversion from 'size_t' to 'uint32_t', possible loss of data
+2025-07-18T09:52:50.1177387Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\MessageTypeStore.cpp(162): warning C4242: 'argument': conversion from 'int' to 'const _Elem', possible loss of data
+2025-07-18T09:52:50.1178274Z         with
+2025-07-18T09:52:50.1178450Z         [
+2025-07-18T09:52:50.1178634Z             _Elem=char
+2025-07-18T09:52:50.1178821Z         ]
+2025-07-18T09:52:52.9533982Z [4/6] Building CXX object CMakeFiles\Arcus.dir\src\PlatformSocket.cpp.obj
+2025-07-18T09:52:52.9534584Z cl : Command line warning D9025 : overriding '/W3' with '/W4'
+2025-07-18T09:52:52.9535306Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\PlatformSocket.cpp(54): warning C4242: 'argument': conversion from 'int' to 'u_short', possible loss of data
+2025-07-18T09:52:52.9536302Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\PlatformSocket.cpp(71): warning C4244: '=': conversion from 'SOCKET' to 'int', possible loss of data
+2025-07-18T09:52:52.9537283Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\PlatformSocket.cpp(97): warning C4244: 'initializing': conversion from 'SOCKET' to 'int', possible loss of data
+2025-07-18T09:52:52.9538266Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\PlatformSocket.cpp(178): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+2025-07-18T09:52:52.9539285Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\PlatformSocket.cpp(221): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+2025-07-18T09:52:54.0558960Z [5/6] Building CXX object CMakeFiles\Arcus.dir\src\Socket.cpp.obj
+2025-07-18T09:52:54.0559506Z cl : Command line warning D9025 : overriding '/W3' with '/W4'
+2025-07-18T09:52:54.0560211Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\Socket_p.h(349): warning C4267: 'initializing': conversion from 'size_t' to 'uint32_t', possible loss of data
+2025-07-18T09:52:54.0561242Z C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\src\Socket_p.h(349): warning C4267: 'initializing': conversion from 'size_t' to 'const uint32_t', possible loss of data
+2025-07-18T09:52:55.0191735Z [6/6] Linking CXX shared library Arcus.dll
+2025-07-18T09:52:55.0264629Z 
+2025-07-18T09:52:55.0266469Z arcus/5.10.0: Package 'd719caab426bcdc1d76c5415239243e1bc080307' built
+2025-07-18T09:52:55.0267115Z arcus/5.10.0: Build folder C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\b\build\Release
+2025-07-18T09:52:55.0276762Z arcus/5.10.0: Generating the package
+2025-07-18T09:52:55.0277333Z arcus/5.10.0: Packaging in folder C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\p
+2025-07-18T09:52:55.0277770Z arcus/5.10.0: Calling package()
+2025-07-18T09:52:55.0316891Z arcus/5.10.0: WARN: deprecated: AutoPackager is **** deprecated ****
+2025-07-18T09:52:55.0317403Z arcus/5.10.0: WARN: deprecated: AutoPackager **** will be removed ****
+2025-07-18T09:52:55.0317832Z arcus/5.10.0: WARN: deprecated: Use explicit copy() calls instead
+2025-07-18T09:52:55.0754995Z arcus/5.10.0: package(): Packaged 1 '.dll' file: Arcus.dll
+2025-07-18T09:52:55.0756011Z arcus/5.10.0: package(): Packaged 2 '.exe' files: CMakeCCompilerId.exe, CMakeCXXCompilerId.exe
+2025-07-18T09:52:55.0756915Z arcus/5.10.0: package(): Packaged 5 '.h' files
+2025-07-18T09:52:55.0757284Z arcus/5.10.0: package(): Packaged 1 '.lib' file: Arcus.lib
+2025-07-18T09:52:55.0757718Z arcus/5.10.0: Created package revision f8ad4677ed8bd5d102af2e86204fed10
+2025-07-18T09:52:55.0758162Z arcus/5.10.0: Package 'd719caab426bcdc1d76c5415239243e1bc080307' created
+2025-07-18T09:52:55.0758991Z arcus/5.10.0: Full package reference: arcus/5.10.0#6f50e0bcb3455e530c9834cfe62f9017:d719caab426bcdc1d76c5415239243e1bc080307#f8ad4677ed8bd5d102af2e86204fed10
+2025-07-18T09:52:55.1185172Z arcus/5.10.0: Package folder C:\Users\runneradmin\.conan2\p\b\arcusfc7e624a8f06e\p
+2025-07-18T09:52:55.4751614Z dulcificum/5.10.0: Sources downloaded from 'cura-conan2'
+2025-07-18T09:52:55.6137845Z 
+2025-07-18T09:52:55.6139123Z -------- Installing package dulcificum/5.10.0 (22 of 26) --------
+2025-07-18T09:52:55.6139856Z dulcificum/5.10.0: Building from source
+2025-07-18T09:52:55.6140598Z dulcificum/5.10.0: Package dulcificum/5.10.0:efcfe47ca89d938f44a45f189f81fe7265bb38cf
+2025-07-18T09:52:55.6180244Z dulcificum/5.10.0: Copying sources to build folder
+2025-07-18T09:52:56.0131300Z dulcificum/5.10.0: Building your package in C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\b
+2025-07-18T09:52:56.0175874Z dulcificum/5.10.0: Calling generate()
+2025-07-18T09:52:56.0177081Z dulcificum/5.10.0: Generators folder: C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\b\build\Release\generators
+2025-07-18T09:52:56.0787460Z dulcificum/5.10.0: CMakeToolchain generated: conan_toolchain.cmake
+2025-07-18T09:52:56.1868298Z dulcificum/5.10.0: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\b\build\Release\generators\CMakePresets.json
+2025-07-18T09:52:56.1870464Z dulcificum/5.10.0: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\b\CMakeUserPresets.json
+2025-07-18T09:52:56.5680174Z dulcificum/5.10.0: Generating aggregated env files
+2025-07-18T09:52:56.5681468Z dulcificum/5.10.0: Generated aggregated env files: ['conanbuild.bat', 'conanrun.bat']
+2025-07-18T09:52:56.5723238Z dulcificum/5.10.0: Calling build()
+2025-07-18T09:52:56.5725511Z dulcificum/5.10.0: Running CMake.configure()
+2025-07-18T09:52:56.5729334Z dulcificum/5.10.0: RUN: cmake -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="generators/conan_toolchain.cmake" -DCMAKE_INSTALL_PREFIX="C:/Users/runneradmin/.conan2/p/b/dulci389bb683d47ba/p" -DCMAKE_POLICY_DEFAULT_CMP0077="NEW" -DCMAKE_POLICY_DEFAULT_CMP0091="NEW" -DBUILD_TESTING="OFF" -DCMAKE_BUILD_TYPE="Release" "C:/Users/runneradmin/.conan2/p/b/dulci389bb683d47ba/b"
+2025-07-18T09:52:56.5842020Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:52:57.7043004Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:52:57.7794604Z -- Using Conan toolchain: C:/Users/runneradmin/.conan2/p/b/dulci389bb683d47ba/b/build/Release/generators/conan_toolchain.cmake
+2025-07-18T09:52:57.7795781Z -- Conan toolchain: Setting CMAKE_MSVC_RUNTIME_LIBRARY=$<$<CONFIG:Release>:MultiThreadedDLL>
+2025-07-18T09:52:57.7796406Z -- Conan toolchain: C++ Standard 20 with extensions OFF
+2025-07-18T09:52:57.7797541Z -- Conan toolchain: Setting BUILD_SHARED_LIBS = OFF
+2025-07-18T09:52:58.0845115Z -- The C compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:52:58.2954088Z -- The CXX compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:52:58.3132329Z -- Detecting C compiler ABI info
+2025-07-18T09:52:59.1383287Z -- Detecting C compiler ABI info - done
+2025-07-18T09:52:59.1662001Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:52:59.1666114Z -- Detecting C compile features
+2025-07-18T09:52:59.1672624Z -- Detecting C compile features - done
+2025-07-18T09:52:59.1765749Z -- Detecting CXX compiler ABI info
+2025-07-18T09:52:59.8317744Z -- Detecting CXX compiler ABI info - done
+2025-07-18T09:52:59.8602600Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:52:59.8607077Z -- Detecting CXX compile features
+2025-07-18T09:52:59.8618681Z -- Detecting CXX compile features - done
+2025-07-18T09:52:59.8673071Z -- Conan: Target declared 'standardprojectsettings::standardprojectsettings'
+2025-07-18T09:52:59.8682737Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/standb1cf9a2ad7ef9/p/res/cmake/StandardProjectSettings.cmake'
+2025-07-18T09:52:59.8708821Z -- Generating compile commands to C:/Users/runneradmin/.conan2/p/b/dulci389bb683d47ba/b/build/Release/compile_commands.json
+2025-07-18T09:52:59.8710396Z -- Configuring pyDulcificum version: 5.10.0
+2025-07-18T09:52:59.8710991Z -- Configuring Dulcificum version: 5.10.0
+2025-07-18T09:52:59.8711546Z -- Configuring Dulcificum hash: 334b4d56b732d17b636d98d96a309bb2c4d0e02f
+2025-07-18T09:52:59.8730831Z -- Conan: Target declared 'nlohmann_json::nlohmann_json'
+2025-07-18T09:52:59.8760266Z -- Conan: Component target declared 'spdlog::spdlog'
+2025-07-18T09:52:59.8795707Z -- Conan: Component target declared 'fmt::fmt'
+2025-07-18T09:52:59.8833808Z -- Conan: Component target declared 'range-v3::range-v3-meta'
+2025-07-18T09:52:59.8834447Z -- Conan: Component target declared 'range-v3::range-v3-concepts'
+2025-07-18T09:52:59.8834879Z -- Conan: Target declared 'range-v3::range-v3'
+2025-07-18T09:52:59.8877866Z -- Conan: Target declared 'ctre::ctre'
+2025-07-18T09:52:59.8888677Z -- Enabling threading support for dulcificum
+2025-07-18T09:52:59.9819206Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+2025-07-18T09:53:00.2071063Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+2025-07-18T09:53:00.2071935Z -- Looking for pthread_create in pthreads
+2025-07-18T09:53:00.5294838Z -- Looking for pthread_create in pthreads - not found
+2025-07-18T09:53:00.5295550Z -- Looking for pthread_create in pthread
+2025-07-18T09:53:01.6487436Z -- Looking for pthread_create in pthread - not found
+2025-07-18T09:53:01.6500075Z -- Found Threads: TRUE
+2025-07-18T09:53:01.7503522Z -- Conan: Component target declared 'cpython::python'
+2025-07-18T09:53:01.7504188Z -- Conan: Component target declared 'cpython::_hidden'
+2025-07-18T09:53:01.7504650Z -- Conan: Component target declared 'cpython::embed'
+2025-07-18T09:53:01.7505118Z -- Conan: Target declared 'cpython::cpython'
+2025-07-18T09:53:01.7526181Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/libs/cmake/use_conan_python.cmake'
+2025-07-18T09:53:02.2252789Z -- Found Python: C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/libs/cmake/../../python.exe (found version "3.12.2") found components: Interpreter Development Development.Module Development.Embed
+2025-07-18T09:53:02.2264566Z -- Found Python: 3.12.2 (found version "3.12.2")
+2025-07-18T09:53:02.2298475Z -- Conan: Component target declared 'pybind11::headers'
+2025-07-18T09:53:02.2299071Z -- Conan: Component target declared 'pybind11::pybind11'
+2025-07-18T09:53:02.2299713Z -- Conan: Component target declared 'pybind11::embed'
+2025-07-18T09:53:02.2300207Z -- Conan: Component target declared 'pybind11::module'
+2025-07-18T09:53:02.2300929Z -- Conan: Component target declared 'pybind11::python_link_helper'
+2025-07-18T09:53:02.2318613Z -- Conan: Component target declared 'pybind11::windows_extras'
+2025-07-18T09:53:02.2319336Z -- Conan: Component target declared 'pybind11::lto'
+2025-07-18T09:53:02.2319868Z -- Conan: Component target declared 'pybind11::thin_lto'
+2025-07-18T09:53:02.2320406Z -- Conan: Component target declared 'pybind11::opt_size'
+2025-07-18T09:53:02.2321010Z -- Conan: Component target declared 'pybind11::python2_no_register'
+2025-07-18T09:53:02.2321560Z -- Conan: Target declared 'pybind11_all_do_not_use'
+2025-07-18T09:53:02.2333755Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/pybin247145ae5906e/p/lib/cmake/pybind11/pybind11Common.cmake'
+2025-07-18T09:53:02.3221849Z -- Performing Test HAS_MSVC_GL_LTCG
+2025-07-18T09:53:02.9413336Z -- Performing Test HAS_MSVC_GL_LTCG - Success
+2025-07-18T09:53:02.9431622Z -- Configuring done (5.2s)
+2025-07-18T09:53:03.0260877Z -- Generating done (0.1s)
+2025-07-18T09:53:03.0261236Z CMake Warning:
+2025-07-18T09:53:03.0261495Z   Manually-specified variables were not used by the project:
+2025-07-18T09:53:03.0261767Z 
+2025-07-18T09:53:03.0261827Z     BUILD_TESTING
+2025-07-18T09:53:03.0262007Z     CMAKE_POLICY_DEFAULT_CMP0077
+2025-07-18T09:53:03.0262147Z 
+2025-07-18T09:53:03.0262152Z 
+2025-07-18T09:53:03.0275330Z -- Build files have been written to: C:/Users/runneradmin/.conan2/p/b/dulci389bb683d47ba/b/build/Release
+2025-07-18T09:53:03.0371718Z 
+2025-07-18T09:53:03.0372806Z dulcificum/5.10.0: Running CMake.build()
+2025-07-18T09:53:03.0376564Z dulcificum/5.10.0: RUN: cmake --build "C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\b\build\Release" -- -j4
+2025-07-18T09:53:03.0477183Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:53:04.1356177Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:53:08.5689937Z [1/12] Building CXX object CMakeFiles\dulcificum.dir\src\gcode\ast\entries.cpp.obj
+2025-07-18T09:53:08.5705600Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\optional(166): warning C4244: '=': conversion from '_Ty' to '_Ty', possible loss of data
+2025-07-18T09:53:08.5707971Z         with
+2025-07-18T09:53:08.5708343Z         [
+2025-07-18T09:53:08.5708698Z             _Ty=double
+2025-07-18T09:53:08.5709076Z         ]
+2025-07-18T09:53:08.5709422Z         and
+2025-07-18T09:53:08.5709760Z         [
+2025-07-18T09:53:08.5710115Z             _Ty=size_t
+2025-07-18T09:53:08.5710527Z         ]
+2025-07-18T09:53:08.5711599Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\optional(166): note: the template instantiation context (the oldest one first) is
+2025-07-18T09:53:08.5713933Z C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\b\src\gcode\ast\entries.cpp(125): note: see reference to function template instantiation 'std::optional<size_t> &std::optional<size_t>::operator =<T,0>(_Ty2 &&) noexcept' being compiled
+2025-07-18T09:53:08.5715666Z         with
+2025-07-18T09:53:08.5716062Z         [
+2025-07-18T09:53:08.5716424Z             T=double,
+2025-07-18T09:53:08.5717153Z             _Ty2=double
+2025-07-18T09:53:08.5717556Z         ]
+2025-07-18T09:53:08.5719018Z C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\b\src\gcode\ast\entries.cpp(125): note: see the first reference to 'std::optional<size_t>::operator =' in 'dulcificum::gcode::ast::InitialTemperatureExtruder::InitialTemperatureExtruder'
+2025-07-18T09:53:08.5721803Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\optional(312): note: see reference to function template instantiation 'void std::_Optional_construct_base<_Ty>::_Assign<double>(_Ty2 &&) noexcept' being compiled
+2025-07-18T09:53:08.5723604Z         with
+2025-07-18T09:53:08.5723989Z         [
+2025-07-18T09:53:08.5724360Z             _Ty=size_t,
+2025-07-18T09:53:08.5724794Z             _Ty2=double
+2025-07-18T09:53:08.5725204Z         ]
+2025-07-18T09:53:08.5742872Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\xutility(462): warning C4244: 'initializing': conversion from '_Ty' to '_Ty', possible loss of data
+2025-07-18T09:53:08.5771585Z         with
+2025-07-18T09:53:08.5773019Z         [
+2025-07-18T09:53:08.5775368Z             _Ty=double
+2025-07-18T09:53:08.6051266Z         ]
+2025-07-18T09:53:08.6061633Z         and
+2025-07-18T09:53:08.6082765Z         [
+2025-07-18T09:53:08.6395030Z             _Ty=unsigned __int64
+2025-07-18T09:53:08.6439613Z         ]
+2025-07-18T09:53:08.7338195Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\xutility(462): note: the template instantiation context (the oldest one first) is
+2025-07-18T09:53:08.7976855Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\optional(312): note: see reference to function template instantiation 'void std::_Optional_construct_base<_Ty>::_Assign<double>(_Ty2 &&) noexcept' being compiled
+2025-07-18T09:53:08.8171608Z         with
+2025-07-18T09:53:08.8175901Z         [
+2025-07-18T09:53:08.8177672Z             _Ty=size_t,
+2025-07-18T09:53:08.8179966Z             _Ty2=double
+2025-07-18T09:53:08.8272559Z         ]
+2025-07-18T09:53:08.9279187Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\optional(168): note: see reference to function template instantiation '_Ty &std::_Optional_construct_base<_Ty>::_Construct<double>(double &&) noexcept' being compiled
+2025-07-18T09:53:08.9281320Z         with
+2025-07-18T09:53:09.1258401Z         [
+2025-07-18T09:53:09.3865479Z             _Ty=size_t
+2025-07-18T09:53:09.6746394Z         ]
+2025-07-18T09:53:09.8444111Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\optional(156): note: see reference to function template instantiation 'void std::_Construct_in_place<unsigned __int64,_Ty>(unsigned __int64 &,_Ty &&) noexcept' being compiled
+2025-07-18T09:53:10.0951160Z         with
+2025-07-18T09:53:10.3174295Z         [
+2025-07-18T09:53:10.5494994Z             _Ty=double
+2025-07-18T09:53:10.7530306Z         ]
+2025-07-18T09:53:10.9564367Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\xutility(472): note: see reference to function template instantiation '_Ty *std::construct_at<_Ty,double>(_Ty *const ,double &&) noexcept(<expr>)' being compiled
+2025-07-18T09:53:11.1511771Z         with
+2025-07-18T09:53:11.4090816Z         [
+2025-07-18T09:53:11.6226948Z             _Ty=unsigned __int64
+2025-07-18T09:53:11.8567623Z         ]
+2025-07-18T09:53:12.0891499Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\xutility(476): warning C4244: 'initializing': conversion from '_Ty' to 'unsigned __int64', possible loss of data
+2025-07-18T09:53:12.2091844Z         with
+2025-07-18T09:53:12.2596397Z         [
+2025-07-18T09:53:12.2842857Z             _Ty=double
+2025-07-18T09:53:12.2973958Z         ]
+2025-07-18T09:53:12.4138785Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\xutility(463): warning C4244: 'initializing': conversion from '_Ty' to '_Ty', possible loss of data
+2025-07-18T09:53:12.4259002Z         with
+2025-07-18T09:53:12.4279072Z         [
+2025-07-18T09:53:12.4439645Z             _Ty=double
+2025-07-18T09:53:12.4462776Z         ]
+2025-07-18T09:53:12.4561525Z         and
+2025-07-18T09:53:12.4574645Z         [
+2025-07-18T09:53:12.4592464Z             _Ty=unsigned __int64
+2025-07-18T09:53:12.4644609Z         ]
+2025-07-18T09:53:12.4682661Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\xutility(463): note: the template instantiation context (the oldest one first) is
+2025-07-18T09:53:12.4696797Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\optional(156): note: see reference to function template instantiation 'void std::_Construct_in_place<unsigned __int64,_Ty>(unsigned __int64 &,_Ty &&) noexcept' being compiled
+2025-07-18T09:53:12.4779854Z         with
+2025-07-18T09:53:12.4873614Z         [
+2025-07-18T09:53:12.4969547Z             _Ty=double
+2025-07-18T09:53:12.6082379Z         ]
+2025-07-18T09:53:12.6605367Z C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.44.35207\include\xutility(472): note: see reference to function template instantiation '_Ty *std::construct_at<_Ty,double>(_Ty *const ,double &&) noexcept' being compiled
+2025-07-18T09:53:12.6672128Z         with
+2025-07-18T09:53:12.6682080Z         [
+2025-07-18T09:53:12.6693974Z             _Ty=unsigned __int64
+2025-07-18T09:53:12.6854957Z         ]
+2025-07-18T09:53:12.6859184Z [2/12] Building CXX object CMakeFiles\dulcificum.dir\src\gcode\parse.cpp.obj
+2025-07-18T09:53:14.9471071Z [3/12] Building CXX object CMakeFiles\dulcificum.dir\src\miracle_jtp\mgjtp_command_to_json.cpp.obj
+2025-07-18T09:53:17.7157982Z [4/12] Building CXX object CMakeFiles\dulcificum.dir\src\miracle_jtp\mgjtp_json_to_command.cpp.obj
+2025-07-18T09:53:18.2925289Z [5/12] Building CXX object CMakeFiles\dulcificum.dir\src\miracle_jtp\mgjtp_mappings_json_key_to_str.cpp.obj
+2025-07-18T09:53:20.7308218Z [6/12] Building CXX object CMakeFiles\dulcificum.dir\src\command_types.cpp.obj
+2025-07-18T09:53:20.8420016Z [7/12] Building CXX object CMakeFiles\dulcificum.dir\src\gcode\gcode_to_command.cpp.obj
+2025-07-18T09:53:21.5720259Z [8/12] Building CXX object CMakeFiles\dulcificum.dir\src\utils\io.cpp.obj
+2025-07-18T09:53:26.9763422Z [9/12] Building CXX object pyDulcificum\CMakeFiles\pyDulcificum.dir\pyDulcificum.cpp.obj
+2025-07-18T09:55:19.6835070Z [10/12] Building CXX object CMakeFiles\dulcificum.dir\src\gcode\ast\ast.cpp.obj
+2025-07-18T09:55:19.9051621Z [11/12] Linking CXX static library dulcificum.lib
+2025-07-18T09:55:23.0965591Z [12/12] Linking CXX shared module pyDulcificum\pyDulcificum.cp312-win_amd64.pyd
+2025-07-18T09:55:23.1036047Z 
+2025-07-18T09:55:23.1037810Z dulcificum/5.10.0: Package 'efcfe47ca89d938f44a45f189f81fe7265bb38cf' built
+2025-07-18T09:55:23.1038842Z dulcificum/5.10.0: Build folder C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\b\build\Release
+2025-07-18T09:55:23.1049990Z dulcificum/5.10.0: Generating the package
+2025-07-18T09:55:23.1050899Z dulcificum/5.10.0: Packaging in folder C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\p
+2025-07-18T09:55:23.1051382Z dulcificum/5.10.0: Calling package()
+2025-07-18T09:55:23.1221598Z dulcificum/5.10.0: WARN: deprecated: AutoPackager is **** deprecated ****
+2025-07-18T09:55:23.1222322Z dulcificum/5.10.0: WARN: deprecated: AutoPackager **** will be removed ****
+2025-07-18T09:55:23.1223304Z dulcificum/5.10.0: WARN: deprecated: Use explicit copy() calls instead
+2025-07-18T09:55:23.2736357Z dulcificum/5.10.0: package(): Packaged 24 '.h' files
+2025-07-18T09:55:23.2736971Z dulcificum/5.10.0: package(): Packaged 2 '.lib' files: dulcificum.lib, pyDulcificum.lib
+2025-07-18T09:55:23.2737525Z dulcificum/5.10.0: package(): Packaged 1 '.pyd' file: pyDulcificum.cp312-win_amd64.pyd
+2025-07-18T09:55:23.2738049Z dulcificum/5.10.0: Created package revision 90681da51a3a3569ffc48a4f43656e8a
+2025-07-18T09:55:23.2738802Z dulcificum/5.10.0: Package 'efcfe47ca89d938f44a45f189f81fe7265bb38cf' created
+2025-07-18T09:55:23.2739649Z dulcificum/5.10.0: Full package reference: dulcificum/5.10.0#d7796f570134346c8cf8a45b2b677d63:efcfe47ca89d938f44a45f189f81fe7265bb38cf#90681da51a3a3569ffc48a4f43656e8a
+2025-07-18T09:55:23.3139274Z dulcificum/5.10.0: Package folder C:\Users\runneradmin\.conan2\p\b\dulci389bb683d47ba\p
+2025-07-18T09:55:23.7525344Z pynest2d/5.10.0: Sources downloaded from 'cura-conan2'
+2025-07-18T09:55:23.7689807Z 
+2025-07-18T09:55:23.7690244Z -------- Installing package pynest2d/5.10.0 (23 of 26) --------
+2025-07-18T09:55:23.7690848Z pynest2d/5.10.0: Building from source
+2025-07-18T09:55:23.7691452Z pynest2d/5.10.0: Package pynest2d/5.10.0:52d801d180d193c4263315f833f3dda04d223fbf
+2025-07-18T09:55:23.7711489Z pynest2d/5.10.0: Copying sources to build folder
+2025-07-18T09:55:23.7825807Z pynest2d/5.10.0: Building your package in C:\Users\runneradmin\.conan2\p\b\pynes06837e6d70dd7\b
+2025-07-18T09:55:23.7872392Z pynest2d/5.10.0: Calling generate()
+2025-07-18T09:55:23.7873126Z pynest2d/5.10.0: Generators folder: C:\Users\runneradmin\.conan2\p\b\pynes06837e6d70dd7\b\build\Release\generators
+2025-07-18T09:55:23.7898418Z {'name': 'pynest2d', 'libs': ['nest2d', 'polyclipping', 'nlopt', 'python312'], 'libdirs': ['C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/p/lib', 'C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p/lib', 'C:/Users/runneradmin/.conan2/p/nloptb3c43de892ea1/p/lib', 'C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/libs'], 'includedirs': ['C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/p/include', 'C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p/include', 'C:/Users/runneradmin/.conan2/p/nloptb3c43de892ea1/p/include', 'C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/include', 'C:/Users/runneradmin/.conan2/p/boost49354e0e38e86/p/include', 'include'], 'build_static': 'False', 'build_debug': 'False'}
+2025-07-18T09:55:23.8729275Z ['########## \'build_system\' block #############\n\n[build-system]\nrequires = ["sip >=6, <7", "setuptools>=40.8.0", "wheel"]\nbuild-backend = "sipbuild.api"\n\n', '########## \'tool_sip_metadata\' block #############\n\n[tool.sip.metadata]\nname = "pynest2d"\nversion = "5.10.0"\nsummary = "Python bindings for libnest2d"\nhome-page = "https://github.com/Ultimaker/pynest2d"\nauthor = "Ultimaker B.V."\nlicense = "LGPL-3.0"\ndescription-file = "README.md"\nrequires-python = ">=3.12.2"\n\n', '########## \'tool_sip_project\' block #############\n\n[tool.sip.project]\ncompile = false\nsip-files-dir = "python"\nbuild-dir = "C:/Users/runneradmin/.conan2/p/b/pynes06837e6d70dd7/b/build/Release/sip"\ntarget-dir = "C:/Users/runneradmin/.conan2/p/b/pynes06837e6d70dd7/p/site-packages"\npy-include-dir = "C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/include"\npy-major-version = 3\npy-minor-version = 12\n', "########## 'tool_sip_bindings' block #############\n\n[tool.sip.bindings.pynest2d]\nexceptions = true\nrelease-gil = true\nlibraries = ['nest2d', 'polyclipping', 'nlopt', 'python312']\nlibrary-dirs = ['C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/p/lib', 'C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p/lib', 'C:/Users/runneradmin/.conan2/p/nloptb3c43de892ea1/p/lib', 'C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/libs']\ninclude-dirs = ['C:/Users/runneradmin/.conan2/p/b/nest2040dd1a0311b1/p/include', 'C:/Users/runneradmin/.conan2/p/b/clipp738c8b1e7104a/p/include', 'C:/Users/runneradmin/.conan2/p/nloptb3c43de892ea1/p/include', 'C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/include', 'C:/Users/runneradmin/.conan2/p/boost49354e0e38e86/p/include', 'include']\npep484-pyi = true\nstatic = false\ndebug = false\n\n", "########## 'compiling' block #############\n\nextra-compile-args = ['/std:c++17', '-MD', '-O2', '-Ob2', '-FS']\nextra-link-args = []\n\n"]
+2025-07-18T09:55:23.9576416Z pynest2d/5.10.0: CMakeToolchain generated: conan_toolchain.cmake
+2025-07-18T09:55:24.0171956Z pynest2d/5.10.0: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\pynes06837e6d70dd7\b\build\Release\generators\CMakePresets.json
+2025-07-18T09:55:24.0174227Z pynest2d/5.10.0: CMakeToolchain generated: C:\Users\runneradmin\.conan2\p\b\pynes06837e6d70dd7\b\CMakeUserPresets.json
+2025-07-18T09:55:24.0271700Z pynest2d/5.10.0: Calling:
+2025-07-18T09:55:24.0272009Z  > "sip-build"
+2025-07-18T09:55:24.0273400Z pynest2d/5.10.0: RUN: "sip-build"
+2025-07-18T09:55:24.4318598Z pyproject.toml: line 14: using '[tool.sip.metadata]' to specify the project metadata is deprecated and will be removed in SIP v7.0.0, use '[project]' instead
+2025-07-18T09:55:24.4349881Z These bindings will be built: pynest2d.
+2025-07-18T09:55:24.4350384Z Generating the pynest2d bindings...
+2025-07-18T09:55:24.6982860Z Generating the pynest2d .pyi file...
+2025-07-18T09:55:24.7571058Z The project has been built.
+2025-07-18T09:55:24.7789193Z 
+2025-07-18T09:55:24.7807683Z pynest2d/5.10.0: Generating aggregated env files
+2025-07-18T09:55:24.7808168Z pynest2d/5.10.0: Generated aggregated env files: ['conanbuild.bat']
+2025-07-18T09:55:24.7837812Z pynest2d/5.10.0: Calling build()
+2025-07-18T09:55:24.7840044Z pynest2d/5.10.0: Running CMake.configure()
+2025-07-18T09:55:24.7843651Z pynest2d/5.10.0: RUN: cmake -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="generators/conan_toolchain.cmake" -DCMAKE_INSTALL_PREFIX="C:/Users/runneradmin/.conan2/p/b/pynes06837e6d70dd7/p" -DCMAKE_POLICY_DEFAULT_CMP0091="NEW" -DBUILD_TESTING="OFF" -DCMAKE_BUILD_TYPE="Release" "C:/Users/runneradmin/.conan2/p/b/pynes06837e6d70dd7/b"
+2025-07-18T09:55:24.8421705Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:55:25.9193693Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:55:26.0201982Z -- Using Conan toolchain: C:/Users/runneradmin/.conan2/p/b/pynes06837e6d70dd7/b/build/Release/generators/conan_toolchain.cmake
+2025-07-18T09:55:26.0202870Z -- Conan toolchain: Setting CMAKE_MSVC_RUNTIME_LIBRARY=$<$<CONFIG:Release>:MultiThreadedDLL>
+2025-07-18T09:55:26.0203379Z -- Conan toolchain: C++ Standard 17 with extensions OFF
+2025-07-18T09:55:26.0203788Z -- Conan toolchain: Setting BUILD_SHARED_LIBS = ON
+2025-07-18T09:55:26.2713735Z -- The C compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:55:26.4106233Z -- The CXX compiler identification is MSVC 19.44.35211.0
+2025-07-18T09:55:26.4281554Z -- Detecting C compiler ABI info
+2025-07-18T09:55:27.0371062Z -- Detecting C compiler ABI info - done
+2025-07-18T09:55:27.0490346Z -- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:55:27.0497945Z -- Detecting C compile features
+2025-07-18T09:55:27.0504367Z -- Detecting C compile features - done
+2025-07-18T09:55:27.0598379Z -- Detecting CXX compiler ABI info
+2025-07-18T09:55:27.5258049Z -- Detecting CXX compiler ABI info - done
+2025-07-18T09:55:27.5380801Z -- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe - skipped
+2025-07-18T09:55:27.5384820Z -- Detecting CXX compile features
+2025-07-18T09:55:27.5396423Z -- Detecting CXX compile features - done
+2025-07-18T09:55:27.6429725Z -- Conan: Component target declared 'cpython::python'
+2025-07-18T09:55:27.6430290Z -- Conan: Component target declared 'cpython::_hidden'
+2025-07-18T09:55:27.6430728Z -- Conan: Component target declared 'cpython::embed'
+2025-07-18T09:55:27.6431124Z -- Conan: Target declared 'cpython::cpython'
+2025-07-18T09:55:27.6452694Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/libs/cmake/use_conan_python.cmake'
+2025-07-18T09:55:27.8428634Z -- Found Python: C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/libs/cmake/../../python.exe (found version "3.12.2") found components: Interpreter
+2025-07-18T09:55:27.8439412Z -- Found Python: 3.12.2 (found version "3.12.2")
+2025-07-18T09:55:27.8460656Z -- Conan: Target declared 'nest2d::nest2d'
+2025-07-18T09:55:27.8494928Z -- Conan: Component target declared 'Boost::headers'
+2025-07-18T09:55:27.8495464Z -- Conan: Component target declared 'Boost::boost'
+2025-07-18T09:55:27.8495816Z -- Conan: Target declared 'boost::boost'
+2025-07-18T09:55:27.8527949Z -- Conan: Component target declared 'NLopt::nlopt'
+2025-07-18T09:55:27.8566190Z -- Conan: Target declared 'clipper::clipper'
+2025-07-18T09:55:27.8599101Z -- Conan: Target declared 'standardprojectsettings::standardprojectsettings'
+2025-07-18T09:55:27.8620294Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/standb1cf9a2ad7ef9/p/res/cmake/StandardProjectSettings.cmake'
+2025-07-18T09:55:27.8646087Z -- Generating compile commands to C:/Users/runneradmin/.conan2/p/b/pynes06837e6d70dd7/b/build/Release/compile_commands.json
+2025-07-18T09:55:27.8666181Z -- Conan: Target declared 'sipbuildtool::sipbuildtool'
+2025-07-18T09:55:27.8674826Z -- Conan: Including build module from 'C:/Users/runneradmin/.conan2/p/sipbu1734d17924246/p/cmake/SIPMacros.cmake'
+2025-07-18T09:55:27.8679041Z -- Enabling threading support for pynest2d
+2025-07-18T09:55:27.9602373Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+2025-07-18T09:55:28.1701960Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+2025-07-18T09:55:28.1703560Z -- Looking for pthread_create in pthreads
+2025-07-18T09:55:28.4274632Z -- Looking for pthread_create in pthreads - not found
+2025-07-18T09:55:28.4275144Z -- Looking for pthread_create in pthread
+2025-07-18T09:55:28.6841350Z -- Looking for pthread_create in pthread - not found
+2025-07-18T09:55:28.6853734Z -- Found Threads: TRUE
+2025-07-18T09:55:28.6856298Z -- SIP: Touching the source files
+2025-07-18T09:55:28.6856701Z -- SIP: Collecting the generated source files
+2025-07-18T09:55:28.6860324Z -- SIP: Collecting the user specified source files
+2025-07-18T09:55:28.6860826Z -- SIP: Linking the interface target against the library
+2025-07-18T09:55:28.6866487Z -- SIP: Installing Python module and PEP 484 file in C:\Users\runneradmin\.conan2\p\cpyth130b4b9567088\p\bin\Lib\site-packages
+2025-07-18T09:55:28.6867668Z CMake Warning (dev) at C:/Users/runneradmin/.conan2/p/sipbu1734d17924246/p/cmake/SIPMacros.cmake:72 (install):
+2025-07-18T09:55:28.6868633Z   Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+2025-07-18T09:55:28.6869375Z   "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+2025-07-18T09:55:28.6869957Z   command to set the policy and suppress this warning.
+2025-07-18T09:55:28.6870424Z Call Stack (most recent call first):
+2025-07-18T09:55:28.6870810Z   CMakeLists.txt:16 (install_sip_module)
+2025-07-18T09:55:28.6871641Z This warning is for project developers.  Use -Wno-dev to suppress it.
+2025-07-18T09:55:28.6872068Z 
+2025-07-18T09:55:28.6872605Z CMake Warning (dev) at C:/Users/runneradmin/.conan2/p/sipbu1734d17924246/p/cmake/SIPMacros.cmake:72 (install):
+2025-07-18T09:55:28.6873583Z   Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+2025-07-18T09:55:28.6874367Z   "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+2025-07-18T09:55:28.6875015Z   command to set the policy and suppress this warning.
+2025-07-18T09:55:28.6875473Z Call Stack (most recent call first):
+2025-07-18T09:55:28.6875863Z   CMakeLists.txt:16 (install_sip_module)
+2025-07-18T09:55:28.6876423Z This warning is for project developers.  Use -Wno-dev to suppress it.
+2025-07-18T09:55:28.6876882Z 
+2025-07-18T09:55:28.6877426Z CMake Warning (dev) at C:/Users/runneradmin/.conan2/p/sipbu1734d17924246/p/cmake/SIPMacros.cmake:72 (install):
+2025-07-18T09:55:28.6878433Z   Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+2025-07-18T09:55:28.6879176Z   "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+2025-07-18T09:55:28.6879797Z   command to set the policy and suppress this warning.
+2025-07-18T09:55:28.6880248Z Call Stack (most recent call first):
+2025-07-18T09:55:28.6880864Z   CMakeLists.txt:16 (install_sip_module)
+2025-07-18T09:55:28.6881394Z This warning is for project developers.  Use -Wno-dev to suppress it.
+2025-07-18T09:55:28.6881821Z 
+2025-07-18T09:55:28.6882321Z CMake Warning (dev) at C:/Users/runneradmin/.conan2/p/sipbu1734d17924246/p/cmake/SIPMacros.cmake:72 (install):
+2025-07-18T09:55:28.6883265Z   Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+2025-07-18T09:55:28.6883983Z   "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+2025-07-18T09:55:28.6884588Z   command to set the policy and suppress this warning.
+2025-07-18T09:55:28.6885033Z Call Stack (most recent call first):
+2025-07-18T09:55:28.6885429Z   CMakeLists.txt:16 (install_sip_module)
+2025-07-18T09:55:28.6885953Z This warning is for project developers.  Use -Wno-dev to suppress it.
+2025-07-18T09:55:28.6886372Z 
+2025-07-18T09:55:28.6886498Z -- Configuring done (2.7s)
+2025-07-18T09:55:28.7703778Z -- Generating done (0.1s)
+2025-07-18T09:55:28.7704138Z CMake Warning:
+2025-07-18T09:55:28.7704397Z   Manually-specified variables were not used by the project:
+2025-07-18T09:55:28.7704630Z 
+2025-07-18T09:55:28.7704694Z     BUILD_TESTING
+2025-07-18T09:55:28.7704798Z 
+2025-07-18T09:55:28.7704803Z 
+2025-07-18T09:55:28.7717839Z -- Build files have been written to: C:/Users/runneradmin/.conan2/p/b/pynes06837e6d70dd7/b/build/Release
+2025-07-18T09:55:28.7810027Z 
+2025-07-18T09:55:28.7811091Z pynest2d/5.10.0: Running CMake.build()
+2025-07-18T09:55:28.7814727Z pynest2d/5.10.0: RUN: cmake --build "C:\Users\runneradmin\.conan2\p\b\pynes06837e6d70dd7\b\build\Release" -- -j4
+2025-07-18T09:55:28.8367383Z conanvcvars.bat: Activating environment Visual Studio 17 - amd64 - winsdk_version=None - vcvars_ver=14.4
+2025-07-18T09:55:29.9159631Z [vcvarsall.bat] Environment initialized for: 'x64'
+2025-07-18T09:55:30.2576605Z [1/21] Building C object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sip_descriptors.c.obj
+2025-07-18T09:55:30.5285718Z [2/21] Building C object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sip_array.c.obj
+2025-07-18T09:55:30.7015085Z [3/21] Building C object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sip_enum.c.obj
+2025-07-18T09:55:30.7478313Z [4/21] Building C object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sip_int_convertors.c.obj
+2025-07-18T09:55:30.9481163Z [5/21] Building C object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sip_object_map.c.obj
+2025-07-18T09:55:30.9505109Z [6/21] Building C object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sip_threads.c.obj
+2025-07-18T09:55:30.9571065Z [7/21] Building C object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sip_voidptr.c.obj
+2025-07-18T09:55:30.9620338Z [8/21] Building C object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sip_core.c.obj
+2025-07-18T09:55:38.1294004Z [9/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dBox.cpp.obj
+2025-07-18T09:55:38.1748741Z [10/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dCircle.cpp.obj
+2025-07-18T09:55:38.2137659Z [11/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dDJDHeuristicConfig.cpp.obj
+2025-07-18T09:55:38.4823610Z [12/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dBottomLeftConfig.cpp.obj
+2025-07-18T09:55:45.9191399Z [13/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dItemGroup.cpp.obj
+2025-07-18T09:55:45.9192842Z [14/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dNfpConfig.cpp.obj
+2025-07-18T09:55:46.5302014Z [15/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dPoint.cpp.obj
+2025-07-18T09:55:49.1733015Z [16/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dItem.cpp.obj
+2025-07-18T09:55:58.1505078Z [17/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dRectangle.cpp.obj
+2025-07-18T09:55:58.5731953Z [18/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dstdstring.cpp.obj
+2025-07-18T09:55:58.8078965Z [19/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dstdvector0101Item.cpp.obj
+2025-07-18T09:55:59.3631250Z [20/21] Building CXX object CMakeFiles\sip_pynest2d.dir\sip\pynest2d\sippynest2dcmodule.cpp.obj
+2025-07-18T09:55:59.5171506Z [21/21] Linking CXX shared library pynest2d.pyd
+2025-07-18T09:55:59.5247324Z 
+2025-07-18T09:55:59.5249065Z pynest2d/5.10.0: Package '52d801d180d193c4263315f833f3dda04d223fbf' built
+2025-07-18T09:55:59.5250215Z pynest2d/5.10.0: Build folder C:\Users\runneradmin\.conan2\p\b\pynes06837e6d70dd7\b\build\Release
+2025-07-18T09:55:59.5260347Z pynest2d/5.10.0: Generating the package
+2025-07-18T09:55:59.5261381Z pynest2d/5.10.0: Packaging in folder C:\Users\runneradmin\.conan2\p\b\pynes06837e6d70dd7\p
+2025-07-18T09:55:59.5262169Z pynest2d/5.10.0: Calling package()
+2025-07-18T09:55:59.5603264Z pynest2d/5.10.0: package(): Packaged 1 '.lib' file: pynest2d.lib
+2025-07-18T09:55:59.5604344Z pynest2d/5.10.0: package(): Packaged 1 '.pyd' file: pynest2d.pyd
+2025-07-18T09:55:59.5604935Z pynest2d/5.10.0: package(): Packaged 1 '.pyi' file: pynest2d.pyi
+2025-07-18T09:55:59.5605502Z pynest2d/5.10.0: Created package revision 6b5c03fda31268c5d927523bcf1e96c1
+2025-07-18T09:55:59.5606054Z pynest2d/5.10.0: Package '52d801d180d193c4263315f833f3dda04d223fbf' created
+2025-07-18T09:55:59.5607014Z pynest2d/5.10.0: Full package reference: pynest2d/5.10.0#ff5d39339d68c1cb296f83563e3eeacd:52d801d180d193c4263315f833f3dda04d223fbf#6b5c03fda31268c5d927523bcf1e96c1
+2025-07-18T09:55:59.5969879Z pynest2d/5.10.0: Package folder C:\Users\runneradmin\.conan2\p\b\pynes06837e6d70dd7\p
+2025-07-18T09:56:03.1222832Z uranium/5.11.0-alpha.0@ultimaker/testing: Sources downloaded from 'cura-conan2'
+2025-07-18T09:56:06.4659205Z 
+2025-07-18T09:56:06.4660047Z -------- Installing package uranium/5.11.0-alpha.0@ultimaker/testing (26 of 26) --------
+2025-07-18T09:56:06.4660649Z uranium/5.11.0-alpha.0@ultimaker/testing: Building from source
+2025-07-18T09:56:06.4661330Z uranium/5.11.0-alpha.0@ultimaker/testing: Package uranium/5.11.0-alpha.0@ultimaker/testing:da39a3ee5e6b4b0d3255bfef95601890afd80709
+2025-07-18T09:56:06.4678892Z uranium/5.11.0-alpha.0@ultimaker/testing: Copying sources to build folder
+2025-07-18T09:56:09.5219675Z uranium/5.11.0-alpha.0@ultimaker/testing: Building your package in C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b
+2025-07-18T09:56:09.5264747Z uranium/5.11.0-alpha.0@ultimaker/testing: Calling generate()
+2025-07-18T09:56:09.5265706Z uranium/5.11.0-alpha.0@ultimaker/testing: Generators folder: C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\generators
+2025-07-18T09:56:09.5738536Z uranium/5.11.0-alpha.0@ultimaker/testing: Generating aggregated env files
+2025-07-18T09:56:09.5739519Z uranium/5.11.0-alpha.0@ultimaker/testing: Generated aggregated env files: ['conanrun.bat', 'conanbuild.bat']
+2025-07-18T09:56:09.6053931Z uranium/5.11.0-alpha.0@ultimaker/testing: Calling build()
+2025-07-18T09:56:09.6209982Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\cs_CZ\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\cs_CZ\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:09.7821334Z 
+2025-07-18T09:56:09.7958661Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\de_DE\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\de_DE\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:09.8690396Z 
+2025-07-18T09:56:09.8699487Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\es_ES\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\es_ES\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:09.9581305Z 
+2025-07-18T09:56:09.9590509Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\fi_FI\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\fi_FI\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.0329746Z 
+2025-07-18T09:56:10.0480731Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\fr_FR\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\fr_FR\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.1228894Z 
+2025-07-18T09:56:10.1384987Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\hu_HU\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\hu_HU\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.2120657Z 
+2025-07-18T09:56:10.2129596Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\it_IT\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\it_IT\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.2989113Z 
+2025-07-18T09:56:10.3073598Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\ja_JP\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\ja_JP\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.3831428Z 
+2025-07-18T09:56:10.4107741Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\ko_KR\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\ko_KR\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.4854610Z 
+2025-07-18T09:56:10.4994468Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\nl_NL\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\nl_NL\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.5739250Z 
+2025-07-18T09:56:10.5994453Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\pl_PL\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\pl_PL\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.6797026Z 
+2025-07-18T09:56:10.6929380Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\pt_BR\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\pt_BR\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.7696556Z 
+2025-07-18T09:56:10.7958787Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\pt_PT\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\pt_PT\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.8739453Z 
+2025-07-18T09:56:10.8889605Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\ru_RU\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\ru_RU\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:10.9642294Z 
+2025-07-18T09:56:10.9651389Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\tr_TR\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\tr_TR\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:11.0505783Z 
+2025-07-18T09:56:11.0515091Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\zh_CN\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\zh_CN\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:11.1296345Z 
+2025-07-18T09:56:11.1442594Z uranium/5.11.0-alpha.0@ultimaker/testing: RUN: msgfmt C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\resources\i18n\zh_TW\uranium.po -o C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build\resources\i18n\zh_TW\LC_MESSAGES\uranium.mo -f
+2025-07-18T09:56:11.2211414Z 
+2025-07-18T09:56:11.2214122Z uranium/5.11.0-alpha.0@ultimaker/testing: Package 'da39a3ee5e6b4b0d3255bfef95601890afd80709' built
+2025-07-18T09:56:11.2215084Z uranium/5.11.0-alpha.0@ultimaker/testing: Build folder C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\b\build
+2025-07-18T09:56:11.2246677Z uranium/5.11.0-alpha.0@ultimaker/testing: Generating the package
+2025-07-18T09:56:11.2247571Z uranium/5.11.0-alpha.0@ultimaker/testing: Packaging in folder C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\p
+2025-07-18T09:56:11.2248251Z uranium/5.11.0-alpha.0@ultimaker/testing: Calling package()
+2025-07-18T09:56:14.5487365Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 235 '.py' files
+2025-07-18T09:56:14.5488184Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 19 '.json' files
+2025-07-18T09:56:14.5488786Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 8 '.obj' files
+2025-07-18T09:56:14.5489508Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 41 '.qml' files
+2025-07-18T09:56:14.5490471Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 1 '.pot' file: uranium.pot
+2025-07-18T09:56:14.5491076Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 17 '.po' files
+2025-07-18T09:56:14.5491665Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 17 '.mo' files
+2025-07-18T09:56:14.5492265Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 8 '.shader' files
+2025-07-18T09:56:14.5492826Z uranium/5.11.0-alpha.0@ultimaker/testing: package(): Packaged 1 file: qmldir
+2025-07-18T09:56:14.5493508Z uranium/5.11.0-alpha.0@ultimaker/testing: Created package revision 549ba7402a70c1f8360e7cef09f0c29e
+2025-07-18T09:56:14.5494244Z uranium/5.11.0-alpha.0@ultimaker/testing: Package 'da39a3ee5e6b4b0d3255bfef95601890afd80709' created
+2025-07-18T09:56:14.5495503Z uranium/5.11.0-alpha.0@ultimaker/testing: Full package reference: uranium/5.11.0-alpha.0@ultimaker/testing#dce26ec9cf2518396e13e24cb30b4f75:da39a3ee5e6b4b0d3255bfef95601890afd80709#549ba7402a70c1f8360e7cef09f0c29e
+2025-07-18T09:56:14.5815855Z uranium/5.11.0-alpha.0@ultimaker/testing: Package folder C:\Users\runneradmin\.conan2\p\b\uranie90fd330da434\p
+2025-07-18T09:56:14.5818858Z WARN: deprecated: Usage of deprecated Conan 1.X features that will be removed in Conan 2.X:
+2025-07-18T09:56:14.5819875Z WARN: deprecated:     'env_info' used in: boost/1.86.0, cpython/3.12.2, gettext/0.22.5, protobuf/3.21.12
+2025-07-18T09:56:14.5820887Z WARN: deprecated:     'cpp_info.filenames' used in: boost/1.86.0, protobuf/3.21.12
+2025-07-18T09:56:14.5822596Z WARN: deprecated:     'cpp_info.names' used in: boost/1.86.0, protobuf/3.21.12, range-v3/0.12.0, nlopt/2.7.1, zlib/1.3.1
+2025-07-18T09:56:14.5823254Z WARN: deprecated:     'user_info' used in: boost/1.86.0, cpython/3.12.2
+2025-07-18T09:56:14.5823866Z WARN: deprecated:     'cpp_info.build_modules' used in: protobuf/3.21.12
+2025-07-18T09:56:14.5826177Z 
+2025-07-18T09:56:14.5826406Z ======== Finalizing install (deploy, generators) ========
+2025-07-18T09:56:14.5883295Z conanfile.py (cura/5.11.0-alpha.0): Writing generators to D:\a\Cura\Cura\cura_inst\build\generators
+2025-07-18T09:56:14.5886519Z conanfile.py (cura/5.11.0-alpha.0): Generator 'VirtualPythonEnv' calling 'generate()'
+2025-07-18T09:56:14.5899802Z conanfile.py (cura/5.11.0-alpha.0): Using Python interpreter 'C:/Users/runneradmin/.conan2/p/cpyth130b4b9567088/p/bin/python.exe' to create Virtual Environment in 'D:\a\Cura\Cura\cura_inst\build\generators\cura_venv'
+2025-07-18T09:56:20.6678150Z Requirement already satisfied: pip in d:\a\cura\cura\cura_inst\build\generators\cura_venv\lib\site-packages (24.0)
+2025-07-18T09:56:20.7676845Z Collecting pip
+2025-07-18T09:56:20.7955980Z   Downloading pip-25.1.1-py3-none-any.whl.metadata (3.6 kB)
+2025-07-18T09:56:20.8633807Z Downloading pip-25.1.1-py3-none-any.whl (1.8 MB)
+2025-07-18T09:56:20.9954016Z    ---------------------------------------- 1.8/1.8 MB 14.5 MB/s eta 0:00:00
+2025-07-18T09:56:21.0286301Z Installing collected packages: pip
+2025-07-18T09:56:21.0288772Z   Attempting uninstall: pip
+2025-07-18T09:56:21.0304729Z     Found existing installation: pip 24.0
+2025-07-18T09:56:21.1479752Z     Uninstalling pip-24.0:
+2025-07-18T09:56:21.1699748Z       Successfully uninstalled pip-24.0
+2025-07-18T09:56:22.6510692Z Successfully installed pip-25.1.1
+2025-07-18T09:56:24.5173846Z Collecting wheel
+2025-07-18T09:56:24.5196959Z   Using cached wheel-0.45.1-py3-none-any.whl.metadata (2.3 kB)
+2025-07-18T09:56:24.6860023Z Collecting setuptools
+2025-07-18T09:56:24.6882809Z   Using cached setuptools-80.9.0-py3-none-any.whl.metadata (6.6 kB)
+2025-07-18T09:56:24.7041423Z Using cached wheel-0.45.1-py3-none-any.whl (72 kB)
+2025-07-18T09:56:24.7061060Z Using cached setuptools-80.9.0-py3-none-any.whl (1.2 MB)
+2025-07-18T09:56:24.7406310Z Installing collected packages: wheel, setuptools
+2025-07-18T09:56:25.9505758Z 
+2025-07-18T09:56:25.9518857Z Successfully installed setuptools-80.9.0 wheel-0.45.1
+2025-07-18T09:56:26.0164943Z conanfile.py (cura/5.11.0-alpha.0): Generating pip requirements file at 'D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_basic.txt'
+2025-07-18T09:56:26.0168377Z conanfile.py (cura/5.11.0-alpha.0): Generating pip requirements file at 'D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt'
+2025-07-18T09:56:26.0173229Z conanfile.py (cura/5.11.0-alpha.0): Generating pip requirements file at 'D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_dev_basic.txt'
+2025-07-18T09:56:26.0177551Z conanfile.py (cura/5.11.0-alpha.0): Generating pip requirements file at 'D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_installer_basic.txt'
+2025-07-18T09:56:26.0183665Z conanfile.py (cura/5.11.0-alpha.0): Generating pip requirements summary at 'D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_summary.yml'
+2025-07-18T09:56:26.0222086Z conanfile.py (cura/5.11.0-alpha.0): Installing pip requirements from D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_basic.txt
+2025-07-18T09:56:27.0840200Z Collecting charon@ git+https://github.com/ultimaker/libcharon@master/s-line#egg=charon (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_basic.txt (line 1))
+2025-07-18T09:56:27.0845458Z   Cloning https://github.com/ultimaker/libcharon (to revision master/s-line) to c:\users\runneradmin\appdata\local\temp\pip-install-ffiywdtu\charon_226eb1e2066f486bb07d8896d0e39eb2
+2025-07-18T09:56:27.1065617Z   Running command git clone --filter=blob:none --quiet https://github.com/ultimaker/libcharon 'C:\Users\runneradmin\AppData\Local\Temp\pip-install-ffiywdtu\charon_226eb1e2066f486bb07d8896d0e39eb2'
+2025-07-18T09:56:28.3353277Z   Running command git checkout -q b275d32cd2be7261194b6770cbd524717332e674
+2025-07-18T09:56:28.7861949Z   Resolved https://github.com/ultimaker/libcharon to commit b275d32cd2be7261194b6770cbd524717332e674
+2025-07-18T09:56:28.8098806Z   Preparing metadata (setup.py): started
+2025-07-18T09:56:29.1139587Z   Preparing metadata (setup.py): finished with status 'done'
+2025-07-18T09:56:29.1168357Z Building wheels for collected packages: charon
+2025-07-18T09:56:29.1410454Z   DEPRECATION: Building 'charon' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'charon'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+2025-07-18T09:56:29.1412765Z   Building wheel for charon (setup.py): started
+2025-07-18T09:56:29.5774864Z   Building wheel for charon (setup.py): finished with status 'done'
+2025-07-18T09:56:29.5790842Z   Created wheel for charon: filename=charon-1.0-py3-none-any.whl size=34663 sha256=fd3d00a582877bebf4e25ae554c3fb94e0f2b3b41d07d922fc87b988df1e5c42
+2025-07-18T09:56:29.5793637Z   Stored in directory: C:\Users\runneradmin\AppData\Local\Temp\pip-ephem-wheel-cache-ejfq957y\wheels\fe\ed\cc\9cc36ab91cd9e2fbafdf439af85601a214bfc323aae45d000a
+2025-07-18T09:56:29.5911532Z Successfully built charon
+2025-07-18T09:56:29.6043489Z Installing collected packages: charon
+2025-07-18T09:56:29.6497379Z Successfully installed charon-1.0
+2025-07-18T09:56:29.7219273Z conanfile.py (cura/5.11.0-alpha.0): Installing pip requirements from D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt
+2025-07-18T09:56:30.8237050Z DEPRECATION: Wheel filename 'numpy-mkl-1.26.1-cp312-cp312-win_amd64.whl' is not correctly normalised. Future versions of pip will raise the following error:
+2025-07-18T09:56:30.8238015Z Invalid wheel filename (invalid version): 'numpy-mkl-1.26.1-cp312-cp312-win_amd64'
+2025-07-18T09:56:30.8238338Z 
+2025-07-18T09:56:30.8239085Z  pip 25.3 will enforce this behaviour change. A possible replacement is to rename the wheel to use a correctly normalised name (this may require updating the version in the project metadata). Discussion can be found at https://github.com/pypa/pip/issues/12938
+2025-07-18T09:56:30.8247803Z Collecting numpy@ https://cura.jfrog.io/artifactory/cura-local-pypi/numpy/numpy/numpy-mkl-1.26.1-cp312-cp312-win_amd64.whl (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 38))
+2025-07-18T09:56:31.5493515Z   Downloading https://cura.jfrog.io/artifactory/cura-local-pypi/numpy/numpy/numpy-mkl-1.26.1-cp312-cp312-win_amd64.whl (249.3 MB)
+2025-07-18T09:56:39.0206444Z      ------------------------------------- 249.3/249.3 MB 33.4 MB/s eta 0:00:00
+2025-07-18T09:56:39.5904718Z Collecting certifi==2023.5.7 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 1))
+2025-07-18T09:56:39.6105196Z   Downloading certifi-2023.5.7-py3-none-any.whl (156 kB)
+2025-07-18T09:56:40.2147087Z Collecting zeroconf==0.31.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 2))
+2025-07-18T09:56:40.2207960Z   Downloading zeroconf-0.31.0-py3-none-any.whl (59 kB)
+2025-07-18T09:56:40.2955553Z Collecting importlib-metadata==4.10.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 3))
+2025-07-18T09:56:40.3008528Z   Downloading importlib_metadata-4.10.0-py3-none-any.whl (17 kB)
+2025-07-18T09:56:40.5056473Z Collecting trimesh==3.9.36 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 4))
+2025-07-18T09:56:40.5109180Z   Downloading trimesh-3.9.36-py3-none-any.whl (639 kB)
+2025-07-18T09:56:40.5492462Z      ------------------------------------- 639.9/639.9 kB 12.2 MB/s eta 0:00:00
+2025-07-18T09:56:40.6917685Z Collecting setuptools==75.6.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 5))
+2025-07-18T09:56:40.6961292Z   Downloading setuptools-75.6.0-py3-none-any.whl (1.2 MB)
+2025-07-18T09:56:40.7439601Z      ---------------------------------------- 1.2/1.2 MB 20.5 MB/s eta 0:00:00
+2025-07-18T09:56:40.8591561Z Collecting sentry-sdk==0.13.5 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 6))
+2025-07-18T09:56:40.8653484Z   Downloading sentry_sdk-0.13.5-py2.py3-none-any.whl (91 kB)
+2025-07-18T09:56:40.9161179Z Collecting pyserial==3.4 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 7))
+2025-07-18T09:56:40.9209941Z   Downloading pyserial-3.4-py2.py3-none-any.whl (193 kB)
+2025-07-18T09:56:40.9710862Z Collecting chardet==3.0.4 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 8))
+2025-07-18T09:56:40.9765650Z   Downloading chardet-3.0.4-py2.py3-none-any.whl (133 kB)
+2025-07-18T09:56:41.0258117Z Collecting idna==2.8 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 9))
+2025-07-18T09:56:41.0297804Z   Downloading idna-2.8-py2.py3-none-any.whl (58 kB)
+2025-07-18T09:56:41.0815549Z Collecting attrs==21.3.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 10))
+2025-07-18T09:56:41.0869233Z   Downloading attrs-21.3.0-py2.py3-none-any.whl (61 kB)
+2025-07-18T09:56:41.1547595Z Collecting requests==2.32.3 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 11))
+2025-07-18T09:56:41.1588434Z   Downloading requests-2.32.3-py3-none-any.whl (64 kB)
+2025-07-18T09:56:41.2279625Z Collecting twisted==21.2.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 12))
+2025-07-18T09:56:41.2359548Z   Downloading Twisted-21.2.0-py3-none-any.whl (3.1 MB)
+2025-07-18T09:56:41.3074686Z      ---------------------------------------- 3.1/3.1 MB 45.5 MB/s eta 0:00:00
+2025-07-18T09:56:41.3684101Z Collecting constantly==15.1.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 13))
+2025-07-18T09:56:41.3729412Z   Downloading constantly-15.1.0-py2.py3-none-any.whl (7.9 kB)
+2025-07-18T09:56:41.4164422Z Collecting hyperlink==21.0.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 14))
+2025-07-18T09:56:41.4205920Z   Downloading hyperlink-21.0.0-py2.py3-none-any.whl (74 kB)
+2025-07-18T09:56:41.4690341Z Collecting incremental==22.10.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 15))
+2025-07-18T09:56:41.4733337Z   Downloading incremental-22.10.0-py2.py3-none-any.whl (16 kB)
+2025-07-18T09:56:41.6311553Z Collecting zope.interface==5.4.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 16))
+2025-07-18T09:56:41.6365416Z   Downloading zope.interface-5.4.0.tar.gz (249 kB)
+2025-07-18T09:56:41.9827505Z   Preparing metadata (setup.py): started
+2025-07-18T09:56:42.3103050Z   Preparing metadata (setup.py): finished with status 'done'
+2025-07-18T09:56:42.3454544Z Collecting automat==20.2.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 17))
+2025-07-18T09:56:42.3501665Z   Downloading Automat-20.2.0-py2.py3-none-any.whl (31 kB)
+2025-07-18T09:56:42.4879230Z Collecting shapely==2.0.6 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 18))
+2025-07-18T09:56:42.4936083Z   Downloading shapely-2.0.6-cp312-cp312-win_amd64.whl (1.4 MB)
+2025-07-18T09:56:42.5485305Z      ---------------------------------------- 1.4/1.4 MB 25.1 MB/s eta 0:00:00
+2025-07-18T09:56:42.8112581Z Collecting cython==0.29.26 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 19))
+2025-07-18T09:56:42.8164263Z   Downloading Cython-0.29.26-py2.py3-none-any.whl (983 kB)
+2025-07-18T09:56:42.8652004Z      ------------------------------------- 983.3/983.3 kB 15.3 MB/s eta 0:00:00
+2025-07-18T09:56:42.9048477Z Collecting pybind11==2.6.2 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 20))
+2025-07-18T09:56:42.9104195Z   Downloading pybind11-2.6.2-py2.py3-none-any.whl (191 kB)
+2025-07-18T09:56:42.9621567Z Collecting wheel==0.37.1 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 21))
+2025-07-18T09:56:42.9661802Z   Downloading wheel-0.37.1-py2.py3-none-any.whl (35 kB)
+2025-07-18T09:56:43.0116887Z Collecting ifaddr==0.1.7 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 22))
+2025-07-18T09:56:43.0173207Z   Downloading ifaddr-0.1.7-py2.py3-none-any.whl (10 kB)
+2025-07-18T09:56:43.0643245Z Collecting pycparser==2.22 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 23))
+2025-07-18T09:56:43.0684656Z   Downloading pycparser-2.22-py3-none-any.whl (117 kB)
+2025-07-18T09:56:43.1237519Z Collecting zipp==3.5.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 24))
+2025-07-18T09:56:43.1285403Z   Downloading zipp-3.5.0-py3-none-any.whl (5.7 kB)
+2025-07-18T09:56:43.1980090Z Collecting urllib3==2.2.3 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 25))
+2025-07-18T09:56:43.3088857Z   Downloading urllib3-2.2.3-py3-none-any.whl (126 kB)
+2025-07-18T09:56:43.3614579Z Collecting jeepney==0.8.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 26))
+2025-07-18T09:56:43.3653659Z   Downloading jeepney-0.8.0-py3-none-any.whl (48 kB)
+2025-07-18T09:56:43.4206204Z Collecting SecretStorage==3.3.3 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 27))
+2025-07-18T09:56:43.4249236Z   Downloading SecretStorage-3.3.3-py3-none-any.whl (15 kB)
+2025-07-18T09:56:43.4991500Z Collecting keyring==25.5.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 28))
+2025-07-18T09:56:43.5031587Z   Downloading keyring-25.5.0-py3-none-any.whl (39 kB)
+2025-07-18T09:56:43.5602829Z Collecting jaraco.classes==3.4.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 29))
+2025-07-18T09:56:43.5792808Z   Downloading jaraco.classes-3.4.0-py3-none-any.whl (6.8 kB)
+2025-07-18T09:56:43.6340441Z Collecting jaraco.functools==4.1.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 30))
+2025-07-18T09:56:43.6380583Z   Downloading jaraco.functools-4.1.0-py3-none-any.whl (10 kB)
+2025-07-18T09:56:43.6891958Z Collecting jaraco.context==6.0.1 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 31))
+2025-07-18T09:56:43.6931090Z   Downloading jaraco.context-6.0.1-py3-none-any.whl (6.8 kB)
+2025-07-18T09:56:43.7532274Z Collecting more_itertools==10.5.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 32))
+2025-07-18T09:56:43.7572096Z   Downloading more_itertools-10.5.0-py3-none-any.whl (60 kB)
+2025-07-18T09:56:43.9140652Z Collecting charset-normalizer==2.1.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 33))
+2025-07-18T09:56:43.9194403Z   Downloading charset_normalizer-2.1.0-py3-none-any.whl (39 kB)
+2025-07-18T09:56:44.0423854Z Collecting twisted-iocpsupport==1.0.2 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 34))
+2025-07-18T09:56:44.0477401Z   Downloading twisted-iocpsupport-1.0.2.tar.gz (10 kB)
+2025-07-18T09:56:44.1302566Z   Installing build dependencies: started
+2025-07-18T09:56:49.6479618Z   Installing build dependencies: finished with status 'done'
+2025-07-18T09:56:49.6495087Z   Getting requirements to build wheel: started
+2025-07-18T09:56:52.8445112Z   Getting requirements to build wheel: finished with status 'done'
+2025-07-18T09:56:52.8470630Z   Preparing metadata (pyproject.toml): started
+2025-07-18T09:56:53.4878995Z   Preparing metadata (pyproject.toml): finished with status 'done'
+2025-07-18T09:56:53.5265674Z Collecting pywin32-ctypes==0.2.3 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 35))
+2025-07-18T09:56:53.5303989Z   Downloading pywin32_ctypes-0.2.3-py3-none-any.whl (30 kB)
+2025-07-18T09:56:53.7301313Z Collecting pynavlib==0.9.4 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 36))
+2025-07-18T09:56:53.8516069Z   Downloading pynavlib-0.9.4-cp312-cp312-win_amd64.whl (4.8 MB)
+2025-07-18T09:56:54.2315216Z      ---------------------------------------- 4.8/4.8 MB 12.1 MB/s eta 0:00:00
+2025-07-18T09:56:54.2947505Z Collecting colorama==0.4.5 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 37))
+2025-07-18T09:56:54.3140284Z   Downloading colorama-0.4.5-py2.py3-none-any.whl (16 kB)
+2025-07-18T09:56:54.4465051Z Collecting PyQt6==6.6.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 39))
+2025-07-18T09:56:54.4647645Z   Downloading PyQt6-6.6.0-cp37-abi3-win_amd64.whl (6.5 MB)
+2025-07-18T09:56:54.5653135Z      ---------------------------------------- 6.5/6.5 MB 66.9 MB/s eta 0:00:00
+2025-07-18T09:56:54.6750356Z Collecting PyQt6-Qt6==6.6.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 40))
+2025-07-18T09:56:54.6949461Z   Downloading PyQt6_Qt6-6.6.0-py3-none-win_amd64.whl (62.1 MB)
+2025-07-18T09:56:56.3687316Z      --------------------------------------- 62.1/62.1 MB 37.0 MB/s eta 0:00:00
+2025-07-18T09:56:56.5357019Z Collecting PyQt6-sip==13.6.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 41))
+2025-07-18T09:56:56.5547525Z   Downloading PyQt6_sip-13.6.0-cp312-cp312-win_amd64.whl (73 kB)
+2025-07-18T09:56:56.8053212Z Collecting cffi==1.17.1 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 42))
+2025-07-18T09:56:56.8230763Z   Downloading cffi-1.17.1-cp312-cp312-win_amd64.whl (181 kB)
+2025-07-18T09:56:56.9634758Z Collecting colorlog==6.6.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 43))
+2025-07-18T09:56:56.9818873Z   Downloading colorlog-6.6.0-py2.py3-none-any.whl (11 kB)
+2025-07-18T09:56:57.2739300Z Collecting cryptography==44.0.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 44))
+2025-07-18T09:56:57.2948555Z   Downloading cryptography-44.0.0-cp39-abi3-win_amd64.whl (3.2 MB)
+2025-07-18T09:56:57.3933282Z      ---------------------------------------- 3.2/3.2 MB 31.3 MB/s eta 0:00:00
+2025-07-18T09:56:57.7496653Z Collecting mypy==0.931 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 45))
+2025-07-18T09:56:57.7544222Z   Downloading mypy-0.931-py3-none-any.whl (2.4 MB)
+2025-07-18T09:56:57.8417877Z      ---------------------------------------- 2.4/2.4 MB 22.9 MB/s eta 0:00:00
+2025-07-18T09:56:57.9339839Z Collecting mypy-extensions==0.4.3 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 46))
+2025-07-18T09:56:57.9596304Z   Downloading mypy_extensions-0.4.3-py2.py3-none-any.whl (4.5 kB)
+2025-07-18T09:56:58.1144598Z Collecting networkx==2.6.2 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 47))
+2025-07-18T09:56:58.2386927Z   Downloading networkx-2.6.2-py3-none-any.whl (1.9 MB)
+2025-07-18T09:56:58.3130386Z      ---------------------------------------- 1.9/1.9 MB 21.3 MB/s eta 0:00:00
+2025-07-18T09:56:58.4492818Z Collecting numpy-stl==2.10.1 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 48))
+2025-07-18T09:56:58.4680855Z   Downloading numpy-stl-2.10.1.tar.gz (483 kB)
+2025-07-18T09:56:59.0903510Z   Preparing metadata (setup.py): started
+2025-07-18T09:57:00.8589337Z   Preparing metadata (setup.py): finished with status 'done'
+2025-07-18T09:57:00.9196897Z Collecting pyclipper==1.3.0.post5 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 49))
+2025-07-18T09:57:00.9275838Z   Downloading pyclipper-1.3.0.post5-cp312-cp312-win_amd64.whl (108 kB)
+2025-07-18T09:57:00.9860200Z Collecting python-utils==2.3.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 50))
+2025-07-18T09:57:00.9915645Z   Downloading python_utils-2.3.0-py2.py3-none-any.whl (12 kB)
+2025-07-18T09:57:01.2339933Z Collecting scipy==1.11.3 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 51))
+2025-07-18T09:57:01.3181184Z   Downloading scipy-1.11.3-cp312-cp312-win_amd64.whl (43.7 MB)
+2025-07-18T09:57:05.3397256Z      --------------------------------------- 43.7/43.7 MB 10.8 MB/s eta 0:00:00
+2025-07-18T09:57:05.4270637Z Collecting six==1.16.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 52))
+2025-07-18T09:57:05.4308725Z   Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
+2025-07-18T09:57:05.4865383Z Collecting tomli==2.0.1 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 53))
+2025-07-18T09:57:05.4902810Z   Downloading tomli-2.0.1-py3-none-any.whl (12 kB)
+2025-07-18T09:57:05.5680783Z Collecting typing-extensions==4.3.0 (from -r D:\a\Cura\Cura\cura_inst\build\generators\pip_requirements_core_hashes.txt (line 54))
+2025-07-18T09:57:05.5721359Z   Downloading typing_extensions-4.3.0-py3-none-any.whl (25 kB)
+2025-07-18T09:57:05.7609300Z Building wheels for collected packages: twisted-iocpsupport, zope.interface, numpy-stl
+2025-07-18T09:57:05.8578651Z   Building wheel for twisted-iocpsupport (pyproject.toml): started
+2025-07-18T09:57:14.6604002Z   Building wheel for twisted-iocpsupport (pyproject.toml): finished with status 'done'
+2025-07-18T09:57:14.6625035Z   Created wheel for twisted-iocpsupport: filename=twisted_iocpsupport-1.0.2-cp312-cp312-win_amd64.whl size=44614 sha256=6fc31b75f6a60c1c15807e1020c5c0e6f22564bbd4cf82ffe71779d5352cb5f6
+2025-07-18T09:57:14.6627185Z   Stored in directory: c:\users\runneradmin\appdata\local\pip\cache\wheels\58\ab\c6\fc0540e29450778696ba408511d20b7905a9d0b81d7f494f45
+2025-07-18T09:57:14.6691511Z   DEPRECATION: Building 'zope.interface' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'zope.interface'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+2025-07-18T09:57:14.6693684Z   Building wheel for zope.interface (setup.py): started
+2025-07-18T09:57:17.1993466Z   Building wheel for zope.interface (setup.py): finished with status 'done'
+2025-07-18T09:57:17.2010023Z   Created wheel for zope.interface: filename=zope_interface-5.4.0-cp312-cp312-win_amd64.whl size=210895 sha256=8692ee1cc8fb004efe8aa5e91066a5155426cf0f63a8df9c11d278475fd7923a
+2025-07-18T09:57:17.2012660Z   Stored in directory: c:\users\runneradmin\appdata\local\pip\cache\wheels\57\b8\5c\fd78112637ca87123f10a10933377b56b2e93d1221d7e9af97
+2025-07-18T09:57:17.2101434Z   DEPRECATION: Building 'numpy-stl' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'numpy-stl'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+2025-07-18T09:57:17.2103881Z   Building wheel for numpy-stl (setup.py): started
+2025-07-18T09:57:17.6592743Z   Building wheel for numpy-stl (setup.py): finished with status 'done'
+2025-07-18T09:57:17.6608199Z   Created wheel for numpy-stl: filename=numpy_stl-2.10.1-py3-none-any.whl size=17601 sha256=d30ce773d223044baa5620af631439abb6ab3527accf2e65aef49d94d0515512
+2025-07-18T09:57:17.6610825Z   Stored in directory: c:\users\runneradmin\appdata\local\pip\cache\wheels\ba\9e\72\4403fc00f4c927e7fd19a9a5da8ea280318878526b423ed82d
+2025-07-18T09:57:17.6648259Z Successfully built twisted-iocpsupport zope.interface numpy-stl
+2025-07-18T09:57:17.8259405Z Installing collected packages: twisted-iocpsupport, pyserial, PyQt6-Qt6, pyclipper, mypy-extensions, incremental, ifaddr, constantly, chardet, zipp, zeroconf, wheel, urllib3, typing-extensions, tomli, six, setuptools, pywin32-ctypes, PyQt6-sip, pynavlib, pycparser, pybind11, numpy, networkx, more_itertools, jeepney, jaraco.context, idna, cython, colorama, charset-normalizer, certifi, attrs, zope.interface, trimesh, shapely, sentry-sdk, scipy, requests, python-utils, PyQt6, mypy, jaraco.functools, jaraco.classes, importlib-metadata, hyperlink, colorlog, cffi, automat, twisted, numpy-stl, keyring, cryptography, SecretStorage
+2025-07-18T09:57:19.4477111Z   Attempting uninstall: wheel
+2025-07-18T09:57:19.4496050Z     Found existing installation: wheel 0.45.1
+2025-07-18T09:57:19.4597962Z     Uninstalling wheel-0.45.1:
+2025-07-18T09:57:19.4643275Z       Successfully uninstalled wheel-0.45.1
+2025-07-18T09:57:19.6688280Z   Attempting uninstall: setuptools
+2025-07-18T09:57:19.6709335Z     Found existing installation: setuptools 80.9.0
+2025-07-18T09:57:19.7679799Z     Uninstalling setuptools-80.9.0:
+2025-07-18T09:57:19.8287906Z       Successfully uninstalled setuptools-80.9.0
+2025-07-18T09:57:40.7720612Z 
+2025-07-18T09:57:40.7787546Z Successfully installed PyQt6-6.6.0 PyQt6-Qt6-6.6.0 PyQt6-sip-13.6.0 SecretStorage-3.3.3 attrs-21.3.0 automat-20.2.0 certifi-2023.5.7 cffi-1.17.1 chardet-3.0.4 charset-normalizer-2.1.0 colorama-0.4.5 colorlog-6.6.0 constantly-15.1.0 cryptography-44.0.0 cython-0.29.26 hyperlink-21.0.0 idna-2.8 ifaddr-0.1.7 importlib-metadata-4.10.0 incremental-22.10.0 jaraco.classes-3.4.0 jaraco.context-6.0.1 jaraco.functools-4.1.0 jeepney-0.8.0 keyring-25.5.0 more_itertools-10.5.0 mypy-0.931 mypy-extensions-0.4.3 networkx-2.6.2 numpy-1.26.1 numpy-stl-2.10.1 pybind11-2.6.2 pyclipper-1.3.0.post5 pycparser-2.22 pynavlib-0.9.4 pyserial-3.4 python-utils-2.3.0 pywin32-ctypes-0.2.3 requests-2.32.3 scipy-1.11.3 sentry-sdk-0.13.5 setuptools-75.6.0 shapely-2.0.6 six-1.16.0 tomli-2.0.1 trimesh-3.9.36 twisted-21.2.0 twisted-iocpsupport-1.0.2 typing-extensions-4.3.0 urllib3-2.2.3 wheel-0.37.1 zeroconf-0.31.0 zipp-3.5.0 zope.interface-5.4.0
+2025-07-18T09:57:41.4318998Z conanfile.py (cura/5.11.0-alpha.0): Calling generate()
+2025-07-18T09:57:41.4319772Z conanfile.py (cura/5.11.0-alpha.0): Generators folder: D:\a\Cura\Cura\cura_inst\build\generators
+2025-07-18T09:57:41.6239943Z conanfile.py (cura/5.11.0-alpha.0): Write CuraVersion.py to D:\a\Cura\Cura\_cura_sources
+2025-07-18T09:57:41.6241369Z conanfile.py (cura/5.11.0-alpha.0): Collecting conan installs
+2025-07-18T09:57:41.6244154Z conanfile.py (cura/5.11.0-alpha.0): Collecting python installs
+2025-07-18T09:57:41.6247777Z conanfile.py (cura/5.11.0-alpha.0): RUN: python collect_python_installs.py
+2025-07-18T09:57:41.9073298Z 
+2025-07-18T09:57:41.9271637Z conanfile.py (cura/5.11.0-alpha.0): WARN: Source URL for PyQt6 (https://www.riverbankcomputing.com/software/pyqt/) doesn't seem to be a supported repository
+2025-07-18T09:57:41.9364389Z conanfile.py (cura/5.11.0-alpha.0): WARN: Source URL for PyQt6-Qt6 (https://www.riverbankcomputing.com/software/pyqt/) doesn't seem to be a supported repository
+2025-07-18T09:57:41.9455983Z conanfile.py (cura/5.11.0-alpha.0): WARN: Source URL for PyQt6-sip (https://www.riverbankcomputing.com/software/sip/) doesn't seem to be a supported repository
+2025-07-18T09:57:42.2070266Z conanfile.py (cura/5.11.0-alpha.0): WARN: Source URL for charon (http://pypi.python.org/pypi/charon/) doesn't seem to be a supported repository
+2025-07-18T09:57:42.5845336Z conanfile.py (cura/5.11.0-alpha.0): WARN: Source URL for cython (http://cython.org/) doesn't seem to be a supported repository
+2025-07-18T09:57:44.3746488Z Could not find 'D:\a\Cura\Cura\_cura_sources\resources\themes\daily_test_colors.json'. Won't generate rotating colors for alpha builds.
+2025-07-18T09:57:44.8744904Z conanfile.py (cura/5.11.0-alpha.0): Generating aggregated env files
+2025-07-18T09:57:44.8745744Z conanfile.py (cura/5.11.0-alpha.0): Generated aggregated env files: ['conanrun.bat', 'conanbuild.bat']
+2025-07-18T09:57:44.8746320Z Install finished successfully

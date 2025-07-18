@@ -90,31 +90,148 @@ jobs:
             Write-Host "Conan version:"
             & "$pydir\python.exe" -m pip show conan
             cd _cura_sources
+            Write-Host "Running conan install..."
             conan install . --build=missing --update -g VirtualPythonEnv -of ../cura_inst
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "Conan install failed with exit code $LASTEXITCODE"
+                exit $LASTEXITCODE
+            }
+            cd ..
+            Write-Host "Checking generated files:"
+            if (Test-Path "cura_inst") {
+                Write-Host "cura_inst directory exists"
+                Write-Host "Contents of cura_inst:"
+                Get-ChildItem "cura_inst" -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
+                Write-Host "Looking for specific files:"
+                Write-Host "conanrun.bat exists: $(Test-Path 'cura_inst\conanrun.bat')"
+                Write-Host "packaging directory exists: $(Test-Path 'cura_inst\packaging')"
+                if (Test-Path "cura_inst\packaging") {
+                    Write-Host "Contents of packaging directory:"
+                    Get-ChildItem "cura_inst\packaging" -Recurse | Select-Object FullName | Format-Table -AutoSize
+                }
+            } else {
+                Write-Error "cura_inst directory not found!"
+                exit 1
+            }
 
       - name: Create the Cura distribution with pyinstaller
         id: prepare-distribution
         shell: cmd
         run: |
-            call cura_inst\conanrun.bat
+            echo "=== Debugging cura_inst directory ==="
+            if exist "cura_inst" (
+                echo "cura_inst directory exists"
+                dir cura_inst
+                echo "Checking for conanrun.bat:"
+                if exist "cura_inst\conanrun.bat" (
+                    echo "conanrun.bat found"
+                    type cura_inst\conanrun.bat
+                ) else (
+                    echo "ERROR: conanrun.bat not found!"
+                    echo "Available files in cura_inst:"
+                    dir cura_inst /s
+                    exit /b 1
+                )
+            ) else (
+                echo "ERROR: cura_inst directory not found!"
+                exit /b 1
+            )
 
+            echo "=== Calling conanrun.bat ==="
+            call cura_inst\conanrun.bat
+            if %ERRORLEVEL% neq 0 (
+                echo "conanrun.bat failed with error level %ERRORLEVEL%"
+                exit /b %ERRORLEVEL%
+            )
+
+            echo "=== Creating Python virtual environment ==="
             python -m venv cura_installer_venv
             call cura_installer_venv\Scripts\Activate.bat
 
-            python -m pip install -r cura_inst\packaging\pip_requirements_core_basic.txt --no-warn-script-location
-            python -m pip install -r cura_inst\packaging\pip_requirements_core_hashes.txt --no-warn-script-location
-            python -m pip install -r cura_inst\packaging\pip_requirements_installer_basic.txt --no-warn-script-location
+            echo "=== Checking Python environment ==="
+            python --version
+            pip --version
+            echo "Python path: %PYTHON%"
+            echo "Current PATH: %PATH%"
 
+            echo "=== Checking for pip requirements files ==="
+            if exist "cura_inst\packaging" (
+                echo "packaging directory exists"
+                dir cura_inst\packaging
+            ) else (
+                echo "ERROR: packaging directory not found!"
+                echo "Contents of cura_inst:"
+                dir cura_inst /s
+                exit /b 1
+            )
+
+            if exist "cura_inst\packaging\pip_requirements_core_basic.txt" (
+                echo "Installing core basic requirements..."
+                python -m pip install -r cura_inst\packaging\pip_requirements_core_basic.txt --no-warn-script-location
+            ) else (
+                echo "WARNING: pip_requirements_core_basic.txt not found"
+            )
+
+            if exist "cura_inst\packaging\pip_requirements_core_hashes.txt" (
+                echo "Installing core hashes requirements..."
+                python -m pip install -r cura_inst\packaging\pip_requirements_core_hashes.txt --no-warn-script-location
+            ) else (
+                echo "WARNING: pip_requirements_core_hashes.txt not found"
+            )
+
+            if exist "cura_inst\packaging\pip_requirements_installer_basic.txt" (
+                echo "Installing installer requirements..."
+                python -m pip install -r cura_inst\packaging\pip_requirements_installer_basic.txt --no-warn-script-location
+            ) else (
+                echo "WARNING: pip_requirements_installer_basic.txt not found"
+            )
+
+            echo "=== Running prepare_installer.py ==="
             python Cura-workflows\runner_scripts\prepare_installer.py --os ${{ runner.os }} --architecture X64 ${{ inputs.enterprise && '--enterprise' || '' }} ${{ inputs.private_data && '--internal' || '' }} --summary-output %GITHUB_STEP_SUMMARY% --variables-output %GITHUB_OUTPUT%
+            if %ERRORLEVEL% neq 0 (
+                echo "prepare_installer.py failed with error level %ERRORLEVEL%"
+                exit /b %ERRORLEVEL%
+            )
 
-            pyinstaller cura_inst\UltiMaker-Cura.spec
+            echo "=== Checking for pyinstaller spec file ==="
+            if exist "cura_inst\UltiMaker-Cura.spec" (
+                echo "UltiMaker-Cura.spec found, running pyinstaller..."
+                pyinstaller cura_inst\UltiMaker-Cura.spec
+            ) else (
+                echo "ERROR: UltiMaker-Cura.spec not found"
+                echo "Contents of cura_inst:"
+                dir cura_inst
+                exit /b 1
+            )
 
       - name: Copy precompiled CuraEngine.exe
         run: |
+            Write-Host "=== Checking for precompiled CuraEngine.exe ==="
+            Write-Host "Current directory: $(Get-Location)"
+            Write-Host "Contents of current directory:"
+            Get-ChildItem . | Select-Object Name, Length | Format-Table -AutoSize
+            Write-Host "Contents of _cura_sources:"
+            if (Test-Path "_cura_sources") {
+                Get-ChildItem "_cura_sources" | Select-Object Name, Length | Format-Table -AutoSize
+            } else {
+                Write-Host "_cura_sources directory not found"
+            }
+            Write-Host "Contents of dist:"
+            if (Test-Path "dist") {
+                Get-ChildItem "dist" -Recurse | Select-Object FullName | Format-Table -AutoSize
+            } else {
+                Write-Host "dist directory not found"
+            }
+
             if (Test-Path "_cura_sources\CuraEngine.exe") {
                 Write-Host "Found precompiled CuraEngine.exe, copying to distribution"
-                Copy-Item "_cura_sources\CuraEngine.exe" "dist\UltiMaker-Cura\CuraEngine.exe" -Force
-                Write-Host "CuraEngine.exe copied successfully"
+                if (Test-Path "dist\UltiMaker-Cura") {
+                    Copy-Item "_cura_sources\CuraEngine.exe" "dist\UltiMaker-Cura\CuraEngine.exe" -Force
+                    Write-Host "CuraEngine.exe copied successfully to dist\UltiMaker-Cura\"
+                } else {
+                    Write-Error "dist\UltiMaker-Cura directory not found!"
+                    exit 1
+                }
             } else {
                 Write-Error "CuraEngine.exe not found in _cura_sources directory. Please place the precompiled CuraEngine.exe file in the Cura project root."
                 exit 1
