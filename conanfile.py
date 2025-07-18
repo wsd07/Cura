@@ -445,18 +445,24 @@ class CuraConan(ConanFile):
                 self.output.error(f"Missing folder {src_path} for pyinstaller data {data}")
                 if "package" in data:
                     pkg_name = data["package"]
-                    if pkg_name in self.dependencies:
-                        dep = self.dependencies[pkg_name]
+                    dep_found = None
+                    for dep in self.dependencies.host:
+                        if dep.ref.name == pkg_name:
+                            dep_found = dep
+                            break
+
+                    if dep_found:
                         self.output.error(f"Package {pkg_name} found in dependencies:")
-                        self.output.error(f"  - package_folder: {dep.package_folder}")
-                        self.output.error(f"  - ref: {dep.ref}")
-                        if hasattr(dep, 'cpp_info'):
-                            self.output.error(f"  - cpp_info.bindirs: {dep.cpp_info.bindirs}")
-                            self.output.error(f"  - cpp_info.libdirs: {dep.cpp_info.libdirs}")
-                            self.output.error(f"  - cpp_info.resdirs: {dep.cpp_info.resdirs}")
+                        self.output.error(f"  - package_folder: {dep_found.package_folder}")
+                        self.output.error(f"  - ref: {dep_found.ref}")
+                        if hasattr(dep_found, 'cpp_info'):
+                            self.output.error(f"  - cpp_info.bindirs: {dep_found.cpp_info.bindirs}")
+                            self.output.error(f"  - cpp_info.libdirs: {dep_found.cpp_info.libdirs}")
+                            self.output.error(f"  - cpp_info.resdirs: {dep_found.cpp_info.resdirs}")
                     else:
                         self.output.error(f"Package {pkg_name} NOT found in dependencies")
-                        self.output.error(f"Available dependencies: {list(self.dependencies.keys())}")
+                        available_deps = [dep.ref.name for dep in self.dependencies.host]
+                        self.output.error(f"Available dependencies: {available_deps}")
                 raise ConanException(f"Missing folder {src_path} for pyinstaller data {data}")
 
             datas.append((str(src_path), data["dst"]))
@@ -477,11 +483,16 @@ class CuraConan(ConanFile):
                 self.output.error(f"Missing folder {src_path} for pyinstaller binary {binary}")
                 if "package" in binary:
                     pkg_name = binary["package"]
-                    if pkg_name in self.dependencies:
-                        dep = self.dependencies[pkg_name]
+                    dep_found = None
+                    for dep in self.dependencies.host:
+                        if dep.ref.name == pkg_name:
+                            dep_found = dep
+                            break
+
+                    if dep_found:
                         self.output.error(f"Binary package {pkg_name} found in dependencies:")
-                        self.output.error(f"  - package_folder: {dep.package_folder}")
-                        self.output.error(f"  - ref: {dep.ref}")
+                        self.output.error(f"  - package_folder: {dep_found.package_folder}")
+                        self.output.error(f"  - ref: {dep_found.ref}")
                     else:
                         self.output.error(f"Binary package {pkg_name} NOT found in dependencies")
                 raise ConanException(f"Missing folder {src_path} for pyinstaller binary {binary}")
@@ -688,9 +699,9 @@ class CuraConan(ConanFile):
         self.output.info(f"Debug: source_folder = {self.source_folder}")
 
         # Debug dependencies information
-        self.output.info(f"Debug: Available dependencies: {list(self.dependencies.keys())}")
-        for dep_name, dep in self.dependencies.items():
-            self.output.info(f"Debug: Dependency {dep_name}:")
+        self.output.info("Debug: Available dependencies:")
+        for dep in self.dependencies.host:
+            self.output.info(f"Debug: Dependency {dep.ref.name}:")
             self.output.info(f"  - package_folder: {dep.package_folder}")
             self.output.info(f"  - ref: {dep.ref}")
 
