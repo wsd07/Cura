@@ -135,9 +135,23 @@ runs:
         conan profile detect -f
         conan config install https://github.com/wsd07/conan-config.git -a "-b ${{ inputs.conan_config_branch }}"
 
+        # Force Conan to use the correct Python version
+        echo "Python version check:"
+        python --version
+        which python || where python
+
+        # Set Python path for Conan
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+          echo "Setting Python path for Windows..."
+          export CONAN_USER_HOME="$HOME"
+          python_path=$(which python || where python | head -1)
+          echo "Using Python: $python_path"
+        fi
+
         # Build and create packages from your repositories
         echo "Building CuraEngine from wsd07/CuraEngine..."
         cd CuraEngine
+        python -c "import sys; print('Python version:', sys.version)"
         conan create . --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing --build=missing
         cd ..
 

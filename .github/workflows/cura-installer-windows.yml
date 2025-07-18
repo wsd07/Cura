@@ -71,7 +71,10 @@ jobs:
         with:
           install_system_dependencies: true
           repository_path: _cura_sources # we don't want the actual sources to interfere with the built conan package
-          python_set_env_vars: false
+          python_set_env_vars: true
+        env:
+          PYTHONPATH: C:\hostedtoolcache\windows\Python\3.13.5\x64
+          PATH: C:\hostedtoolcache\windows\Python\3.13.5\x64;C:\hostedtoolcache\windows\Python\3.13.5\x64\Scripts;${{ env.PATH }}
 
       - name: Set packages overrides
         id: set-overrides
