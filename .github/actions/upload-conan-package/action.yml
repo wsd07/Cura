@@ -1,0 +1,24 @@
+# composite action, not to be run on its own, but included in a build script
+
+name: 'Upload conan packages'
+description: 'Uploads one or multiple conan packages, to either the public or private repository'
+
+inputs:
+  package_name:
+    required: false
+    default: "*"
+    type: string
+
+
+runs:
+  using: "composite"
+  steps:
+      - name: Upload the Package(s)
+        shell: bash
+        run: |
+          if [[ -f pydir.txt ]]; then
+            pydir=$(cat pydir.txt)
+            PATH+=":$pydir:$pydir/Scripts"
+          fi
+
+          python Cura-workflows/runner_scripts/upload_conan_package.py "${{ inputs.package_name }}"

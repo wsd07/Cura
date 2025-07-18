@@ -1,0 +1,92 @@
+name: Create Conan package release
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        required: false
+        default: ''
+        type: string
+
+      branch:
+        required: false
+        default: ''
+        type: string
+
+      private_data:
+        required: false
+        default: false
+        type: boolean
+
+      conan_recipe_root:
+        required: false
+        default: "."
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: 'Repository'
+        default: 'Cura'
+        type: choice
+        options:
+          - Cura
+          - Uranium
+          - fdm_materials
+          - Cura-binary-data
+          - CuraEngine
+          - CuraEngine_grpc_definitions
+          - CuraEngine_plugin_gradual_flow
+          - synsepalum-dulcificum
+          - libArcus
+          - libnest2d
+          - libSavitar
+          - pyarcus
+          - pynest2d
+          - pySavitar
+          - NativeCADPlugin
+
+      branch:
+        description: 'Branch'
+        required: false
+        default: 'main'
+        type: string
+
+      conan_recipe_root:
+        description: 'Path to conanfile.py'
+        required: false
+        default: "."
+        type: string
+
+      private_data:
+        description: 'Export to private data'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  conan-recipe-version:
+    name: Calculate version numbers
+    uses: ./.github/workflows/conan-recipe-version.yml
+    with:
+      repository: Ultimaker/${{ inputs.repository }}
+      branch: ${{ inputs.branch }}
+      conan_recipe_root: ${{ inputs.conan_recipe_root }}
+      release: true
+
+  conan-recipe-export:
+    name: Upload package recipe
+    needs: [ conan-recipe-version ]
+    uses: ./.github/workflows/conan-recipe-export.yml
+    with:
+      repository: Ultimaker/${{ inputs.repository }}
+      branch: ${{ inputs.branch }}
+      version: ${{ needs.conan-recipe-version.outputs.version_base }}
+      user: ${{ needs.conan-recipe-version.outputs.user }}
+      channel: ${{ needs.conan-recipe-version.outputs.channel }}
+      private_data: ${{ inputs.private_data }}
+      conan_recipe_root: ${{ inputs.conan_recipe_root }}
+    secrets: inherit

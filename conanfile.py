@@ -441,28 +441,6 @@ class CuraConan(ConanFile):
                 raise ConanException("Misformatted conan data for pyinstaller datas, expected either package or root option")
 
             if not Path(src_path).exists():
-                # Add detailed debugging information
-                self.output.error(f"Missing folder {src_path} for pyinstaller data {data}")
-                if "package" in data:
-                    pkg_name = data["package"]
-                    dep_found = None
-                    for dep in self.dependencies.host:
-                        if dep.ref.name == pkg_name:
-                            dep_found = dep
-                            break
-
-                    if dep_found:
-                        self.output.error(f"Package {pkg_name} found in dependencies:")
-                        self.output.error(f"  - package_folder: {dep_found.package_folder}")
-                        self.output.error(f"  - ref: {dep_found.ref}")
-                        if hasattr(dep_found, 'cpp_info'):
-                            self.output.error(f"  - cpp_info.bindirs: {dep_found.cpp_info.bindirs}")
-                            self.output.error(f"  - cpp_info.libdirs: {dep_found.cpp_info.libdirs}")
-                            self.output.error(f"  - cpp_info.resdirs: {dep_found.cpp_info.resdirs}")
-                    else:
-                        self.output.error(f"Package {pkg_name} NOT found in dependencies")
-                        available_deps = [dep.ref.name for dep in self.dependencies.host]
-                        self.output.error(f"Available dependencies: {available_deps}")
                 raise ConanException(f"Missing folder {src_path} for pyinstaller data {data}")
 
             datas.append((str(src_path), data["dst"]))
@@ -479,22 +457,6 @@ class CuraConan(ConanFile):
                 raise ConanException("Misformatted conan data for pyinstaller binaries, expected either package or root option")
 
             if not Path(src_path).exists():
-                # Add detailed debugging information for binaries
-                self.output.error(f"Missing folder {src_path} for pyinstaller binary {binary}")
-                if "package" in binary:
-                    pkg_name = binary["package"]
-                    dep_found = None
-                    for dep in self.dependencies.host:
-                        if dep.ref.name == pkg_name:
-                            dep_found = dep
-                            break
-
-                    if dep_found:
-                        self.output.error(f"Binary package {pkg_name} found in dependencies:")
-                        self.output.error(f"  - package_folder: {dep_found.package_folder}")
-                        self.output.error(f"  - ref: {dep_found.ref}")
-                    else:
-                        self.output.error(f"Binary package {pkg_name} NOT found in dependencies")
                 raise ConanException(f"Missing folder {src_path} for pyinstaller binary {binary}")
 
             for bin in Path(src_path).glob(binary["binary"] + "*[.exe|.dll|.so|.dylib|.so.]*"):
@@ -693,61 +655,17 @@ class CuraConan(ConanFile):
         ''' Note: this deploy step is actually used to prepare for building a Cura distribution with pyinstaller, which is not
             the original purpose in the Conan philosophy '''
 
-        # Debug information
-        self.output.info(f"Debug: package_folder = {self.package_folder}")
-        self.output.info(f"Debug: deploy_folder = {self.deploy_folder}")
-        self.output.info(f"Debug: source_folder = {self.source_folder}")
-
-        # Debug dependencies information
-        self.output.info("Debug: Available dependencies:")
-        for dep in self.dependencies.host:
-            self.output.info(f"Debug: Dependency {dep.ref.name}:")
-            self.output.info(f"  - package_folder: {dep.package_folder}")
-            self.output.info(f"  - ref: {dep.ref}")
-
-        # Check if package_folder is None and use source_folder as fallback
-        if self.package_folder is None:
-            self.output.warning("package_folder is None, using source_folder as fallback")
-            package_folder = self.source_folder
-            # When using source_folder, we need to use cpp.package paths instead of cpp_info paths
-            bindirs = self.cpp.package.bindirs
-            resdirs = self.cpp.package.resdirs
-            libdirs = self.cpp.package.libdirs
-        else:
-            package_folder = self.package_folder
-            bindirs = self.cpp_info.bindirs
-            resdirs = self.cpp_info.resdirs
-            libdirs = self.cpp_info.libdirs
-
-        # Only copy if source and destination are different
-        src_path = os.path.join(package_folder, resdirs[2])
-        dst_path = os.path.join(self.deploy_folder, "packaging")
-        if os.path.abspath(src_path) != os.path.abspath(dst_path):
-            copy(self, "*", src_path, dst_path, keep_path=True)
-        else:
-            self.output.info(f"Skipping copy from {src_path} to {dst_path} (same path)")
+        copy(self, "*", os.path.join(self.package_folder, self.cpp.package.resdirs[2]),
+             os.path.join(self.deploy_folder, "packaging"), keep_path=True)
 
         # Copy resources of Cura (keep folder structure) needed by pyinstaller to determine the module structure
-        # Only copy if source and destination are different
-        def safe_copy(src_rel_path, dst_path, keep_path_val):
-            src_path = os.path.join(package_folder, src_rel_path)
-            if os.path.abspath(src_path) != os.path.abspath(dst_path):
-                copy(self, "*", src_path, dst_path, keep_path=keep_path_val)
-            else:
-                self.output.info(f"Skipping copy from {src_path} to {dst_path} (same path)")
-
-        safe_copy(bindirs[0], str(self._base_dir), False)
-        safe_copy(libdirs[0], str(self._site_packages.joinpath("cura")), True)
-        safe_copy(resdirs[0], str(self._share_dir.joinpath("cura", "resources")), True)
-        safe_copy(resdirs[1], str(self._share_dir.joinpath("cura", "plugins")), True)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.bindirs[0]), str(self._base_dir), keep_path = False)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.libdirs[0]), str(self._site_packages.joinpath("cura")), keep_path = True)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[0]), str(self._share_dir.joinpath("cura", "resources")), keep_path = True)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[1]), str(self._share_dir.joinpath("cura", "plugins")), keep_path = True)
 
         # Copy the cura_resources resources from the package
-        # Only remove if the path exists and is not the current directory
-        rm_path = os.path.join(package_folder, resdirs[0])
-        if os.path.exists(rm_path) and os.path.abspath(rm_path) != os.path.abspath(self.source_folder):
-            rm(self, "conanfile.py", rm_path)
-        else:
-            self.output.info(f"Skipping rm conanfile.py from {rm_path} (same as source or doesn't exist)")
+        rm(self, "conanfile.py", os.path.join(self.package_folder, self.cpp.package.resdirs[0]))
         cura_resources = self.dependencies["cura_resources"].cpp_info
         for res_dir in cura_resources.resdirs:
             copy(self, "*", res_dir, str(self._share_dir.joinpath("cura", "resources", Path(res_dir).name)), keep_path = True)
@@ -759,37 +677,16 @@ class CuraConan(ConanFile):
         copy(self, "*", uranium.libdirs[0], str(self._site_packages.joinpath("UM")), keep_path = True)
 
         self._delete_unwanted_binaries(self._site_packages)
-        self._delete_unwanted_binaries(package_folder)
+        self._delete_unwanted_binaries(self.package_folder)
         self._delete_unwanted_binaries(self._base_dir)
         self._delete_unwanted_binaries(self._share_dir)
 
         entitlements_file = "'{}'".format(Path(self.deploy_folder, "packaging", "MacOS", "cura.entitlements"))
-
-        # Debug information
-        self.output.info(f"Debug: package_folder = {self.package_folder}")
-        self.output.info(f"Debug: using package_folder = {package_folder}")
-        self.output.info(f"Debug: bindirs = {bindirs}")
-        self.output.info(f"Debug: resdirs = {resdirs}")
-        self.output.info(f"Debug: settings.os = {self.settings.os}")
-
-        try:
-            entrypoint_location = "'{}'".format(os.path.join(package_folder, bindirs[0], self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])).replace("\\", "\\\\")
-            self.output.info(f"Debug: entrypoint_location = {entrypoint_location}")
-
-            icon_path = "'{}'".format(os.path.join(package_folder, resdirs[2], self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])).replace("\\", "\\\\")
-            self.output.info(f"Debug: icon_path = {icon_path}")
-
-            self._generate_pyinstaller_spec(location = self.deploy_folder,
-                                            entrypoint_location = entrypoint_location,
-                                            icon_path = icon_path,
-                                            entitlements_file = entitlements_file if self.settings.os == "Macos" else "None",
-                                            cura_source_folder = package_folder)
-        except Exception as e:
-            self.output.error(f"Error in _generate_pyinstaller_spec: {str(e)}")
-            self.output.error(f"Error type: {type(e).__name__}")
-            import traceback
-            self.output.error(f"Traceback: {traceback.format_exc()}")
-            raise
+        self._generate_pyinstaller_spec(location = self.deploy_folder,
+                                        entrypoint_location = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.bindirs[0], self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])).replace("\\", "\\\\"),
+                                        icon_path = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.resdirs[2], self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])).replace("\\", "\\\\"),
+                                        entitlements_file = entitlements_file if self.settings.os == "Macos" else "None",
+                                        cura_source_folder = self.package_folder)
 
     def package(self):
         copy(self, "cura_app.py", src = self.source_folder, dst = os.path.join(self.package_folder, self.cpp.package.bindirs[0]))

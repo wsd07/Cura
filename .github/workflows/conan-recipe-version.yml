@@ -1,0 +1,91 @@
+name: Get Conan Recipe Version
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        required: false
+        default: ''
+        type: string
+
+      branch:
+        required: false
+        default: ''
+        type: string
+
+      conan_recipe_root:
+        required: false
+        default: "."
+        type: string
+
+      release:
+        required: false
+        default: false
+        type: boolean
+
+      internal:
+        required: false
+        default: false
+        type: boolean
+
+      version:
+        required: false
+        default: ''
+        type: string
+
+    outputs:
+      package_name:
+        description: "Package name"
+        value: ${{ inputs.package_name }}
+
+      version_base:
+        description: "Base version number: <major>.<minor>.<patch>-<releasetag>"
+        value: ${{ jobs.make-versions.outputs.version_base }}
+
+      version_full:
+        description: "Full unique version number: <major>.<minor>.<patch>-<releasetag>+<commit>"
+        value: ${{ jobs.make-versions.outputs.version_full }}
+
+      channel:
+        description: "The conan channel"
+        value: ${{ jobs.make-versions.outputs.channel }}
+
+      user:
+        description: "The conan user"
+        value: ${{ jobs.make-versions.outputs.user }}
+
+      package_version_full:
+        description: "The unique Conan package id: <name>/<version>+<commit>@<user>/<channel>"
+        value: ${{ jobs.make-versions.outputs.package_version_full }}
+
+      package_version_latest:
+        description: "The most recent version for the user+channel: <name>/<version>@<user>/<channel>"
+        value: ${{ jobs.make-versions.outputs.package_version_latest }}
+
+jobs:
+  make-versions:
+    name: Generate version numbers
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      version_base: ${{ steps.get-conan-broadcast-data.outputs.version_base }}
+      version_full: ${{ steps.get-conan-broadcast-data.outputs.version_full }}
+      channel: ${{ steps.get-conan-broadcast-data.outputs.channel }}
+      user: ${{ steps.get-conan-broadcast-data.outputs.user }}
+      package_version_full: ${{ steps.get-conan-broadcast-data.outputs.package_version_full }}
+      package_version_latest: ${{ steps.get-conan-broadcast-data.outputs.package_version_latest }}
+
+    steps:
+      - name: Setup the build environment
+        uses: ultimaker/cura-workflows/.github/actions/setup-build-environment@main
+        with:
+          repository: ${{ inputs.repository }}
+          branch: ${{ inputs.branch }}
+
+      - id: get-conan-broadcast-data
+        name: Get Conan broadcast data
+        run: |
+          package_name=$(conan inspect "${{ inputs.conan_recipe_root }}" | awk '/^name:/ {print $2}')
+
+          python Cura-workflows/runner_scripts/get_conan_broadcast_data.py --package_name "$package_name" --sha "${{ github.sha }}" --event_name "${{ github.event_name }}" --ref_name "${{ inputs.branch != '' && inputs.branch || github.ref_name }}" --head_ref "${{ github.head_ref }}" ${{ inputs.release && '--release' || '' }} --version "${{ inputs.version }}" ${{ inputs.internal && '--internal' || '' }} --version-output "$GITHUB_OUTPUT" --summary-output "$GITHUB_STEP_SUMMARY"

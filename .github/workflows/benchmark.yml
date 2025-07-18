@@ -1,0 +1,84 @@
+name: Benchmark
+
+on:
+  workflow_call:
+    inputs:
+      conan_extra_args:
+        required: false
+        default: ""
+        type: string
+
+      benchmark_cmd:
+        required: true
+        type: string
+
+      name:
+        required: true
+        type: string
+
+      output_file_path:
+        required: true
+        type: string
+
+      data_dir:
+        required: true
+        type: string
+
+      tool:
+        required: true
+        type: string
+
+      conan_internal:
+        required: false
+        default: false
+        type: boolean
+
+      alert_comment_cc_users:
+        required: false
+        default: ""
+        type: string
+
+      alert_threshold:
+        required: false
+        default: "150%"
+        type: string
+
+permissions:
+  contents: write
+  deployments: write
+
+jobs:
+  benchmark:
+    name: Run benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup the build environment
+        uses: ultimaker/cura-workflows/.github/actions/setup-build-environment@main
+        with:
+          install_system_dependencies: true
+
+      - name: Install dependencies and build
+        run: conan build . -s build_type=Release --build=missing --update -g VirtualRunEnv ${{ inputs.conan_extra_args }}
+
+      - name: Run benchmark
+        id: run-test
+        run: |
+          source generators/conanrun.sh
+          ${{ inputs.benchmark_cmd }}
+        working-directory: build/Release
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: ${{ inputs.name }}
+          output-file-path: build/Release/${{ inputs.output_file_path }}
+          gh-repository: github.com/Ultimaker/CuraEngineBenchmarks
+          gh-pages-branch: main
+          benchmark-data-dir-path: ${{ inputs.data_dir }}
+          tool: ${{ inputs.tool }}
+          github-token: ${{ secrets.CURA_BENCHMARK_PAT }}
+          auto-push: true
+          max-items-in-chart: 250
+          alert-threshold: ${{ inputs.alert_threshold }}
+          comment-on-alert: ${{ inputs.alert_comment_cc_users != '' }}
+          alert-comment-cc-users: ${{ inputs.alert_comment_cc_users }}

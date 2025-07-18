@@ -1,0 +1,124 @@
+name: Linux Installer
+run-name: ${{ inputs.cura_conan_version }} for Linux-X64 by @${{ github.actor }}
+
+on:
+  workflow_call:
+    inputs:
+      cura_conan_version:
+        description: 'Cura Conan Version'
+        default: ''
+        required: false
+        type: string
+
+      package_overrides:
+        description: 'List of specific packages to be used (space-separated)'
+        default: ''
+        required: false
+        type: string
+
+      conan_args:
+        description: 'Conan args'
+        default: ''
+        required: false
+        type: string
+
+      enterprise:
+        description: 'Build Cura as an Enterprise edition'
+        default: false
+        required: true
+        type: boolean
+
+      staging:
+        description: 'Use staging API'
+        default: false
+        required: true
+        type: boolean
+
+      operating_system:
+        description: 'OS'
+        required: true
+        default: 'ubuntu-22.04'
+        type: string
+
+      private_data:
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  cura-installer-create:
+    name: Build linux AppImage
+    runs-on: ${{ inputs.operating_system }}
+
+    steps:
+      - name: Setup the build environment
+        id: setup-environment
+        uses: ultimaker/cura-workflows/.github/actions/setup-build-environment@main
+        with:
+          conan_user: ${{ secrets.CONAN_USER }}
+          conan_password: ${{ secrets.CONAN_PASS }}
+          private_data: ${{ inputs.private_data }}
+          install_system_dependencies: true
+          repository_path: _cura_sources # we don't want the actual sources to interfere with the built conan package
+
+      - name: Set packages overrides
+        id: set-overrides
+        uses: ultimaker/cura-workflows/.github/actions/set-package-overrides@main
+        with:
+          package_overrides: ${{ inputs.package_overrides }}
+          profile: installer.jinja
+
+      - name: Install AppImage builder
+        run: |
+          chmod +x ./Cura-workflows/runner_scripts/appimage_setup.sh
+          ./Cura-workflows/runner_scripts/appimage_setup.sh
+
+      - name: Configure GPG Key
+        run: echo -n "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode | gpg --import
+
+      - name: Gather/build the packages
+        run: conan install --requires "${{ inputs.cura_conan_version != '' && inputs.cura_conan_version || format('cura/{0}@ultimaker/testing', steps.setup-environment.outputs.package_version) }}" ${{ inputs.conan_args }} --build=missing --update -of cura_inst --deployer-package="*" --profile ${{ steps.set-overrides.outputs.profile }} -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN }}" ${{ inputs.enterprise && '-o "cura/*:enterprise=True"' || '' }} ${{ inputs.staging && '-o "cura/*:staging=True"' || '' }} ${{ inputs.private_data && '-o "cura/*:internal=True"' || '' }}
+
+      - name: Create the Cura distribution with pyinstaller
+        id: prepare-distribution
+        run: |
+          source cura_inst/conanrun.sh
+          python -m venv cura_installer_venv
+          source cura_installer_venv/bin/activate
+          ls cura_inst/packaging/pip_requirements_{core,installer}_*.txt | xargs -I {} pip install -r {}
+
+          python Cura-workflows/runner_scripts/prepare_installer.py --os ${{ runner.os }} --architecture X64 ${{ inputs.enterprise && '--enterprise' || '' }} ${{ inputs.private_data && '--internal' || '' }} --summary-output "$GITHUB_STEP_SUMMARY" --variables-output "$GITHUB_OUTPUT"
+
+          pyinstaller ./cura_inst/UltiMaker-Cura.spec
+
+      - name: Create the Linux AppImage (Bash)
+        run: |
+          python ../cura_inst/packaging/AppImage-builder/create_appimage.py ./UltiMaker-Cura "${{ steps.prepare-distribution.outputs.CURA_VERSION_FULL }}" "${{ steps.prepare-distribution.outputs.INSTALLER_FILENAME }}.AppImage"
+          chmod +x "${{ steps.prepare-distribution.outputs.INSTALLER_FILENAME }}.AppImage"
+        working-directory: dist
+
+      - name: Upload the AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.prepare-distribution.outputs.INSTALLER_FILENAME }}-AppImage
+          path: dist/${{ steps.prepare-distribution.outputs.INSTALLER_FILENAME }}.AppImage
+          retention-days: 5
+
+      - name: Upload the asc
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.prepare-distribution.outputs.INSTALLER_FILENAME }}-asc
+          path: dist/${{ steps.prepare-distribution.outputs.INSTALLER_FILENAME }}.AppImage.asc
+          retention-days: 5
+
+      - name: Upload the built Package(s)
+        if: ${{ always() }}
+        uses: ultimaker/cura-workflows/.github/actions/upload-conan-package@main
+        continue-on-error: true
+
+      - name: Clean local cache
+        if: ${{ always() && startsWith(inputs.operating_system, 'self-hosted') }}
+        run: conan remove '*' --lru=1w -c
