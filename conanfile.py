@@ -594,9 +594,10 @@ class CuraConan(ConanFile):
         self._generate_cura_version(str(Path(self.source_folder, "cura")))
 
         # Copy CuraEngine.exe to bindirs of Virtual Python Environment
-        curaengine = self.dependencies["curaengine"].cpp_info
-        copy(self, "CuraEngine.exe", curaengine.bindirs[0], self.source_folder, keep_path = False)
-        copy(self, "CuraEngine", curaengine.bindirs[0], self.source_folder, keep_path = False)
+        # Using precompiled CuraEngine.exe instead of dependency package
+        # curaengine = self.dependencies["curaengine"].cpp_info
+        # copy(self, "CuraEngine.exe", curaengine.bindirs[0], self.source_folder, keep_path = False)
+        # copy(self, "CuraEngine", curaengine.bindirs[0], self.source_folder, keep_path = False)
 
         # Copy the external plugins that we want to bundle with Cura
         if self.options.enterprise:
