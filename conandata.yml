@@ -3,7 +3,7 @@ requirements:
   - "cura_resources/5.11.0-alpha.0@ultimaker/testing"
   - "uranium/5.11.0-alpha.0@ultimaker/testing"
   #- "uranium/5.11.0@wsd07/testing"
-  - "curaengine/5.11.0-alpha.0@ultimaker/testing"
+  #- "curaengine/5.11.0-alpha.0@ultimaker/testing"  # Using precompiled CuraEngine.exe instead
   #- "curaengine/5.11.0@wsd07/testing"
   - "cura_binary_data/5.11.0-alpha.0@ultimaker/testing"
   - "fdm_materials/5.11.0-alpha.0@ultimaker/testing"
@@ -91,11 +91,11 @@ pyinstaller:
             src: "res/resources/materials"
             dst: "share/cura/resources/materials"
     binaries:
-        curaengine:
-            package: "curaengine"
-            src: "bin"
-            dst: "."
-            binary: "CuraEngine"
+        # curaengine:  # Using precompiled CuraEngine.exe instead
+        #     package: "curaengine"
+        #     src: "bin"
+        #     dst: "."
+        #     binary: "CuraEngine"
     hiddenimports:
         - "pySavitar"
         - "pyArcus"

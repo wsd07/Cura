@@ -71,7 +71,7 @@ jobs:
         with:
           install_system_dependencies: true
           repository_path: _cura_sources # we don't want the actual sources to interfere with the built conan package
-          python_set_env_vars: false
+          python_set_env_vars: true
 
       - name: Set packages overrides
         id: set-overrides
@@ -82,8 +82,6 @@ jobs:
 
       - name: Gather/build the packages
         run: |
-            $pydir = type pydir.txt
-            $env:PATH += ";$pydir;$pydir/Scripts"
             cd _cura_sources
             conan install . --build=missing --update -g VirtualPythonEnv -of ../cura_inst
 
@@ -103,6 +101,17 @@ jobs:
             python Cura-workflows\runner_scripts\prepare_installer.py --os ${{ runner.os }} --architecture X64 ${{ inputs.enterprise && '--enterprise' || '' }} ${{ inputs.private_data && '--internal' || '' }} --summary-output %GITHUB_STEP_SUMMARY% --variables-output %GITHUB_OUTPUT%
 
             pyinstaller cura_inst\UltiMaker-Cura.spec
+
+      - name: Copy precompiled CuraEngine.exe
+        run: |
+            if (Test-Path "_cura_sources\CuraEngine.exe") {
+                Write-Host "Found precompiled CuraEngine.exe, copying to distribution"
+                Copy-Item "_cura_sources\CuraEngine.exe" "dist\UltiMaker-Cura\CuraEngine.exe" -Force
+                Write-Host "CuraEngine.exe copied successfully"
+            } else {
+                Write-Error "CuraEngine.exe not found in _cura_sources directory. Please place the precompiled CuraEngine.exe file in the Cura project root."
+                exit 1
+            }
 
       # - name: Sign the internal executables (skipped for personal development)
         # working-directory: dist/UltiMaker-Cura
@@ -146,8 +155,6 @@ jobs:
 
       - name: Create the Windows exe installer (Powershell)
         run: |
-          $pydir = type ../pydir.txt
-          $env:PATH += ";$pydir;$pydir/Scripts"
           python ..\cura_inst\packaging\NSIS\create_windows_installer.py --source_path ../cura_inst --dist_path . --filename "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.exe" --version "${{ steps.prepare-distribution.outputs.CURA_VERSION_FULL }}"
         working-directory: dist
 
@@ -167,8 +174,6 @@ jobs:
 
       - name: Create the Windows msi installer (Powershell)
         run: |
-          $pydir = type ../pydir.txt
-          $env:PATH += ";$pydir;$pydir/Scripts"
           python ..\cura_inst\packaging\msi\create_windows_msi.py --source_path ..\cura_inst --dist_path .\UltiMaker-Cura --filename "${{ steps.prepare-distribution.outputs.INSTALLER_FILENAME }}.msi" --name "${{ steps.prepare-distribution.outputs.CURA_APP_NAME }}" --version "${{ steps.prepare-distribution.outputs.CURA_VERSION_FULL }}"
         working-directory: dist
 
@@ -210,6 +215,4 @@ jobs:
       - name: Clean local cache
         if: ${{ always() && startsWith(inputs.operating_system, 'self-hosted') }}
         run: |
-            $pydir = type pydir.txt
-            $env:PATH += ";$pydir;$pydir/Scripts"
             conan remove '*' --lru=1w -c
