@@ -135,32 +135,18 @@ runs:
         conan profile detect -f
         conan config install https://github.com/wsd07/conan-config.git -a "-b ${{ inputs.conan_config_branch }}"
 
-        # Force Conan to use the correct Python version
-        echo "Python version check:"
-        python --version
-        which python
-
-        # Set Python path for Conan
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
-          echo "Setting Python path for Windows..."
-          export CONAN_USER_HOME="$HOME"
-          python_path=$(which python)
-          echo "Using Python: $python_path"
-        fi
-
-        # Build and create packages from your repositories
-        echo "Building CuraEngine from wsd07/CuraEngine..."
+        # Set up editable packages exactly like local development
+        echo "Setting up CuraEngine as editable..."
         cd CuraEngine
-        python -c "import sys; print('Python version:', sys.version)"
-        conan create . --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing --build=missing
+        conan editable add . --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing
         cd ..
 
-        echo "Building Uranium from wsd07/Uranium..."
+        echo "Setting up Uranium as editable..."
         cd Uranium
-        conan create . --name=uranium --version=5.11.0 --user=wsd07 --channel=testing --build=missing
+        conan editable add . --name=uranium --version=5.11.0 --user=wsd07 --channel=testing
         cd ..
 
-        echo "Custom packages created successfully!"
+        echo "Editable packages setup completed!"
 
         if [[ -f ${{ inputs.repository_path }}/conanfile.py ]]; then
           conan inspect ${{ inputs.repository_path }} > package_details.txt
