@@ -80,6 +80,25 @@ jobs:
           package_overrides: ${{ inputs.package_overrides }}
           profile: installer.jinja
 
+      - name: Build editable packages
+        run: |
+            $pydir = type pydir.txt
+            $env:PATH += ";$pydir;$pydir/Scripts"
+
+            # Build CuraEngine
+            echo "Building CuraEngine..."
+            cd CuraEngine
+            conan install . --build=missing --update
+            conan build .
+            cd ..
+
+            # Build Uranium
+            echo "Building Uranium..."
+            cd Uranium
+            conan install . --build=missing --update
+            conan build .
+            cd ..
+
       - name: Gather/build the packages
         run: |
             $pydir = type pydir.txt

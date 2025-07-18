@@ -78,6 +78,20 @@ runs:
         path: Cura-workflows
         ref: main
 
+    - name: Checkout Uranium repo
+      uses: actions/checkout@v4
+      with:
+        repository: wsd07/Uranium
+        path: Uranium
+        ref: main
+
+    - name: Checkout CuraEngine repo
+      uses: actions/checkout@v4
+      with:
+        repository: wsd07/CuraEngine
+        path: CuraEngine
+        ref: main
+
     - name: Setup Python and pip
       uses: actions/setup-python@v5
       id: setup-python
@@ -120,6 +134,24 @@ runs:
 
         conan profile detect -f
         conan config install https://github.com/wsd07/conan-config.git -a "-b ${{ inputs.conan_config_branch }}"
+
+        # Set up editable packages for development (following 环境搭建指南.md)
+        echo "Setting up editable packages..."
+        echo "Current directory: $(pwd)"
+        echo "Available directories: $(ls -la)"
+
+        echo "Setting up CuraEngine as editable..."
+        cd CuraEngine
+        conan editable add . --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing
+        cd ..
+
+        echo "Setting up Uranium as editable..."
+        cd Uranium
+        conan editable add . --name=uranium --version=5.11.0 --user=wsd07 --channel=testing
+        cd ..
+
+        echo "Editable packages setup completed!"
+        conan editable list
 
         if [[ -f ${{ inputs.repository_path }}/conanfile.py ]]; then
           conan inspect ${{ inputs.repository_path }} > package_details.txt
