@@ -674,17 +674,35 @@ class CuraConan(ConanFile):
             resdirs = self.cpp_info.resdirs
             libdirs = self.cpp_info.libdirs
 
-        copy(self, "*", os.path.join(package_folder, resdirs[2]),
-             os.path.join(self.deploy_folder, "packaging"), keep_path=True)
+        # Only copy if source and destination are different
+        src_path = os.path.join(package_folder, resdirs[2])
+        dst_path = os.path.join(self.deploy_folder, "packaging")
+        if os.path.abspath(src_path) != os.path.abspath(dst_path):
+            copy(self, "*", src_path, dst_path, keep_path=True)
+        else:
+            self.output.info(f"Skipping copy from {src_path} to {dst_path} (same path)")
 
         # Copy resources of Cura (keep folder structure) needed by pyinstaller to determine the module structure
-        copy(self, "*", os.path.join(package_folder, bindirs[0]), str(self._base_dir), keep_path = False)
-        copy(self, "*", os.path.join(package_folder, libdirs[0]), str(self._site_packages.joinpath("cura")), keep_path = True)
-        copy(self, "*", os.path.join(package_folder, resdirs[0]), str(self._share_dir.joinpath("cura", "resources")), keep_path = True)
-        copy(self, "*", os.path.join(package_folder, resdirs[1]), str(self._share_dir.joinpath("cura", "plugins")), keep_path = True)
+        # Only copy if source and destination are different
+        def safe_copy(src_rel_path, dst_path, keep_path_val):
+            src_path = os.path.join(package_folder, src_rel_path)
+            if os.path.abspath(src_path) != os.path.abspath(dst_path):
+                copy(self, "*", src_path, dst_path, keep_path=keep_path_val)
+            else:
+                self.output.info(f"Skipping copy from {src_path} to {dst_path} (same path)")
+
+        safe_copy(bindirs[0], str(self._base_dir), False)
+        safe_copy(libdirs[0], str(self._site_packages.joinpath("cura")), True)
+        safe_copy(resdirs[0], str(self._share_dir.joinpath("cura", "resources")), True)
+        safe_copy(resdirs[1], str(self._share_dir.joinpath("cura", "plugins")), True)
 
         # Copy the cura_resources resources from the package
-        rm(self, "conanfile.py", os.path.join(package_folder, resdirs[0]))
+        # Only remove if the path exists and is not the current directory
+        rm_path = os.path.join(package_folder, resdirs[0])
+        if os.path.exists(rm_path) and os.path.abspath(rm_path) != os.path.abspath(self.source_folder):
+            rm(self, "conanfile.py", rm_path)
+        else:
+            self.output.info(f"Skipping rm conanfile.py from {rm_path} (same as source or doesn't exist)")
         cura_resources = self.dependencies["cura_resources"].cpp_info
         for res_dir in cura_resources.resdirs:
             copy(self, "*", res_dir, str(self._share_dir.joinpath("cura", "resources", Path(res_dir).name)), keep_path = True)
