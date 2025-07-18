@@ -78,20 +78,6 @@ runs:
         path: Cura-workflows
         ref: main
 
-    - name: Checkout Uranium repo
-      uses: actions/checkout@v4
-      with:
-        repository: wsd07/Uranium
-        path: Uranium
-        ref: main
-
-    - name: Checkout CuraEngine repo
-      uses: actions/checkout@v4
-      with:
-        repository: wsd07/CuraEngine
-        path: CuraEngine
-        ref: main
-
     - name: Setup Python and pip
       uses: actions/setup-python@v5
       id: setup-python

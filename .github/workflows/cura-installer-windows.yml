@@ -69,12 +69,12 @@ jobs:
         id: setup-environment
         uses: wsd07/Cura/.github/actions/setup-build-environment@main
         with:
+          conan_user: ${{ secrets.CONAN_USER }}
+          conan_password: ${{ secrets.CONAN_PASS }}
+          private_data: ${{ inputs.private_data }}
           install_system_dependencies: true
           repository_path: _cura_sources # we don't want the actual sources to interfere with the built conan package
-          python_set_env_vars: true
-        env:
-          PYTHONPATH: C:\hostedtoolcache\windows\Python\3.13.5\x64
-          PATH: C:\hostedtoolcache\windows\Python\3.13.5\x64;C:\hostedtoolcache\windows\Python\3.13.5\x64\Scripts;${{ env.PATH }}
+          python_set_env_vars: false
 
       - name: Set packages overrides
         id: set-overrides
@@ -83,31 +83,11 @@ jobs:
           package_overrides: ${{ inputs.package_overrides }}
           profile: installer.jinja
 
-      - name: Build editable packages
-        run: |
-            $pydir = type pydir.txt
-            $env:PATH += ";$pydir;$pydir/Scripts"
-
-            # Build CuraEngine
-            echo "Building CuraEngine..."
-            cd CuraEngine
-            conan install . --build=missing --update
-            conan build .
-            cd ..
-
-            # Build Uranium
-            echo "Building Uranium..."
-            cd Uranium
-            conan install . --build=missing --update
-            conan build .
-            cd ..
-
       - name: Gather/build the packages
         run: |
             $pydir = type pydir.txt
             $env:PATH += ";$pydir;$pydir/Scripts"
-            cd _cura_sources
-            conan install . --build=missing --update -g VirtualPythonEnv -of ../cura_inst
+            conan install --requires "${{ inputs.cura_conan_version != '' && inputs.cura_conan_version || format('cura/{0}@ultimaker/testing', steps.setup-environment.outputs.package_version) }}" ${{ inputs.conan_args }} --build=missing --update -of cura_inst --deployer-package="*" --profile ${{ steps.set-overrides.outputs.profile }} -c user.sentry:token="${{ secrets.CURAENGINE_SENTRY_TOKEN }}" ${{ inputs.enterprise && '-o "cura/*:enterprise=True"' || '' }} ${{ inputs.staging && '-o "cura/*:staging=True"' || '' }} ${{ inputs.private_data && '-o "cura/*:internal=True"' || '' }}
 
       - name: Create the Cura distribution with pyinstaller
         id: prepare-distribution
@@ -126,12 +106,12 @@ jobs:
 
             pyinstaller cura_inst\UltiMaker-Cura.spec
 
-      # - name: Sign the internal executables (skipped for personal development)
-        # working-directory: dist/UltiMaker-Cura
-        # run: |
-        #   & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "CuraEngine.exe"
-        #   & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "UltiMaker-Cura.exe"
-        # timeout-minutes: 2
+      - name: Sign the internal executables
+        working-directory: dist/UltiMaker-Cura
+        run: |
+          & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "CuraEngine.exe"
+          & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "UltiMaker-Cura.exe"
+        timeout-minutes: 2
 
       - name: Workaround (need exact version of msvc redistributables)
         run: |
@@ -173,11 +153,11 @@ jobs:
           python ..\cura_inst\packaging\NSIS\create_windows_installer.py --source_path ../cura_inst --dist_path . --filename "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.exe" --version "${{ steps.prepare-distribution.outputs.CURA_VERSION_FULL }}"
         working-directory: dist
 
-      # - name: Sign the Windows exe installer (skipped for personal development)
-        # run: |
-        #   & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.exe"
-        # working-directory: dist
-        # timeout-minutes: 2
+      - name: Sign the Windows exe installer (Powershell)
+        run: |
+          & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.exe"
+        working-directory: dist
+        timeout-minutes: 2
 
       - name: Upload the installer exe
         if: ${{ always() }}
@@ -194,11 +174,11 @@ jobs:
           python ..\cura_inst\packaging\msi\create_windows_msi.py --source_path ..\cura_inst --dist_path .\UltiMaker-Cura --filename "${{ steps.prepare-distribution.outputs.INSTALLER_FILENAME }}.msi" --name "${{ steps.prepare-distribution.outputs.CURA_APP_NAME }}" --version "${{ steps.prepare-distribution.outputs.CURA_VERSION_FULL }}"
         working-directory: dist
 
-      # - name: Sign the Windows msi installer (skipped for personal development)
-        # run: |
-        #   & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.msi"
-        # working-directory: dist
-        # timeout-minutes: 2
+      - name: Sign the Windows msi installer (Powershell)
+        run: |
+          & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "${{steps.prepare-distribution.outputs.INSTALLER_FILENAME}}.msi"
+        working-directory: dist
+        timeout-minutes: 2
 
       - name: Upload the installer msi
         if: ${{ always() }}
