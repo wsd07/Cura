@@ -119,20 +119,8 @@ runs:
         fi
 
         conan profile detect -f
-        conan config install https://github.com/wsd07/conan-config.git -a "-b ${{ inputs.conan_config_branch }}"
+        conan config install https://github.com/Ultimaker/conan-config.git -a "-b ${{ inputs.conan_config_branch }}"
 
-        # Set up editable packages exactly like local development
-        echo "Setting up CuraEngine as editable..."
-        cd CuraEngine
-        conan editable add . --name=curaengine --version=5.11.0 --user=wsd07 --channel=testing
-        cd ..
-
-        echo "Setting up Uranium as editable..."
-        cd Uranium
-        conan editable add . --name=uranium --version=5.11.0 --user=wsd07 --channel=testing
-        cd ..
-
-        echo "Editable packages setup completed!"
 
         if [[ -f ${{ inputs.repository_path }}/conanfile.py ]]; then
           conan inspect ${{ inputs.repository_path }} > package_details.txt
