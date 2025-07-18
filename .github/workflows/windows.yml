@@ -1,4 +1,4 @@
-name: Windows Installer
+name: Cura Windows Installer
 run-name: ${{ inputs.cura_conan_version }} by @${{ github.actor }}
 
 on:
