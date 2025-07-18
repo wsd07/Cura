@@ -71,7 +71,7 @@ jobs:
         with:
           install_system_dependencies: true
           repository_path: _cura_sources # we don't want the actual sources to interfere with the built conan package
-          python_set_env_vars: true
+          python_set_env_vars: false
 
       - name: Set packages overrides
         id: set-overrides
