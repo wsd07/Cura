@@ -152,15 +152,33 @@ jobs:
                 exit /b %ERRORLEVEL%
             )
 
-            echo "=== Creating Python virtual environment ==="
-            python -m venv cura_installer_venv
-            call cura_installer_venv\Scripts\Activate.bat
-
-            echo "=== Checking Python environment ==="
+            echo "=== Checking Python environment after Conan setup ==="
             python --version
             pip --version
             echo "Python path: %PYTHON%"
             echo "Current PATH: %PATH%"
+            echo "PYTHONPATH: %PYTHONPATH%"
+
+            echo "=== Checking if cura module is available ==="
+            python -c "import sys; print('Python sys.path:'); [print(f'  {p}') for p in sys.path]"
+            python -c "try: import cura; print('✓ cura module found'); except ImportError as e: print(f'✗ cura module not found: {e}')"
+
+            echo "=== Looking for cura module in file system ==="
+            if exist "cura_inst\build\generators\cura_venv" (
+                echo "Checking cura_venv directory:"
+                dir cura_inst\build\generators\cura_venv\Lib\site-packages | findstr /i cura
+            )
+            if exist "_cura_sources" (
+                echo "Checking _cura_sources directory:"
+                dir _cura_sources | findstr /i cura
+            )
+
+            echo "=== Adding _cura_sources to PYTHONPATH ==="
+            set PYTHONPATH=%CD%\_cura_sources;%PYTHONPATH%
+            echo "Updated PYTHONPATH: %PYTHONPATH%"
+
+            echo "=== Testing cura import again ==="
+            python -c "try: import cura; print('✓ cura module found after PYTHONPATH update'); except ImportError as e: print(f'✗ cura module still not found: {e}')"
 
             echo "=== Checking for pip requirements files ==="
             if exist "cura_inst\build\generators" (
@@ -173,26 +191,16 @@ jobs:
                 exit /b 1
             )
 
-            if exist "cura_inst\build\generators\pip_requirements_core_basic.txt" (
-                echo "Installing core basic requirements..."
-                python -m pip install -r cura_inst\build\generators\pip_requirements_core_basic.txt --no-warn-script-location
-            ) else (
-                echo "WARNING: pip_requirements_core_basic.txt not found"
-            )
-
-            if exist "cura_inst\build\generators\pip_requirements_core_hashes.txt" (
-                echo "Installing core hashes requirements..."
-                python -m pip install -r cura_inst\build\generators\pip_requirements_core_hashes.txt --no-warn-script-location
-            ) else (
-                echo "WARNING: pip_requirements_core_hashes.txt not found"
-            )
-
+            echo "=== Installing additional requirements in Conan environment ==="
             if exist "cura_inst\build\generators\pip_requirements_installer_basic.txt" (
-                echo "Installing installer requirements..."
+                echo "Installing installer requirements (pyinstaller etc.)..."
                 python -m pip install -r cura_inst\build\generators\pip_requirements_installer_basic.txt --no-warn-script-location
             ) else (
                 echo "WARNING: pip_requirements_installer_basic.txt not found"
             )
+
+            echo "=== Verifying cura module after pip installs ==="
+            python -c "try: import cura; print('✓ cura module still available'); except ImportError as e: print(f'✗ cura module lost: {e}')"
 
             echo "=== Running prepare_installer.py ==="
             python Cura-workflows\runner_scripts\prepare_installer.py --os ${{ runner.os }} --architecture X64 ${{ inputs.enterprise && '--enterprise' || '' }} ${{ inputs.private_data && '--internal' || '' }} --summary-output %GITHUB_STEP_SUMMARY% --variables-output %GITHUB_OUTPUT%
