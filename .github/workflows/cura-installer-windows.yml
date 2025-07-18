@@ -122,12 +122,12 @@ jobs:
             if exist "cura_inst" (
                 echo "cura_inst directory exists"
                 dir cura_inst
-                echo "Checking for conanrun.bat:"
-                if exist "cura_inst\conanrun.bat" (
-                    echo "conanrun.bat found"
-                    type cura_inst\conanrun.bat
+                echo "Checking for conanrun.bat in build\generators:"
+                if exist "cura_inst\build\generators\conanrun.bat" (
+                    echo "conanrun.bat found in build\generators"
+                    type cura_inst\build\generators\conanrun.bat
                 ) else (
-                    echo "ERROR: conanrun.bat not found!"
+                    echo "ERROR: conanrun.bat not found in build\generators!"
                     echo "Available files in cura_inst:"
                     dir cura_inst /s
                     exit /b 1
@@ -137,10 +137,18 @@ jobs:
                 exit /b 1
             )
 
-            echo "=== Calling conanrun.bat ==="
-            call cura_inst\conanrun.bat
+            echo "=== Calling virtual environment setup ==="
+            echo "First calling conanrun.bat:"
+            call cura_inst\build\generators\conanrun.bat
             if %ERRORLEVEL% neq 0 (
                 echo "conanrun.bat failed with error level %ERRORLEVEL%"
+                exit /b %ERRORLEVEL%
+            )
+
+            echo "Then calling virtual_python_env.bat:"
+            call cura_inst\build\generators\virtual_python_env.bat
+            if %ERRORLEVEL% neq 0 (
+                echo "virtual_python_env.bat failed with error level %ERRORLEVEL%"
                 exit /b %ERRORLEVEL%
             )
 
@@ -155,33 +163,33 @@ jobs:
             echo "Current PATH: %PATH%"
 
             echo "=== Checking for pip requirements files ==="
-            if exist "cura_inst\packaging" (
-                echo "packaging directory exists"
-                dir cura_inst\packaging
+            if exist "cura_inst\build\generators" (
+                echo "generators directory exists"
+                dir cura_inst\build\generators
             ) else (
-                echo "ERROR: packaging directory not found!"
+                echo "ERROR: generators directory not found!"
                 echo "Contents of cura_inst:"
                 dir cura_inst /s
                 exit /b 1
             )
 
-            if exist "cura_inst\packaging\pip_requirements_core_basic.txt" (
+            if exist "cura_inst\build\generators\pip_requirements_core_basic.txt" (
                 echo "Installing core basic requirements..."
-                python -m pip install -r cura_inst\packaging\pip_requirements_core_basic.txt --no-warn-script-location
+                python -m pip install -r cura_inst\build\generators\pip_requirements_core_basic.txt --no-warn-script-location
             ) else (
                 echo "WARNING: pip_requirements_core_basic.txt not found"
             )
 
-            if exist "cura_inst\packaging\pip_requirements_core_hashes.txt" (
+            if exist "cura_inst\build\generators\pip_requirements_core_hashes.txt" (
                 echo "Installing core hashes requirements..."
-                python -m pip install -r cura_inst\packaging\pip_requirements_core_hashes.txt --no-warn-script-location
+                python -m pip install -r cura_inst\build\generators\pip_requirements_core_hashes.txt --no-warn-script-location
             ) else (
                 echo "WARNING: pip_requirements_core_hashes.txt not found"
             )
 
-            if exist "cura_inst\packaging\pip_requirements_installer_basic.txt" (
+            if exist "cura_inst\build\generators\pip_requirements_installer_basic.txt" (
                 echo "Installing installer requirements..."
-                python -m pip install -r cura_inst\packaging\pip_requirements_installer_basic.txt --no-warn-script-location
+                python -m pip install -r cura_inst\build\generators\pip_requirements_installer_basic.txt --no-warn-script-location
             ) else (
                 echo "WARNING: pip_requirements_installer_basic.txt not found"
             )
