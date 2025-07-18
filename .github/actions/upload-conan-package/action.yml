@@ -5,9 +5,9 @@ description: 'Uploads one or multiple conan packages, to either the public or pr
 
 inputs:
   package_name:
+    description: 'Package name to upload'
     required: false
     default: "*"
-    type: string
 
 
 runs:
@@ -21,4 +21,13 @@ runs:
             PATH+=":$pydir:$pydir/Scripts"
           fi
 
-          python Cura-workflows/runner_scripts/upload_conan_package.py "${{ inputs.package_name }}"
+          # Use private development upload script that skips actual uploads
+          if [[ -f runner_scripts/upload_conan_package_private.py ]]; then
+            echo "Using private development upload script"
+            python runner_scripts/upload_conan_package_private.py "${{ inputs.package_name }}"
+          else
+            echo "Skipping Conan package upload for private development"
+            echo "Would upload package: ${{ inputs.package_name }}"
+            # For private development, we skip the actual upload to avoid authentication issues
+            # python Cura-workflows/runner_scripts/upload_conan_package.py "${{ inputs.package_name }}"
+          fi

@@ -119,7 +119,12 @@ runs:
         fi
 
         conan profile detect -f
-        conan config install https://github.com/Ultimaker/conan-config.git -a "-b ${{ inputs.conan_config_branch }}"
+        conan config install https://github.com/wsd07/conan-config.git -a "-b ${{ inputs.conan_config_branch }}"
+
+        # Skip conan login for private development - authentication not needed for local builds
+        # if [ "${{ inputs.conan_user }}" != "" ] && [ "${{ inputs.conan_password }}" != "" ]; then
+        #   conan remote login cura-conan2 ${{ inputs.conan_user }} -p ${{ inputs.conan_password }}
+        # fi
 
 
         if [[ -f ${{ inputs.repository_path }}/conanfile.py ]]; then
