@@ -441,6 +441,22 @@ class CuraConan(ConanFile):
                 raise ConanException("Misformatted conan data for pyinstaller datas, expected either package or root option")
 
             if not Path(src_path).exists():
+                # Add detailed debugging information
+                self.output.error(f"Missing folder {src_path} for pyinstaller data {data}")
+                if "package" in data:
+                    pkg_name = data["package"]
+                    if pkg_name in self.dependencies:
+                        dep = self.dependencies[pkg_name]
+                        self.output.error(f"Package {pkg_name} found in dependencies:")
+                        self.output.error(f"  - package_folder: {dep.package_folder}")
+                        self.output.error(f"  - ref: {dep.ref}")
+                        if hasattr(dep, 'cpp_info'):
+                            self.output.error(f"  - cpp_info.bindirs: {dep.cpp_info.bindirs}")
+                            self.output.error(f"  - cpp_info.libdirs: {dep.cpp_info.libdirs}")
+                            self.output.error(f"  - cpp_info.resdirs: {dep.cpp_info.resdirs}")
+                    else:
+                        self.output.error(f"Package {pkg_name} NOT found in dependencies")
+                        self.output.error(f"Available dependencies: {list(self.dependencies.keys())}")
                 raise ConanException(f"Missing folder {src_path} for pyinstaller data {data}")
 
             datas.append((str(src_path), data["dst"]))
@@ -457,6 +473,17 @@ class CuraConan(ConanFile):
                 raise ConanException("Misformatted conan data for pyinstaller binaries, expected either package or root option")
 
             if not Path(src_path).exists():
+                # Add detailed debugging information for binaries
+                self.output.error(f"Missing folder {src_path} for pyinstaller binary {binary}")
+                if "package" in binary:
+                    pkg_name = binary["package"]
+                    if pkg_name in self.dependencies:
+                        dep = self.dependencies[pkg_name]
+                        self.output.error(f"Binary package {pkg_name} found in dependencies:")
+                        self.output.error(f"  - package_folder: {dep.package_folder}")
+                        self.output.error(f"  - ref: {dep.ref}")
+                    else:
+                        self.output.error(f"Binary package {pkg_name} NOT found in dependencies")
                 raise ConanException(f"Missing folder {src_path} for pyinstaller binary {binary}")
 
             for bin in Path(src_path).glob(binary["binary"] + "*[.exe|.dll|.so|.dylib|.so.]*"):
@@ -659,6 +686,13 @@ class CuraConan(ConanFile):
         self.output.info(f"Debug: package_folder = {self.package_folder}")
         self.output.info(f"Debug: deploy_folder = {self.deploy_folder}")
         self.output.info(f"Debug: source_folder = {self.source_folder}")
+
+        # Debug dependencies information
+        self.output.info(f"Debug: Available dependencies: {list(self.dependencies.keys())}")
+        for dep_name, dep in self.dependencies.items():
+            self.output.info(f"Debug: Dependency {dep_name}:")
+            self.output.info(f"  - package_folder: {dep.package_folder}")
+            self.output.info(f"  - ref: {dep.ref}")
 
         # Check if package_folder is None and use source_folder as fallback
         if self.package_folder is None:
