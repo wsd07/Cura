@@ -30,7 +30,7 @@ on:
       operating_system:
         description: 'OS'
         required: true
-        default: 'self-hosted-Windows-X64'
+        default: 'windows-2022'
         type: choice
         options:
           - self-hosted-Windows-X64
@@ -38,7 +38,7 @@ on:
 
 jobs:
   windows-installer:
-    uses: ultimaker/cura-workflows/.github/workflows/cura-installer-windows.yml@main
+    uses: ./.github/workflows/cura-installer-windows.yml
     with:
       cura_conan_version: ${{ inputs.cura_conan_version }}
       package_overrides: ${{ inputs.package_overrides }}
