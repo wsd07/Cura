@@ -287,16 +287,61 @@ jobs:
 
       - name: Workaround (need exact version of msvc redistributables)
         run: |
-          $MSDIR="C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Redist/MSVC"
-          if ( (dir -Exclude "v*" $MSDIR).Count -ne 1 ) { throw "(!!!) MULTIPLE MSVC VERSIONS IN '$MSDIR' -- NEED EXACTLY 1 TO SELECT A REDISTRIBUTABLE (!!!)" }
-          $MSDIR_R=(dir -Exclude "v*" $MSDIR)[0].FullName
-          $MSDIR_DLLS=(dir $MSDIR_R/x64/Microsoft.VC*.CRT)[0].FullName
-          copy $MSDIR_DLLS/concrt140.dll dist/UltiMaker-Cura/.
-          copy $MSDIR_DLLS/msvcp140.dll dist/UltiMaker-Cura/.
-          copy $MSDIR_DLLS/msvcp140_1.dll dist/UltiMaker-Cura/.
-          copy $MSDIR_DLLS/msvcp140_2.dll dist/UltiMaker-Cura/.
-          copy $MSDIR_DLLS/vcruntime140.dll dist/UltiMaker-Cura/.
-          copy $MSDIR_DLLS/vcruntime140_1.dll dist/UltiMaker-Cura/.
+          # Try different Visual Studio editions
+          $VS_PATHS = @(
+            "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Redist/MSVC",
+            "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Redist/MSVC",
+            "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Redist/MSVC"
+          )
+
+          $MSDIR = $null
+          foreach ($path in $VS_PATHS) {
+            if (Test-Path $path) {
+              Write-Host "Found Visual Studio path: $path"
+              $MSDIR = $path
+              break
+            }
+          }
+
+          if (-not $MSDIR) {
+            throw "Could not find any Visual Studio 2022 installation"
+          }
+
+          # List all MSVC versions for debugging
+          Write-Host "Available MSVC versions in $MSDIR:"
+          $versions = dir -Exclude "v*" $MSDIR -ErrorAction SilentlyContinue
+          foreach ($version in $versions) {
+            Write-Host "  - $($version.Name)"
+          }
+
+          # Select the latest version (highest version number)
+          $MSDIR_R = ($versions | Sort-Object Name -Descending)[0].FullName
+          Write-Host "Selected MSVC version: $MSDIR_R"
+
+          # Find the CRT directory
+          $CRT_DIRS = dir "$MSDIR_R/x64/Microsoft.VC*.CRT" -ErrorAction SilentlyContinue
+          if (-not $CRT_DIRS) {
+            throw "Could not find Microsoft.VC*.CRT directory in $MSDIR_R/x64/"
+          }
+
+          $MSDIR_DLLS = $CRT_DIRS[0].FullName
+          Write-Host "Using CRT directory: $MSDIR_DLLS"
+
+          # List available DLLs for debugging
+          Write-Host "Available DLLs in $MSDIR_DLLS:"
+          dir $MSDIR_DLLS/*.dll | ForEach-Object { Write-Host "  - $($_.Name)" }
+
+          # Copy DLLs (with error checking)
+          $dlls = @("concrt140.dll", "msvcp140.dll", "msvcp140_1.dll", "msvcp140_2.dll", "vcruntime140.dll", "vcruntime140_1.dll")
+          foreach ($dll in $dlls) {
+            $source = "$MSDIR_DLLS/$dll"
+            if (Test-Path $source) {
+              Write-Host "Copying $dll"
+              copy $source dist/UltiMaker-Cura/.
+            } else {
+              Write-Warning "DLL not found: $source"
+            }
+          }
 
       - name: Workaround (some libs linking against python3 instead of python312)
         run: |
