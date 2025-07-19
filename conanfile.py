@@ -588,7 +588,7 @@ class CuraConan(ConanFile):
                 if is_github_actions:
                     # GitHub Actions环境：使用官方uranium包
                     self.output.info(f"GitHub Actions环境: 使用官方uranium包")
-                    self.requires("uranium/5.11.0-alpha.0@ultimaker/testing")
+                    self.requires("uranium/5.11.0@wsd07/testing")
                 else:
                     # 本地macOS环境：使用自定义uranium包
                     self.output.info(f"本地环境: 使用自定义uranium包")
