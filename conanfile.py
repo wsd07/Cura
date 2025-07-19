@@ -582,21 +582,9 @@ class CuraConan(ConanFile):
             if self.options.internal and "fdm_materials" in req:
                 self.output.info(f"跳过内部fdm_materials包: {req}")
                 continue
-
-            # 根据环境和包类型选择合适的包版本
-            if "uranium/5.11.0-alpha.0@ultimaker/testing" in req:
-                if is_github_actions:
-                    # GitHub Actions环境：使用官方uranium包
-                    self.output.info(f"GitHub Actions环境: 使用官方uranium包")
-                    self.requires("uranium/5.11.0@wsd07/testing")
-                else:
-                    # 本地macOS环境：使用自定义uranium包
-                    self.output.info(f"本地环境: 使用自定义uranium包")
-                    self.requires("uranium/5.11.0@wsd07/testing")
-            else:
-                # 其他依赖包直接使用原始配置
-                self.output.info(f"使用原始依赖包: {req}")
-                self.requires(req)
+            # 其他依赖包直接使用原始配置
+            self.output.info(f"使用原始依赖包: {req}")
+            self.requires(req)
 
         # 在本地macOS环境中添加CuraEngine依赖
         if not is_github_actions:
