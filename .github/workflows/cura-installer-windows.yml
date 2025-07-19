@@ -397,7 +397,7 @@ jobs:
           Write-Host "Available DLLs in ${MSDIR_DLLS}:"
           dir $MSDIR_DLLS/*.dll | ForEach-Object { Write-Host "  - $($_.Name)" }
 
-          # Copy DLLs (with error checking)
+          # 复制DLL文件（带错误检查）
           $dlls = @("concrt140.dll", "msvcp140.dll", "msvcp140_1.dll", "msvcp140_2.dll", "vcruntime140.dll", "vcruntime140_1.dll")
           foreach ($dll in $dlls) {
             $source = "$MSDIR_DLLS/$dll"
@@ -409,6 +409,9 @@ jobs:
             }
           }
 
+      # 步骤7：解决Python库链接问题
+      # 功能：将Python库复制到分发目录
+      # 原因：避免在CI环境中重新编译Python库，节省时间和资源
       - name: Workaround (some libs linking against python3 instead of python312)
         run: |
           copy Cura-workflows/python_dll_workaround/* dist/UltiMaker-Cura/.
