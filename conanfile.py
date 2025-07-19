@@ -593,19 +593,17 @@ class CuraConan(ConanFile):
                     # 本地macOS环境：使用自定义uranium包
                     self.output.info(f"本地环境: 使用自定义uranium包")
                     self.requires("uranium/5.11.0@wsd07/testing")
-            elif "curaengine/5.11.0-alpha.0@ultimaker/testing" in req:
-                if is_github_actions:
-                    # GitHub环境使用预编译的CuraEngine，跳过依赖包
-                    self.output.info(f"GitHub Actions环境: 跳过CuraEngine依赖包，使用预编译版本")
-                    continue
-                else:
-                    # 本地macOS环境：使用自定义curaengine包
-                    self.output.info(f"本地环境: 使用自定义curaengine包")
-                    self.requires("curaengine/5.11.0@wsd07/testing")
             else:
                 # 其他依赖包直接使用原始配置
                 self.output.info(f"使用原始依赖包: {req}")
                 self.requires(req)
+
+        # 在本地macOS环境中添加CuraEngine依赖
+        if not is_github_actions:
+            self.output.info(f"本地环境: 添加自定义curaengine包")
+            self.requires("curaengine/5.11.0@wsd07/testing")
+        else:
+            self.output.info(f"GitHub Actions环境: 跳过CuraEngine依赖包，使用预编译版本")
 
         # 处理内部依赖
         if self.options.internal:
