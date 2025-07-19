@@ -446,7 +446,9 @@ class CuraConan(ConanFile):
             datas.append((str(src_path), data["dst"]))
 
         binaries = []
-        for binary in pyinstaller_metadata["binaries"].values():
+        # Handle case where binaries section is None or empty
+        binaries_metadata = pyinstaller_metadata.get("binaries") or {}
+        for binary in binaries_metadata.values():
             if "package" in binary:  # get the paths from conan package
                 src_path = os.path.join(self.dependencies[binary["package"]].package_folder, binary["src"])
             elif "root" in binary:  # get the paths relative from the sourcefolder
