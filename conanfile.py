@@ -568,31 +568,44 @@ class CuraConan(ConanFile):
         # 检测是否在GitHub Actions环境中运行
         is_github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
 
+        # 调试信息：显示环境检测结果
+        self.output.info(f"=== 环境检测结果 ===")
+        self.output.info(f"GITHUB_ACTIONS环境变量: {os.environ.get('GITHUB_ACTIONS', 'NOT_SET')}")
+        self.output.info(f"是否为GitHub Actions环境: {is_github_actions}")
+        self.output.info(f"操作系统: {self.settings.os}")
+        self.output.info(f"=== 开始处理依赖包 ===")
+
         for req in self.conan_data["requirements"]:
+            self.output.info(f"处理依赖包: {req}")
+
             # 跳过内部版本的fdm_materials包
             if self.options.internal and "fdm_materials" in req:
+                self.output.info(f"跳过内部fdm_materials包: {req}")
                 continue
 
-            # 根据环境选择合适的包版本
-            if is_github_actions:
-                # GitHub Actions环境：使用官方包
-                if "uranium/5.11.0@wsd07/testing" in req:
+            # 根据环境和包类型选择合适的包版本
+            if "uranium/5.11.0-alpha.0@ultimaker/testing" in req:
+                if is_github_actions:
+                    # GitHub Actions环境：使用官方uranium包
+                    self.output.info(f"GitHub Actions环境: 使用官方uranium包")
                     self.requires("uranium/5.11.0-alpha.0@ultimaker/testing")
-                elif "curaengine/5.11.0@wsd07/testing" in req:
-                    # GitHub环境使用预编译的CuraEngine，不添加依赖
+                else:
+                    # 本地macOS环境：使用自定义uranium包
+                    self.output.info(f"本地环境: 使用自定义uranium包")
+                    self.requires("uranium/5.11.0@wsd07/testing")
+            elif "curaengine/5.11.0-alpha.0@ultimaker/testing" in req:
+                if is_github_actions:
+                    # GitHub环境使用预编译的CuraEngine，跳过依赖包
+                    self.output.info(f"GitHub Actions环境: 跳过CuraEngine依赖包，使用预编译版本")
                     continue
                 else:
-                    self.requires(req)
-            else:
-                # 本地macOS环境：使用自定义包（如果存在）
-                if req == "uranium/5.11.0-alpha.0@ultimaker/testing":
-                    # 本地环境优先使用自定义uranium包
-                    self.requires("uranium/5.11.0@wsd07/testing")
-                elif req == "curaengine/5.11.0-alpha.0@ultimaker/testing":
-                    # 本地环境使用自定义curaengine包
+                    # 本地macOS环境：使用自定义curaengine包
+                    self.output.info(f"本地环境: 使用自定义curaengine包")
                     self.requires("curaengine/5.11.0@wsd07/testing")
-                else:
-                    self.requires(req)
+            else:
+                # 其他依赖包直接使用原始配置
+                self.output.info(f"使用原始依赖包: {req}")
+                self.requires(req)
 
         # 处理内部依赖
         if self.options.internal:
