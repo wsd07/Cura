@@ -19,7 +19,6 @@ from conan.tools.env import VirtualRunEnv, Environment, VirtualBuildEnv
 from conan.tools.scm import Version
 from conan.errors import ConanInvalidConfiguration, ConanException
 
-# Conan版本要求：当修改此版本时，也需要同时修改conandata.yml/extra_dependencies中的版本
 required_conan_version = ">=2.7.0" # When changing the version, also change the one in conandata.yml/extra_dependencies
 
 
@@ -53,57 +52,48 @@ class CuraConan(ConanFile):
         "staging": False,
         "cloud_api_version": "1",
         "display_name": "UltiMaker Cura",
-        "cura_debug_mode": False,  # 尚未实现的调试模式
+        "cura_debug_mode": False,  # Not yet implemented
         "internal": False,
         "i18n_extract": False,
-        # 根据运行环境决定是否跳过许可证下载：GitHub Actions环境跳过，本地macOS不跳过
-        "skip_licenses_download": os.environ.get("GITHUB_ACTIONS") == "true",
+        "skip_licenses_download": False,
     }
 
     def set_version(self):
-        """设置版本号：如果未指定版本，则从conandata.yml中读取"""
         if not self.version:
             self.version = self.conan_data["version"]
 
     @property
     def _app_name(self):
-        """获取应用程序名称：企业版会添加Enterprise后缀"""
         if self.options.enterprise:
             return str(self.options.display_name) + " Enterprise"
         return str(self.options.display_name)
 
     @property
     def _urls(self):
-        """获取URL配置：根据staging选项返回对应的URL配置键"""
         if self.options.staging:
             return "staging"
         return "default"
 
     @property
     def _root_dir(self):
-        """获取根目录：优先使用deploy_folder，否则使用source_folder"""
         return Path(self.deploy_folder if hasattr(self, "deploy_folder") else self.source_folder)
 
     @property
     def _base_dir(self):
-        """获取虚拟环境基础目录"""
         return self._root_dir.joinpath("venv")
 
     @property
     def _share_dir(self):
-        """获取共享资源目录"""
         return self._base_dir.joinpath("share")
 
     @property
     def _script_dir(self):
-        """获取脚本目录：Windows使用Scripts，其他系统使用bin"""
         if self.settings.os == "Windows":
             return self._base_dir.joinpath("Scripts")
         return self._base_dir.joinpath("bin")
 
     @property
     def _site_packages(self):
-        """获取Python site-packages目录：根据操作系统和Python版本确定路径"""
         if self.settings.os == "Windows":
             return self._base_dir.joinpath("Lib", "site-packages")
         py_version = Version(self.dependencies["cpython"].ref.version)
@@ -111,52 +101,43 @@ class CuraConan(ConanFile):
 
     @property
     def _py_interp(self):
-        """获取Python解释器路径：处理Windows路径中的空格问题"""
         py_interp = self._script_dir.joinpath(Path(self.deps_user_info["cpython"].python).name)
         if self.settings.os == "Windows":
-            # Windows路径中包含空格时需要添加引号
             py_interp = Path(*[f'"{p}"' if " " in p else p for p in py_interp.parts])
         return py_interp
 
     @property
     def _pyinstaller_spec_arch(self):
-        """获取PyInstaller规格文件的架构参数：macOS需要指定架构，其他系统返回None"""
         if self.settings.os == "Macos":
             if self.settings.arch == "armv8":
-                return "'arm64'"  # Apple Silicon (M1/M2)
-            return "'x86_64'"     # Intel Mac
+                return "'arm64'"
+            return "'x86_64'"
         return "None"
 
     def _conan_installs(self):
-        """收集所有Conan依赖包的安装信息：包名、版本号、修订版本"""
         self.output.info("Collecting conan installs")
         conan_installs = {}
 
-        # 遍历所有主机依赖包
+        # list of conan installs
         for dependency in self.dependencies.host.values():
             conan_installs[dependency.ref.name] = {
-                "version": str(dependency.ref.version),  # 版本号
-                "revision": dependency.ref.revision      # 修订版本
+                "version": str(dependency.ref.version),
+                "revision": dependency.ref.revision
             }
         return conan_installs
 
     def _python_installs(self):
-        """收集所有Python包的安装信息：通过importlib.metadata获取已安装的包"""
         self.output.info("Collecting python installs")
         python_installs = {}
 
-        # 创建临时脚本来收集Python包信息
         collect_python_installs = "collect_python_installs.py"
-        # 使用importlib.metadata获取所有已安装包的名称和版本
         code = f"import importlib.metadata;  print(';'.join([(package.metadata['Name']+','+    package.metadata['Version']) for package in importlib.metadata.distributions()]))"
         save(self, collect_python_installs, code)
 
-        # 在虚拟环境中执行脚本并捕获输出
         buffer = StringIO()
         self.run(f"""python {collect_python_installs}""", env = "virtual_python_env", stdout = buffer)
         rm(self, collect_python_installs, ".")
 
-        # 解析输出结果：格式为"包名,版本;包名,版本;..."
         packages = str(buffer.getvalue()).strip('\r\n').split(";")
         for package in packages:
             name, version = package.split(",")
@@ -465,9 +446,7 @@ class CuraConan(ConanFile):
             datas.append((str(src_path), data["dst"]))
 
         binaries = []
-        # Handle case where binaries section is None or empty
-        binaries_metadata = pyinstaller_metadata.get("binaries") or {}
-        for binary in binaries_metadata.values():
+        for binary in pyinstaller_metadata["binaries"].values():
             if "package" in binary:  # get the paths from conan package
                 src_path = os.path.join(self.dependencies[binary["package"]].package_folder, binary["src"])
             elif "root" in binary:  # get the paths relative from the sourcefolder
@@ -564,47 +543,16 @@ class CuraConan(ConanFile):
             raise ConanInvalidConfiguration("Unable to extract translations on Windows without Bash installed")
 
     def requirements(self):
-        """配置依赖包：根据运行环境和选项动态选择合适的依赖包版本"""
-        # 检测是否在GitHub Actions环境中运行
-        is_github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
-
         for req in self.conan_data["requirements"]:
-            # 跳过内部版本的fdm_materials包
             if self.options.internal and "fdm_materials" in req:
                 continue
-
-            # 根据环境选择合适的包版本
-            if is_github_actions:
-                # GitHub Actions环境：使用官方包
-                if "uranium/5.11.0@wsd07/testing" in req:
-                    self.requires("uranium/5.11.0-alpha.0@ultimaker/testing")
-                elif "curaengine/5.11.0@wsd07/testing" in req:
-                    # GitHub环境使用预编译的CuraEngine，不添加依赖
-                    continue
-                else:
-                    self.requires(req)
-            else:
-                # 本地macOS环境：使用自定义包（如果存在）
-                if req == "uranium/5.11.0-alpha.0@ultimaker/testing":
-                    # 本地环境优先使用自定义uranium包
-                    self.requires("uranium/5.11.0@wsd07/testing")
-                elif req == "curaengine/5.11.0-alpha.0@ultimaker/testing":
-                    # 本地环境使用自定义curaengine包
-                    self.requires("curaengine/5.11.0@wsd07/testing")
-                else:
-                    self.requires(req)
-
-        # 处理内部依赖
+            self.requires(req)
         if self.options.internal:
             for req in self.conan_data["requirements_internal"]:
                 self.requires(req)
-
-        # 处理企业版依赖
         if self.options.enterprise:
             for req in self.conan_data["requirements_enterprise"]:
                 self.requires(req)
-
-        # 添加Python依赖
         self.requires("cpython/3.12.2")
 
     def layout(self):
@@ -641,24 +589,14 @@ class CuraConan(ConanFile):
         test_colors_path.unlink()
 
     def generate(self):
-        """生成构建所需的文件和配置"""
         copy(self, "cura_app.py", self.source_folder, str(self._script_dir))
 
         self._generate_cura_version(str(Path(self.source_folder, "cura")))
 
-        # 根据环境处理CuraEngine：GitHub Actions使用预编译版本，本地使用依赖包
-        is_github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
-
-        if is_github_actions:
-            # GitHub Actions环境：使用预编译的CuraEngine.exe（已通过workflow复制）
-            self.output.info("GitHub Actions环境：使用预编译的CuraEngine.exe")
-        else:
-            # 本地macOS环境：从curaengine依赖包复制
-            if "curaengine" in self.dependencies:
-                curaengine = self.dependencies["curaengine"].cpp_info
-                copy(self, "CuraEngine.exe", curaengine.bindirs[0], self.source_folder, keep_path = False)
-                copy(self, "CuraEngine", curaengine.bindirs[0], self.source_folder, keep_path = False)
-                self.output.info("本地环境：从curaengine依赖包复制CuraEngine")
+        # Copy CuraEngine.exe to bindirs of Virtual Python Environment
+        curaengine = self.dependencies["curaengine"].cpp_info
+        copy(self, "CuraEngine.exe", curaengine.bindirs[0], self.source_folder, keep_path = False)
+        copy(self, "CuraEngine", curaengine.bindirs[0], self.source_folder, keep_path = False)
 
         # Copy the external plugins that we want to bundle with Cura
         if self.options.enterprise:
@@ -717,44 +655,17 @@ class CuraConan(ConanFile):
         ''' Note: this deploy step is actually used to prepare for building a Cura distribution with pyinstaller, which is not
             the original purpose in the Conan philosophy '''
 
-        # Handle the case where package_folder is None (during conan install)
-        # In this case, we use source_folder instead of package_folder
-        if self.package_folder is not None:
-            # Use packaged structure (when package was built)
-            packaging_src = os.path.join(self.package_folder, "packaging")
-            bin_src = os.path.join(self.package_folder, "bin")
-            cura_lib_src = os.path.join(self.package_folder, "site-packages", "cura")
-            resources_src = os.path.join(self.package_folder, "resources")
-            plugins_src = os.path.join(self.package_folder, "plugins")
-            entrypoint_src = os.path.join(self.package_folder, "bin", self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])
-            icon_src = os.path.join(self.package_folder, "packaging", self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])
-        else:
-            # Use source structure (during conan install when package wasn't built)
-            packaging_src = os.path.join(self.source_folder, "packaging")
-            bin_src = self.source_folder  # cura_app.py is in root
-            cura_lib_src = os.path.join(self.source_folder, "cura")
-            resources_src = os.path.join(self.source_folder, "resources")
-            plugins_src = os.path.join(self.source_folder, "plugins")
-            entrypoint_src = os.path.join(self.source_folder, self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])
-            icon_src = os.path.join(self.source_folder, "packaging", self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])
-
-        # Copy packaging resources
-        copy(self, "*", packaging_src, os.path.join(self.deploy_folder, "packaging"), keep_path=True)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp.package.resdirs[2]),
+             os.path.join(self.deploy_folder, "packaging"), keep_path=True)
 
         # Copy resources of Cura (keep folder structure) needed by pyinstaller to determine the module structure
-        if self.package_folder is not None:
-            copy(self, "*", bin_src, str(self._base_dir), keep_path = False)
-        else:
-            # Only copy cura_app.py from source folder
-            copy(self, "cura_app.py", bin_src, str(self._base_dir), keep_path = False)
-
-        copy(self, "*", cura_lib_src, str(self._site_packages.joinpath("cura")), keep_path = True)
-        copy(self, "*", resources_src, str(self._share_dir.joinpath("cura", "resources")), keep_path = True)
-        copy(self, "*", plugins_src, str(self._share_dir.joinpath("cura", "plugins")), keep_path = True)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.bindirs[0]), str(self._base_dir), keep_path = False)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.libdirs[0]), str(self._site_packages.joinpath("cura")), keep_path = True)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[0]), str(self._share_dir.joinpath("cura", "resources")), keep_path = True)
+        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[1]), str(self._share_dir.joinpath("cura", "plugins")), keep_path = True)
 
         # Copy the cura_resources resources from the package
-        if os.path.exists(os.path.join(resources_src, "conanfile.py")):
-            rm(self, "conanfile.py", resources_src)
+        rm(self, "conanfile.py", os.path.join(self.package_folder, self.cpp.package.resdirs[0]))
         cura_resources = self.dependencies["cura_resources"].cpp_info
         for res_dir in cura_resources.resdirs:
             copy(self, "*", res_dir, str(self._share_dir.joinpath("cura", "resources", Path(res_dir).name)), keep_path = True)
@@ -766,17 +677,16 @@ class CuraConan(ConanFile):
         copy(self, "*", uranium.libdirs[0], str(self._site_packages.joinpath("UM")), keep_path = True)
 
         self._delete_unwanted_binaries(self._site_packages)
-        if self.package_folder is not None:
-            self._delete_unwanted_binaries(self.package_folder)
+        self._delete_unwanted_binaries(self.package_folder)
         self._delete_unwanted_binaries(self._base_dir)
         self._delete_unwanted_binaries(self._share_dir)
 
         entitlements_file = "'{}'".format(Path(self.deploy_folder, "packaging", "MacOS", "cura.entitlements"))
         self._generate_pyinstaller_spec(location = self.deploy_folder,
-                                        entrypoint_location = "'{}'".format(entrypoint_src).replace("\\", "\\\\"),
-                                        icon_path = "'{}'".format(icon_src).replace("\\", "\\\\"),
+                                        entrypoint_location = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.bindirs[0], self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])).replace("\\", "\\\\"),
+                                        icon_path = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.resdirs[2], self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])).replace("\\", "\\\\"),
                                         entitlements_file = entitlements_file if self.settings.os == "Macos" else "None",
-                                        cura_source_folder = self.package_folder if self.package_folder is not None else self.source_folder)
+                                        cura_source_folder = self.package_folder)
 
     def package(self):
         copy(self, "cura_app.py", src = self.source_folder, dst = os.path.join(self.package_folder, self.cpp.package.bindirs[0]))
@@ -798,12 +708,6 @@ class CuraConan(ConanFile):
             rmdir(self, os.path.join(self.package_folder, self.cpp.package.resdirs[0], Path(res_dir).name))
 
     def package_info(self):
-        # Set cpp_info to match the layout() configuration
-        self.cpp_info.bindirs = ["bin"]
-        self.cpp_info.libdirs = [os.path.join("site-packages", "cura")]
-        self.cpp_info.resdirs = ["resources", "plugins", "packaging"]
-
-        # Set runtime environment
         self.runenv_info.append_path("PYTHONPATH", os.path.join(self.package_folder, "site-packages"))
         self.runenv_info.append_path("PYTHONPATH", os.path.join(self.package_folder, "plugins"))
 

@@ -1,24 +1,12 @@
-# Cura项目配置文件
-# 此文件定义了Cura的版本、依赖包、构建配置等信息
-# 支持本地macOS开发环境和GitHub Actions CI/CD环境
-
 version: "5.11.0-alpha.0"
-
-# 核心依赖包配置
-# 注意：conanfile.py中的requirements()方法会根据运行环境动态选择包版本
-# - GitHub Actions环境：使用官方ultimaker包
-# - 本地macOS环境：使用自定义wsd07包（如果可用）
 requirements:
   - "cura_resources/5.11.0-alpha.0@ultimaker/testing"
-  # Uranium框架：3D打印软件的基础框架
-  - "uranium/5.11.0-alpha.0@ultimaker/testing"
-  # CuraEngine：切片引擎核心
-  - "curaengine/5.11.0-alpha.0@ultimaker/testing"
-  # 二进制数据：图标、主题等资源文件
+  #- "uranium/5.11.0-alpha.0@ultimaker/testing"
+  - "uranium/5.11.0@wsd07/testing"
+  #- "curaengine/5.11.0-alpha.0@ultimaker/testing"  # Using precompiled CuraEngine.exe instead
+  - "curaengine/5.11.0@wsd07/testing"
   - "cura_binary_data/5.11.0-alpha.0@ultimaker/testing"
-  # FDM材料定义：3D打印材料配置文件
   - "fdm_materials/5.11.0-alpha.0@ultimaker/testing"
-  # 其他核心依赖
   - "dulcificum/5.10.0"
   - "pysavitar/5.11.0-alpha.0"
   - "pynest2d/5.10.0"
@@ -103,11 +91,11 @@ pyinstaller:
             src: "res/resources/materials"
             dst: "share/cura/resources/materials"
     binaries:
-        # curaengine:  # Using precompiled CuraEngine.exe instead
-        #     package: "curaengine"
-        #     src: "bin"
-        #     dst: "."
-        #     binary: "CuraEngine"
+        curaengine:
+            package: "curaengine"
+            src: "bin"
+            dst: "."
+            binary: "CuraEngine"
     hiddenimports:
         - "pySavitar"
         - "pyArcus"

@@ -1,101 +1,153 @@
+# =============================================================================
+# Cura Windows安装程序构建工作流
+# =============================================================================
+# 功能：为Windows平台构建Cura的EXE和MSI安装程序
+# 触发方式：被其他workflow调用（workflow_call）
+# 输出：Windows安装程序文件（.exe和.msi格式）
+# =============================================================================
+
 name: Windows Installer
+# 运行时显示的名称，包含版本信息和触发用户
 run-name: ${{ inputs.cura_conan_version }} for Windows-X64 by @${{ github.actor }}
 
+# 工作流触发条件：只能被其他工作流调用
 on:
   workflow_call:
     inputs:
+      # Cura的Conan版本号（可选）
       cura_conan_version:
         description: 'Cura Conan Version'
         default: ''
         required: false
         type: string
 
+      # 特定包覆盖列表（空格分隔，可选）
       package_overrides:
         description: 'List of specific packages to be used (space-separated)'
         default: ''
         required: false
         type: string
 
+      # Conan额外参数（可选）
       conan_args:
         description: 'Conan args'
         default: ''
         required: false
         type: string
 
+      # 是否构建企业版（必需，默认false）
       enterprise:
         description: 'Build Cura as an Enterprise edition'
         default: false
         required: true
         type: boolean
 
+      # 是否使用staging API（必需，默认false）
       staging:
         description: 'Use staging API'
         default: false
         required: true
         type: boolean
 
+      # 操作系统版本（必需，默认windows-2022）
       operating_system:
         description: 'OS'
         required: true
         default: 'windows-2022'
         type: string
 
+      # 是否包含私有数据（可选，默认false）
       private_data:
         required: false
         default: false
         type: boolean
 
+# 工作流权限：只读访问仓库内容
 permissions:
   contents: read
 
+# =============================================================================
+# 环境变量配置
+# =============================================================================
 env:
+  # Windows代码签名证书（来自GitHub Secrets）
   WIN_CERT_INSTALLER_CER: ${{ secrets.WIN_CERT_INSTALLER_CER }}
   WIN_CERT_INSTALLER_CER_PASS: ${{ secrets.WIN_CERT_INSTALLER_CER_PASS }}
+  # Sentry错误追踪令牌
   SENTRY_TOKEN: ${{ secrets.CURAENGINE_SENTRY_TOKEN }}
-  # win-cert-installer is probably not nescesary at all: went out the moment we started using signkey again on our own runner
-  # sentry debug symbols seem to only be uploaded for linux?
+  # 注意：win-cert-installer可能不再必要，因为我们在自己的runner上重新使用signkey
+  # sentry调试符号似乎只在Linux上传？
 
+# =============================================================================
+# 重要说明
+# =============================================================================
+# Windows环境需要bash在PATH中，以便在构建环境设置脚本中使用
+# 可以使用git安装目录下的bash：git/../bin/bash
 
-# NOTE: Windows needs bash on Path, so we can use it in the (build env setup) scripts -- you should be able to use the bash that comes in the git/../bin folder.
-
-
+# =============================================================================
+# 构建作业定义
+# =============================================================================
 jobs:
   cura-installer-create:
-    name: Build Windows installers
-    runs-on: ${{ inputs.operating_system }}
+    name: Build Windows installers  # 作业显示名称
+    runs-on: ${{ inputs.operating_system }}  # 运行环境（通常是windows-2022）
 
+    # =========================================================================
+    # 构建步骤序列
+    # =========================================================================
     steps:
+      # 步骤1：设置构建环境
+      # 功能：安装Python、Conan、系统依赖，检出源代码
       - name: Setup the build environment
         id: setup-environment
         uses: wsd07/Cura/.github/actions/setup-build-environment@main
         with:
-          install_system_dependencies: true
-          repository_path: _cura_sources # we don't want the actual sources to interfere with the built conan package
-          python_set_env_vars: false
+          install_system_dependencies: true  # 安装系统级依赖
+          repository_path: _cura_sources     # 源码路径（避免与构建的conan包冲突）
+          python_set_env_vars: false         # 不设置Python环境变量
 
+      # 步骤2：设置包覆盖配置
+      # 功能：配置特定的Conan包版本覆盖
       - name: Set packages overrides
         id: set-overrides
         uses: wsd07/Cura/.github/actions/set-package-overrides@main
         with:
-          package_overrides: ${{ inputs.package_overrides }}
-          profile: installer.jinja
+          package_overrides: ${{ inputs.package_overrides }}  # 包覆盖列表
+          profile: installer.jinja                            # 使用的配置文件模板
 
+      # 步骤3：收集/构建依赖包
+      # 功能：使用Conan安装所有依赖包，生成虚拟Python环境
       - name: Gather/build the packages
         run: |
+            # 读取Python目录路径并设置环境变量
             $pydir = type pydir.txt
             $env:PATH = "$pydir;$pydir\Scripts;" + $env:PATH
+
+            # 显示Python和Conan版本信息（用于调试）
             Write-Host "Using Python from: $pydir"
             Write-Host "Python version:"
             & "$pydir\python.exe" --version
             Write-Host "Conan version:"
             & "$pydir\python.exe" -m pip show conan
+
+            # 进入源码目录并执行Conan安装
             cd _cura_sources
             Write-Host "Running conan install with deployer-package..."
+            # conan install参数说明：
+            # --build=missing: 构建缺失的包
+            # --update: 更新包到最新版本
+            # -g VirtualPythonEnv: 生成虚拟Python环境
+            # -of ../cura_inst: 输出到cura_inst目录
+            # --deployer-package=*: 部署所有包
             conan install . --build=missing --update -g VirtualPythonEnv -of ../cura_inst --deployer-package=*
+
+            # 检查Conan安装是否成功
             if ($LASTEXITCODE -ne 0) {
                 Write-Error "Conan install failed with exit code $LASTEXITCODE"
                 exit $LASTEXITCODE
             }
+
+            # 返回上级目录并验证生成的文件
             cd ..
             Write-Host "Checking generated files:"
             if (Test-Path "cura_inst") {
@@ -114,11 +166,13 @@ jobs:
                 exit 1
             }
 
+      # 步骤4：使用PyInstaller创建Cura分发包
+      # 功能：激活虚拟环境，运行PyInstaller生成独立可执行文件
       - name: Create the Cura distribution with pyinstaller
         id: prepare-distribution
         shell: cmd
         run: |
-            echo "=== Debugging cura_inst directory ==="
+            echo "=== 调试cura_inst目录结构 ==="
             if exist "cura_inst" (
                 echo "cura_inst directory exists"
                 dir cura_inst
@@ -137,8 +191,9 @@ jobs:
                 exit /b 1
             )
 
-            echo "=== Calling virtual environment setup ==="
+            echo "=== 激活虚拟环境 ==="
             echo "First calling conanrun.bat:"
+            # conanrun.bat: 设置Conan依赖包的环境变量
             call cura_inst\build\generators\conanrun.bat
             if %ERRORLEVEL% neq 0 (
                 echo "conanrun.bat failed with error level %ERRORLEVEL%"
@@ -146,24 +201,25 @@ jobs:
             )
 
             echo "Then calling virtual_python_env.bat:"
+            # virtual_python_env.bat: 激活Python虚拟环境
             call cura_inst\build\generators\virtual_python_env.bat
             if %ERRORLEVEL% neq 0 (
                 echo "virtual_python_env.bat failed with error level %ERRORLEVEL%"
                 exit /b %ERRORLEVEL%
             )
 
-            echo "=== Checking Python environment after Conan setup ==="
+            echo "=== 验证Python环境配置 ==="
             python --version
             pip --version
             echo "Python path: %PYTHON%"
             echo "Current PATH: %PATH%"
             echo "PYTHONPATH: %PYTHONPATH%"
 
-            echo "=== Checking Python environment setup ==="
+            echo "=== 检查Python环境设置 ==="
             echo "Current working directory: %CD%"
             echo "PYTHONPATH: %PYTHONPATH%"
 
-            echo "=== Looking for cura module in file system ==="
+            echo "=== 查找cura模块文件系统位置 ==="
             if exist "_cura_sources\cura" (
                 echo "SUCCESS: cura directory found in _cura_sources"
             ) else (
@@ -245,9 +301,12 @@ jobs:
                 exit /b 1
             )
 
+      # 步骤5：复制预编译的CuraEngine.exe
+      # 功能：将预编译的CuraEngine.exe复制到分发目录
+      # 原因：避免在CI环境中重新编译CuraEngine，节省时间和资源
       - name: Copy precompiled CuraEngine.exe
         run: |
-            Write-Host "=== Checking for precompiled CuraEngine.exe ==="
+            Write-Host "=== 检查预编译的CuraEngine.exe ==="
             Write-Host "Current directory: $(Get-Location)"
             Write-Host "Contents of current directory:"
             Get-ChildItem . | Select-Object Name, Length | Format-Table -AutoSize
@@ -264,9 +323,11 @@ jobs:
                 Write-Host "dist directory not found"
             }
 
+            # 检查预编译的CuraEngine.exe是否存在
             if (Test-Path "_cura_sources\CuraEngine.exe") {
                 Write-Host "Found precompiled CuraEngine.exe, copying to distribution"
                 if (Test-Path "dist\UltiMaker-Cura") {
+                    # 复制CuraEngine.exe到最终分发目录
                     Copy-Item "_cura_sources\CuraEngine.exe" "dist\UltiMaker-Cura\CuraEngine.exe" -Force
                     Write-Host "CuraEngine.exe copied successfully to dist\UltiMaker-Cura\"
                 } else {
@@ -285,15 +346,20 @@ jobs:
         #   & signtool sign /v /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /f C:\actions-runner\code_sign.cer /csp "eToken Base Cryptographic Provider" /kc ${{ secrets.WIN_TOKEN_CONTAINER }} "UltiMaker-Cura.exe"
         # timeout-minutes: 2
 
+      # 步骤6：解决MSVC运行时库依赖问题
+      # 功能：自动查找并复制Visual Studio C++运行时库到分发目录
+      # 原因：确保Cura在没有安装Visual Studio的系统上能正常运行
       - name: Workaround (need exact version of msvc redistributables)
         run: |
-          # Try different Visual Studio editions
+          # 尝试不同版本的Visual Studio安装路径
+          # 支持企业版、专业版、社区版
           $VS_PATHS = @(
             "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Redist/MSVC",
             "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Redist/MSVC",
             "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Redist/MSVC"
           )
 
+          # 查找可用的Visual Studio安装
           $MSDIR = $null
           foreach ($path in $VS_PATHS) {
             if (Test-Path $path) {
@@ -307,18 +373,18 @@ jobs:
             throw "Could not find any Visual Studio 2022 installation"
           }
 
-          # List all MSVC versions for debugging
+          # 列出所有可用的MSVC版本（用于调试）
           Write-Host "Available MSVC versions in ${MSDIR}:"
           $versions = dir -Exclude "v*" $MSDIR -ErrorAction SilentlyContinue
           foreach ($version in $versions) {
             Write-Host "  - $($version.Name)"
           }
 
-          # Select the latest version (highest version number)
+          # 选择最新版本（版本号最高的）
           $MSDIR_R = ($versions | Sort-Object Name -Descending)[0].FullName
           Write-Host "Selected MSVC version: $MSDIR_R"
 
-          # Find the CRT directory
+          # 查找C++运行时库目录
           $CRT_DIRS = dir "$MSDIR_R/x64/Microsoft.VC*.CRT" -ErrorAction SilentlyContinue
           if (-not $CRT_DIRS) {
             throw "Could not find Microsoft.VC*.CRT directory in $MSDIR_R/x64/"
@@ -327,7 +393,7 @@ jobs:
           $MSDIR_DLLS = $CRT_DIRS[0].FullName
           Write-Host "Using CRT directory: $MSDIR_DLLS"
 
-          # List available DLLs for debugging
+          # 列出可用的DLL文件（用于调试）
           Write-Host "Available DLLs in ${MSDIR_DLLS}:"
           dir $MSDIR_DLLS/*.dll | ForEach-Object { Write-Host "  - $($_.Name)" }
 
