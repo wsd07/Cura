@@ -705,7 +705,8 @@ class CuraConan(ConanFile):
         copy(self, "*", uranium.libdirs[0], str(self._site_packages.joinpath("UM")), keep_path = True)
 
         self._delete_unwanted_binaries(self._site_packages)
-        self._delete_unwanted_binaries(self.package_folder)
+        if self.package_folder is not None:
+            self._delete_unwanted_binaries(self.package_folder)
         self._delete_unwanted_binaries(self._base_dir)
         self._delete_unwanted_binaries(self._share_dir)
 
