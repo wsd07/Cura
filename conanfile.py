@@ -656,17 +656,20 @@ class CuraConan(ConanFile):
         ''' Note: this deploy step is actually used to prepare for building a Cura distribution with pyinstaller, which is not
             the original purpose in the Conan philosophy '''
 
-        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[2]),
+        # Use hardcoded paths from layout() instead of cpp_info which may not be initialized in deploy()
+        # From layout(): resdirs = ["resources", "plugins", "packaging"]
+        copy(self, "*", os.path.join(self.package_folder, "packaging"),
              os.path.join(self.deploy_folder, "packaging"), keep_path=True)
 
         # Copy resources of Cura (keep folder structure) needed by pyinstaller to determine the module structure
-        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.bindirs[0]), str(self._base_dir), keep_path = False)
-        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.libdirs[0]), str(self._site_packages.joinpath("cura")), keep_path = True)
-        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[0]), str(self._share_dir.joinpath("cura", "resources")), keep_path = True)
-        copy(self, "*", os.path.join(self.package_folder, self.cpp_info.resdirs[1]), str(self._share_dir.joinpath("cura", "plugins")), keep_path = True)
+        # Use hardcoded paths: bindirs=["bin"], libdirs=["site-packages/cura"], resdirs=["resources", "plugins", "packaging"]
+        copy(self, "*", os.path.join(self.package_folder, "bin"), str(self._base_dir), keep_path = False)
+        copy(self, "*", os.path.join(self.package_folder, "site-packages", "cura"), str(self._site_packages.joinpath("cura")), keep_path = True)
+        copy(self, "*", os.path.join(self.package_folder, "resources"), str(self._share_dir.joinpath("cura", "resources")), keep_path = True)
+        copy(self, "*", os.path.join(self.package_folder, "plugins"), str(self._share_dir.joinpath("cura", "plugins")), keep_path = True)
 
         # Copy the cura_resources resources from the package
-        rm(self, "conanfile.py", os.path.join(self.package_folder, self.cpp_info.resdirs[0]))
+        rm(self, "conanfile.py", os.path.join(self.package_folder, "resources"))
         cura_resources = self.dependencies["cura_resources"].cpp_info
         for res_dir in cura_resources.resdirs:
             copy(self, "*", res_dir, str(self._share_dir.joinpath("cura", "resources", Path(res_dir).name)), keep_path = True)
@@ -684,8 +687,8 @@ class CuraConan(ConanFile):
 
         entitlements_file = "'{}'".format(Path(self.deploy_folder, "packaging", "MacOS", "cura.entitlements"))
         self._generate_pyinstaller_spec(location = self.deploy_folder,
-                                        entrypoint_location = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.bindirs[0], self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])).replace("\\", "\\\\"),
-                                        icon_path = "'{}'".format(os.path.join(self.package_folder, self.cpp_info.resdirs[2], self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])).replace("\\", "\\\\"),
+                                        entrypoint_location = "'{}'".format(os.path.join(self.package_folder, "bin", self.conan_data["pyinstaller"]["runinfo"]["entrypoint"])).replace("\\", "\\\\"),
+                                        icon_path = "'{}'".format(os.path.join(self.package_folder, "packaging", self.conan_data["pyinstaller"]["icon"][str(self.settings.os)])).replace("\\", "\\\\"),
                                         entitlements_file = entitlements_file if self.settings.os == "Macos" else "None",
                                         cura_source_folder = self.package_folder)
 
