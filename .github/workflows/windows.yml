@@ -33,7 +33,7 @@ on:
         default: 'windows-2022'
         type: choice
         options:
-          - self-hosted-Windows-X64
+          - self-hosted
           - windows-2022
 
 jobs:
