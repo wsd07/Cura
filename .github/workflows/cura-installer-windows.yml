@@ -153,7 +153,8 @@ jobs:
             # --version=5.11.0: 版本号
             # --user=wsd07: 用户名
             # --channel=testing: 渠道
-            conan create --name=uranium --version=5.11.0 --user=wsd07 --channel=testing ./Uranium/
+            # --build=missing: 构建缺失的依赖包（如arcus）
+            conan create --name=uranium --version=5.11.0 --user=wsd07 --channel=testing --build=missing ./Uranium/
             if ($LASTEXITCODE -ne 0) {
                 Write-Error "创建Uranium Conan包失败，退出码: $LASTEXITCODE"
                 exit $LASTEXITCODE
