@@ -308,7 +308,7 @@ jobs:
           }
 
           # List all MSVC versions for debugging
-          Write-Host "Available MSVC versions in $MSDIR:"
+          Write-Host "Available MSVC versions in ${MSDIR}:"
           $versions = dir -Exclude "v*" $MSDIR -ErrorAction SilentlyContinue
           foreach ($version in $versions) {
             Write-Host "  - $($version.Name)"
@@ -328,7 +328,7 @@ jobs:
           Write-Host "Using CRT directory: $MSDIR_DLLS"
 
           # List available DLLs for debugging
-          Write-Host "Available DLLs in $MSDIR_DLLS:"
+          Write-Host "Available DLLs in ${MSDIR_DLLS}:"
           dir $MSDIR_DLLS/*.dll | ForEach-Object { Write-Host "  - $($_.Name)" }
 
           # Copy DLLs (with error checking)
