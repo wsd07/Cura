@@ -11,7 +11,7 @@ version: "5.11.0-alpha.0"
 requirements:
   - "cura_resources/5.11.0-alpha.0@ultimaker/testing"
   # Uranium框架：3D打印软件的基础框架
-  - "uranium/5.11.0-alpha.0@ultimaker/testing"
+  - "uranium/5.11.0@wsd07/testing"
   # CuraEngine：切片引擎核心 - 在GitHub Actions中使用预编译版本，在本地使用依赖包
   # - "curaengine/5.11.0-alpha.0@ultimaker/testing"  # 临时注释以解决GitHub Actions构建问题
   # 二进制数据：图标、主题等资源文件
