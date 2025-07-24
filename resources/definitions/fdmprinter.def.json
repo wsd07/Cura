@@ -1107,6 +1107,44 @@
                             "value": "1 if magic_spiralize else max(1, round((wall_thickness - wall_line_width_0) / wall_line_width_x) + 1) if wall_thickness != 0 else 0",
                             "limit_to_extruder": "wall_x_extruder_nr",
                             "settable_per_mesh": true
+                        },
+                        "wall0_extra_length":
+                        {
+                            "label": "1 Wall extra length",
+                            "description": ".When there is only one outer wall, add extra length inside the outer wall",
+                            "type": "float",
+                            "unit": "mm",
+                            "default_value": 5.0,
+                            "minimum_value": "0",
+                            "maximum_value_warning": "50.0",
+                            "maximum_value": "999999.0",
+                            "enabled": "wall_line_count == 1",
+                            "value": "0 if magic_spiralize else (10 * wall_line_width_0)",
+                            "limit_to_extruder": "wall_x_extruder_nr",
+                            "settable_per_mesh": true
+                        },
+                        "wall0_extra_dist_ratio":
+                        {
+                            "label": "1 Wall extra distance ratio",
+                            "description": ".When there is only one outer wall, add extra length inside the outer wall",
+                            "type": "float",
+                            "default_value": 1.1,
+                            "minimum_value": "1.0",
+                            "maximum_value_warning": "2.0",
+                            "maximum_value": "2.0",
+                            "enabled": "wall_line_count == 1",
+                            "limit_to_extruder": "wall_x_extruder_nr",
+                            "settable_per_mesh": true
+                        },
+                        "wall0_extra_dir_flip":
+                        {
+                            "label": "1 Wall extra direction flip",
+                            "description": ".When there is only one outer wall, add extra length inside the outer wall",
+                            "type": "bool",
+                            "default_value": false,
+                            "enabled": "wall_line_count == 1",
+                            "limit_to_extruder": "wall_x_extruder_nr",
+                            "settable_per_mesh": true
                         }
                     }
                 },
@@ -1449,6 +1487,15 @@
                     "type": "bool",
                     "default_value": false,
                     "enabled": "z_seam_type == 'back'",
+                    "limit_to_extruder": "wall_0_extruder_nr",
+                    "settable_per_mesh": true
+                                },
+                "z_seam_point_interpolation":
+                {
+                    "label": "Z Seam Point Interpolation",
+                    "description": "When enabled, the z seam coordinates are relative to each part's centre. When disabled, the coordinates define an absolute position on the build plate.",
+                    "type": "bool",
+                    "default_value": false,
                     "limit_to_extruder": "wall_0_extruder_nr",
                     "settable_per_mesh": true
                 }
@@ -3444,6 +3491,28 @@
                             "settable_per_mesh": true,
                             "children":
                             {
+                                "user_speed_ratio_definition_enable":
+                                {
+                                    "label": "Enable SpeedRatio Graph",
+                                    "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                                    "type": "bool",
+                                    "default_value": false,
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": false,
+                                    "settable_per_meshgroup": false
+                                },
+                                "user_speed_ratio_definition":
+                                {
+                                    "label": "SpeedRatio Height Graph[[H,R]..]/%",
+                                    "description": "SpeedRatio Height Graph[[H,R]..]/%.",
+                                    "unit": "",
+                                    "type": "str",
+                                    "default_value": "[]",
+                                    "enabled": "user_speed_ratio_definition_enable",
+                                    "settable_per_mesh": false,
+                                    "settable_per_extruder": false,
+                                    "settable_per_meshgroup": false
+                                },
                                 "speed_wall_0":
                                 {
                                     "label": "Outer Wall Speed",
@@ -4791,6 +4860,16 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": true,
                     "settable_per_meshgroup": true
+                },
+                "retraction_after_wipe":
+                {
+                    "label": "Retraction after wipe",
+                    "description": "Printing nozzle retraction occurs after wiping the nozzle.",
+                    "type": "bool",
+                    "default_value": false,
+                    "enabled": "retraction_enable",
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": true
                 },
                 "retraction_hop_enabled":
                 {
@@ -6499,8 +6578,8 @@
                     "label": "Skirt Height",
                     "description": "Printing the innermost skirt line with multiple layers makes it easy to remove the skirt.",
                     "type": "int",
-                    "default_value": 3,
-                    "value": "3 if resolveOrValue('skirt_gap') > 0.0 else 1",
+                    "default_value": 1,
+                    "value": "1 if resolveOrValue('skirt_gap') > 0.0 else 1",
                     "minimum_value": "1",
                     "maximum_value_warning": "10",
                     "maximum_value": "machine_height / layer_height",
@@ -6835,6 +6914,34 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": true,
                     "limit_to_extruder": "raft_surface_extruder_nr"
+                },
+                "layer_0_after_raft_temp":
+                {
+                    "label": "Temperature after raft",
+                    "description": "The temperature of the first layer after raft",
+                    "unit": "\u00b0C",
+                    "type": "float",
+                    "value": "max(material_print_temperature - 20,170)",
+                    "minimum_value_warning": "170",
+                    "maximum_value_warning": "270",
+                    "enabled": "resolveOrValue('adhesion_type') == 'raft'",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "limit_to_extruder": "raft_surface_extruder_nr"
+                },
+                "layer_0_after_raft_fan":
+                {
+                    "label": "Fan speed after raft",
+                    "description": "The fan speed of the first layer after raft",
+                    "unit": "%",
+                    "type": "float",
+                    "minimum_value": "0",
+                    "maximum_value": "100",
+                    "default_value": 100,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true,
+                    "enabled": "resolveOrValue('adhesion_type') == 'raft'",
+                    "limit_to_extruder": "adhesion_extruder_nr"
                 },
                 "raft_base_thickness":
                 {
@@ -8258,7 +8365,50 @@
                     "type": "bool",
                     "default_value": false,
                     "settable_per_mesh": false,
-                    "settable_per_extruder": false
+                    "settable_per_extruder": false,
+                    "children":
+                    {
+                        "smooth_spiralized_contours":
+                        {
+                            "label": "Smooth Spiralized Contours",
+                            "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
+                            "type": "bool",
+                            "default_value": true,
+                            "enabled": "magic_spiralize",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "only_spiralize_out_surface":
+                        {
+                            "label": "Only Print Out Surface",
+                            "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
+                            "type": "bool",
+                            "default_value": true,
+                            "enabled": "magic_spiralize",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "connect_out_walls":
+                        {
+                            "label": "Connect Out Walls",
+                            "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
+                            "type": "bool",
+                            "default_value": false,
+                            "enabled": "not only_spiralize_out_surface",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "use_user_defined_seam":
+                        {
+                            "label": "Use User Defined Seam",
+                            "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
+                            "type": "bool",
+                            "default_value": false,
+                            "enabled": "magic_spiralize",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        }
+                    }
                 },
                 "smooth_spiralized_contours":
                 {
@@ -8334,6 +8484,30 @@
                     "minimum_value": "0",
                     "minimum_value_warning": "0.05",
                     "maximum_value_warning": "1.0",
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": false
+                },
+                "mini_polygon_deceleration_mm":
+                {
+                    "label": "Mini-polygon length of deceleration",
+                    "description": "When the size of the polygon is too small, reduce the printing speed.",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 5.0,
+                    "value": "20 * wall_line_width_0",
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": false
+                },
+                "min_polygon_deceleration_scale":
+                {
+                    "label": "Scale of deceleration for Mini-polygon",
+                    "description": "When the size of the polygon is too small, reduce the printing speed.",
+                    "unit": "%",
+                    "type": "float",
+                    "default_value": 10.0,
+                    "minimum_value": "5.0",
+                    "minimum_value_warning": "8.0",
+                    "maximum_value_warning": "100.0",
                     "settable_per_mesh": true,
                     "settable_per_extruder": false
                 },
@@ -8697,7 +8871,110 @@
                     "minimum_value": "0.0",
                     "settable_per_mesh": false,
                     "settable_per_extruder": false,
-                    "settable_per_meshgroup": false
+                    "settable_per_meshgroup": false,
+                    "children":
+                    {
+                        "user_thickness_definition_enable":
+                        {
+                            "label": "Enable Thickness Height Graph",
+                            "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                            "type": "bool",
+                            "default_value": false,
+                            "enabled": "adaptive_layer_height_enabled",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": false
+                        },
+                        "user_thickness_definition":
+                        {
+                            "label": "Thickness Height Graph[[H,T]..]/mm",
+                            "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                            "unit": "",
+                            "type": "str",
+                            "default_value": "[]",
+                            "enabled": "adaptive_layer_height_enabled and user_thickness_definition_enable",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": false
+                        },
+                        "adaptive_layer_height_variation":
+                        {
+                            "label": "Adaptive Layers Maximum Variation",
+                            "description": "The maximum allowed height different from the base layer height.",
+                            "type": "float",
+                            "enabled": "adaptive_layer_height_enabled and not user_thickness_definition_enable",
+                            "unit": "mm",
+                            "default_value": 0.1,
+                            "minimum_value": "0.0",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": false
+                        },
+                        "adaptive_layer_height_variation_step":
+                        {
+                            "label": "Adaptive Layers Variation Step Size",
+                            "description": "The difference in height of the next layer height compared to the previous one.",
+                            "type": "float",
+                            "enabled": "adaptive_layer_height_enabled and not user_thickness_definition_enable",
+                            "default_value": 0.01,
+                            "unit": "mm",
+                            "settable_per_mesh": false,
+                            "minimum_value": "0.001",
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": false
+                        },
+                        "adaptive_layer_height_threshold":
+                        {
+                            "label": "Adaptive Layers Topography Size",
+                            "description": "Target horizontal distance between two adjacent layers. Reducing this setting causes thinner layers to be used to bring the edges of the layers closer together.",
+                            "type": "float",
+                            "enabled": "adaptive_layer_height_enabled and not user_thickness_definition_enable",
+                            "default_value": 0.2,
+                            "unit": "mm",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": false
+                        },
+                         "adaptive_layer_mini_flow_thickness":
+                        {
+                            "label": "Adaptive Layer Mini_flow Thickness",
+                            "description": "Target horizontal distance between two adjacent layers. Reducing this setting causes thinner layers to be used to bring the edges of the layers closer together.",
+                            "type": "float",
+                            "enabled": "adaptive_layer_height_enabled and magic_spiralize",
+                            "default_value": 0.2,
+                            "value": "layer_height - adaptive_layer_height_variation",
+                            "unit": "mm",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": false
+                        },
+                         "adaptive_layer_max_width_ratio":
+                        {
+                            "label": "Adaptive Layer Max Width Ratio",
+                            "description": "Target horizontal distance between two adjacent layers. Reducing this setting causes thinner layers to be used to bring the edges of the layers closer together.",
+                            "type": "float",
+                            "enabled": "adaptive_layer_height_enabled and magic_spiralize",
+                            "default_value": 1.25,
+                            "minimum_value": "1.0",
+                            "unit": "x",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": false
+                        },
+                         "adaptive_layer_max_speed_ratio":
+                        {
+                            "label": "Adaptive Layer Max Speed Ratio",
+                            "description": "Target horizontal distance between two adjacent layers. Reducing this setting causes thinner layers to be used to bring the edges of the layers closer together.",
+                            "type": "float",
+                            "enabled": "adaptive_layer_height_enabled and magic_spiralize",
+                            "default_value": 1.25,
+                            "minimum_value": "1.0",
+                            "unit": "x",
+                            "settable_per_mesh": false,
+                            "settable_per_extruder": false,
+                            "settable_per_meshgroup": false
+                        }
+                    }
                 },
                 "adaptive_layer_height_variation_step":
                 {

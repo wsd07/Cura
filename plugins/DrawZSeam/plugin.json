@@ -1,0 +1,9 @@
+{
+    "name": "Draw Z Seam Point",
+    "author": "wsd",
+    "version": "1.0.0",
+    "description": "Adds a set of seam point",
+    "api": 6,
+    "supported_sdk_versions": ["6.0.0", "7.0.0", "8.0.0"],
+    "i18n-catalog": "DrawZSeam"
+}

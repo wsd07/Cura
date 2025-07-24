@@ -1,0 +1,21 @@
+{
+    "draw_z_seam_enable": {
+        "label": "Enable Draw Z Seam",
+        "description": "Use Draw Z Seam",
+        "type": "bool",
+        "default_value": true,
+        "settable_per_mesh": false,
+        "settable_per_extruder": false,
+        "settable_per_meshgroup": false
+    },
+    "draw_z_seam_points": {
+        "label": "Z Seam Points",
+        "description": "G90/G91 influences the extruder axis mode in the conversion of linear to arc moves. Marlin 2.0 and forks should have this box checked.  Many forks of Marlin 1.x should have this unchecked, like the Prusa MK2 and MK3.",
+        "unit": "",
+        "type": "str",
+        "default_value": "[]",
+        "settable_per_mesh": false,
+        "settable_per_extruder": false,
+        "settable_per_meshgroup": false
+    }
+}
