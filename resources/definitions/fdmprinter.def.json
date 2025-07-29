@@ -2712,6 +2712,28 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
+                "user_temperature_definition_enable":
+                {
+                    "label": "Enable Temperature Graph",
+                    "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                    "type": "bool",
+                    "default_value": false,
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
+                },
+                "user_temperature_definition":
+                {
+                    "label": "Temperature Height Graph[[H,T]..]",
+                    "description": "SpeedRatio Height Graph[[H,T]..].",
+                    "unit": "",
+                    "type": "str",
+                    "default_value": "[]",
+                    "enabled": "user_temperature_definition_enable",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": false,
+                    "settable_per_meshgroup": false
+                },
                 "material_extrusion_cool_down_speed":
                 {
                     "label": "Extrusion Cool Down Speed Modifier",
