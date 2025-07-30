@@ -468,20 +468,20 @@ class DrawZSeam(Tool):
             container._updateRelations(setting_definition)
 
         preferences = self._application.getPreferences()
-        if not preferences.getValue("drawZSeam/settings_made_visible"):
-            setting_keys = self._getAllSettingKeys(self._settings_dict)
+        #if not preferences.getValue("drawZSeam/settings_made_visible"):
+        #    setting_keys = self._getAllSettingKeys(self._settings_dict)
 
-            visible_settings = preferences.getValue("general/visible_settings")
-            visible_settings_changed = False
-            for key in setting_keys:
-                if key not in visible_settings:
-                    visible_settings += ";%s" % key
-                    visible_settings_changed = True
+        #    visible_settings = preferences.getValue("general/visible_settings")
+        #    visible_settings_changed = False
+        #    for key in setting_keys:
+        #        if key not in visible_settings:
+        #            visible_settings += ";%s" % key
+        #            visible_settings_changed = True
 
-            if visible_settings_changed:
-                preferences.setValue("general/visible_settings", visible_settings)
+        #    if visible_settings_changed:
+        #        preferences.setValue("general/visible_settings", visible_settings)
 
-            preferences.setValue("drawZSeam/settings_made_visible", True)
+         #   preferences.setValue("drawZSeam/settings_made_visible", True)
     def _updateAddedChildren(
         self, container: DefinitionContainer, setting_definition: SettingDefinition
     ) -> None:
