@@ -57,7 +57,7 @@ class CuraConan(ConanFile):
         "internal": False,
         "i18n_extract": False,
         # 根据运行环境决定是否跳过许可证下载：GitHub Actions环境跳过，本地macOS不跳过
-        "skip_licenses_download": os.environ.get("GITHUB_ACTIONS") == "true",
+        "skip_licenses_download": True,
     }
 
     def set_version(self):
@@ -197,7 +197,18 @@ class CuraConan(ConanFile):
             url.append(version)
         url.append("json")
 
-        data = requests.get("/".join(url)).json()
+        try:
+            data = requests.get("/".join(url), timeout=10).json()
+        except (requests.exceptions.RequestException, requests.exceptions.ProxyError, requests.exceptions.ConnectionError) as e:
+            self.output.warning(f"Failed to fetch PyPI data for {package}: {e}")
+            # Provide fallback data when network request fails
+            dependency_description = {
+                "summary": f"Python package: {package}",
+                "version": version if version else "unknown",
+                "license": "unknown"
+            }
+            dependencies[package] = dependency_description
+            return
 
         dependency_description = {
             "summary": data["info"]["summary"],
