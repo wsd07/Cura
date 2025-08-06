@@ -1508,6 +1508,15 @@
                     "limit_to_extruder": "wall_0_extruder_nr",
                     "settable_per_mesh": true
                 },
+                "z_seam_part_print_first":
+                {
+                    "label": "Z Seam Point Print First",
+                    "description": "When enabled, the z seam coordinates are relative to each part's centre. When disabled, the coordinates define an absolute position on the build plate.",
+                    "type": "bool",
+                    "default_value": false,
+                    "limit_to_extruder": "wall_0_extruder_nr",
+                    "settable_per_mesh": true
+                },
                 "draw_z_seam_grow":
                 {
                     "label": "Z Seam Point Grow",
@@ -8410,7 +8419,7 @@
                     {
                         "magic_spiralize_range":
                         {
-                            "label": "Flow Temperature Graph",
+                            "label": "Spiralize Range",
                             "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
                             "unit": "[mm,mm]",
                             "type": "str",
@@ -8435,8 +8444,34 @@
                             "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
                             "type": "bool",
                             "default_value": true,
-                            "enabled": "magic_spiralize",
+                            "enabled": "magic_spiralize and smooth_spiralized_z",
                             "settable_per_mesh": false,
+                            "settable_per_extruder": false
+                        },
+                        "spiralized_start_flow_rate":
+                        {
+                            "label": "The Start Flow Rate",
+                            "description": "When the size of the polygon is too small, reduce the printing speed.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 30.0,
+                            "minimum_value": "5.0",
+                            "minimum_value_warning": "8.0",
+                            "maximum_value_warning": "100.0",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": false
+                        },
+                        "spiralized_start_speed_rate":
+                        {
+                            "label": "The Start Speed Rate",
+                            "description": "When the size of the polygon is too small, reduce the printing speed.",
+                            "unit": "%",
+                            "type": "float",
+                            "default_value": 30.0,
+                            "minimum_value": "5.0",
+                            "minimum_value_warning": "8.0",
+                            "maximum_value_warning": "100.0",
+                            "settable_per_mesh": true,
                             "settable_per_extruder": false
                         },
                         "only_spiralize_out_surface":
