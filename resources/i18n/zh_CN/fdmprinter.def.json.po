@@ -6109,6 +6109,54 @@ msgctxt "machine_gcode_flavor option Cheetah"
 msgid "Griffin+Cheetah"
 msgstr "Griffin+Cheetah"
 
+msgctxt "retraction_combing_offset label"
+msgid "Combing Boundary Offset"
+msgstr "避障边界偏移"
+
+msgctxt "retraction_combing_offset description"
+msgid "When combing mode is set to 'All', this offset is applied to the outer wall (wall_0) polygons to define the combing boundary. Positive values expand the boundary outward (allowing travel further from walls), negative values shrink it inward (keeping travel closer to walls). This provides precise control over where the nozzle can travel during combing moves."
+msgstr "当避障模式设置为"全部"时，此偏移量应用于外墙（wall_0）多边形以定义避障边界。正值向外扩展边界（允许远离墙壁移动），负值向内收缩边界（保持移动更接近墙壁）。这提供了对喷嘴在避障移动期间可以移动位置的精确控制。"
+
+msgctxt "magic_spiralize_reinforce_layers label"
+msgid "Spiralize Reinforce Layers"
+msgstr "螺旋模式加强层数"
+
+msgctxt "magic_spiralize_reinforce_layers description"
+msgid "Number of initial layers in spiralize mode that will be reinforced with additional contours. These layers will have multiple concentric walls printed to provide extra strength at the base. Set to 0 to disable reinforcement."
+msgstr "螺旋模式中需要加强的初始层数。这些层将打印多个同心壁以在底部提供额外强度。设置为0以禁用加强功能。"
+
+msgctxt "magic_spiralize_reinforce_contours label"
+msgid "Spiralize Reinforce Contours"
+msgstr "螺旋模式加强圈数"
+
+msgctxt "magic_spiralize_reinforce_contours description"
+msgid "Total width of reinforcement structure as a multiple of wall_0 width. For example, 1.3 means the reinforcement structure has a total width of 1.3 times wall_0. The number of actual contours is calculated by rounding, and each contour's width is adjusted accordingly."
+msgstr "加强结构的总宽度，以wall_0宽度的倍数表示。例如，1.3表示加强结构的总宽度为wall_0的1.3倍。实际轮廓数量通过四舍五入计算，每个轮廓的宽度会相应调整。"
+
+msgctxt "magic_spiralize_reinforce_fade label"
+msgid "Spiralize Reinforce Fade"
+msgstr "螺旋模式加强渐变"
+
+msgctxt "magic_spiralize_reinforce_fade description"
+msgid "When enabled, the reinforcement structure width linearly decreases from the specified value to 0.5 over the reinforcement layers. This creates a gradual transition from strong reinforcement to normal spiral printing."
+msgstr "启用时，加强结构宽度在加强层范围内从指定值线性减少到0.5。这创建了从强加强到正常螺旋打印的渐变过渡。"
+
+msgctxt "magic_spiralize_reinforce_mini_contours label"
+msgid "Spiralize Reinforce Mini Contours"
+msgstr "螺旋加强最小圈数"
+
+msgctxt "magic_spiralize_reinforce_mini_contours description"
+msgid "Number of reinforcement contours for the last reinforcement layer. This parameter works with 'Spiralize Reinforce Contours' to create a linear gradient from the first layer to the last layer. For example, if first layer is 3.6 and last layer is 0.8, the contours will gradually decrease from 3.6 to 0.8 over the reinforcement layers."
+msgstr "最后一个加强层的加强圈数。此参数与"螺旋加强圈数"配合使用，在第一层到最后一层之间创建线性渐变。例如，如果第一层是3.6，最后一层是0.8，则加强圈数将在加强层数范围内从3.6逐渐减少到0.8。"
+
+msgctxt "magic_spiralize_reinforce_flip label"
+msgid "Spiralize Reinforce Flip Direction"
+msgstr "螺旋模式加强圈反向"
+
+msgctxt "magic_spiralize_reinforce_flip description"
+msgid "Whether to print reinforcement contours in the opposite direction to the main spiral. When enabled, reinforcement contours will be printed in reverse direction, which can help reduce stress concentrations and improve layer adhesion."
+msgstr "是否以与主螺旋相反的方向打印加强轮廓。启用时，加强轮廓将以相反方向打印，这有助于减少应力集中并改善层间粘合。"
+
 msgctxt "retraction_combing_avoid_distance label"
 msgid "Inside Travel Avoid Distance"
 msgstr "内部移动避让距离"
@@ -6240,3 +6288,219 @@ msgstr "打印底部区域的单线宽度"
 msgctxt "flooring_pattern option zigzag"
 msgid "Zig Zag"
 msgstr "锯齿形"
+
+msgctxt "wall0_extra_length label"
+msgid "Single Wall Extra Length"
+msgstr "单壁额外长度"
+
+msgctxt "wall0_extra_length description"
+msgid "When there is only one outer wall, add extra length inside the outer wall to improve structural strength and print quality. This helps compensate for the lack of inner walls by extending the single wall path."
+msgstr "当只有一个外壁时，在外壁内部添加额外长度以提高结构强度和打印质量。这通过延长单壁路径来补偿缺少内壁的问题。"
+
+msgctxt "wall0_extra_dist_ratio label"
+msgid "Single Wall Extra Distance Ratio"
+msgstr "单壁额外距离比例"
+
+msgctxt "wall0_extra_dist_ratio description"
+msgid "The ratio that determines how far inside the outer wall the extra length should be placed. A value of 1.1 means the extra path will be placed 10% further inside from the outer wall boundary."
+msgstr "确定额外长度应放置在外壁内多远的比例。值为1.1意味着额外路径将从外壁边界向内放置10%的距离。"
+
+msgctxt "wall0_extra_dir_flip label"
+msgid "Single Wall Extra Direction Flip"
+msgstr "单壁额外方向翻转"
+
+msgctxt "wall0_extra_dir_flip description"
+msgid "When enabled, the direction of the extra length path inside the single outer wall will be flipped (reversed). This can help optimize the printing direction and reduce travel moves."
+msgstr "启用时，单个外壁内额外长度路径的方向将被翻转（反向）。这有助于优化打印方向并减少空行程移动。"
+
+msgctxt "beading_strategy_enable label"
+msgid "Enable Beading Strategy"
+msgstr "启用珠状策略"
+
+msgctxt "beading_strategy_enable description"
+msgid "Enable advanced beading strategy for optimizing wall line widths. This strategy automatically adjusts line widths to better fill thin areas and improve print quality by distributing material more evenly across wall lines."
+msgstr "启用高级珠状策略以优化壁线宽度。该策略自动调整线宽以更好地填充薄区域，并通过在壁线之间更均匀地分布材料来提高打印质量。"
+
+msgctxt "z_seam_part_print_first label"
+msgid "Z Seam Part Print First"
+msgstr "Z缝合部分优先打印"
+
+msgctxt "z_seam_part_print_first description"
+msgid "When enabled, parts containing the Z seam will be printed first in each layer. This can help improve seam alignment and reduce stringing between parts by minimizing travel moves after seam placement."
+msgstr "启用时，包含Z缝合的部分将在每层中优先打印。这有助于改善缝合对齐并通过最小化缝合放置后的空行程移动来减少部件间的拉丝。"
+
+msgctxt "z_seam_point_interpolation label"
+msgid "Z Seam Point Interpolation"
+msgstr "Z缝合点插值"
+
+msgctxt "z_seam_point_interpolation description"
+msgid "When enabled, the Z seam position will be interpolated smoothly between layers to create a more gradual transition. This helps reduce visible seam lines by distributing the seam position changes over multiple layers."
+msgstr "启用时，Z缝合位置将在层间平滑插值以创建更渐进的过渡。这通过在多个层上分布缝合位置变化来帮助减少可见的缝合线。"
+
+msgctxt "draw_z_seam_grow label"
+msgid "Z Seam Grow Effect"
+msgstr "Z缝合增长效果"
+
+msgctxt "draw_z_seam_grow description"
+msgid "When enabled, the Z seam area will be expanded or grown to create a more prominent seam effect. This can be useful for creating intentional design features or improving layer adhesion at the seam location."
+msgstr "启用时，Z缝合区域将被扩展或增长以创建更突出的缝合效果。这对于创建有意的设计特征或改善缝合位置的层粘附性很有用。"
+
+msgctxt "user_temperature_definition_enable label"
+msgid "Enable Custom Temperature Profile"
+msgstr "启用自定义温度配置文件"
+
+msgctxt "user_temperature_definition_enable description"
+msgid "Enable user-defined temperature profile that allows setting different temperatures at specific layer heights. This provides precise temperature control throughout the print for optimal material properties and print quality."
+msgstr "启用用户定义的温度配置文件，允许在特定层高度设置不同的温度。这为整个打印过程提供精确的温度控制，以获得最佳的材料特性和打印质量。"
+
+msgctxt "user_temperature_definition label"
+msgid "Temperature Profile Definition"
+msgstr "温度配置文件定义"
+
+msgctxt "user_temperature_definition description"
+msgid "Define temperature changes at specific layer heights using the format [[Height1,Temperature1],[Height2,Temperature2],...]. For example: [[0,200],[10,210],[20,205]] sets 200°C at layer 0, 210°C at layer 10, and 205°C at layer 20."
+msgstr "使用格式[[高度1,温度1],[高度2,温度2],...]在特定层高度定义温度变化。例如：[[0,200],[10,210],[20,205]]在第0层设置200°C，第10层设置210°C，第20层设置205°C。"
+
+msgctxt "user_speed_ratio_definition_enable label"
+msgid "Enable Custom Speed Ratio Profile"
+msgstr "启用自定义速度比例配置文件"
+
+msgctxt "user_speed_ratio_definition_enable description"
+msgid "Enable user-defined speed ratio profile that allows setting different speed multipliers at specific layer heights. This provides dynamic speed control throughout the print for optimal quality and efficiency."
+msgstr "启用用户定义的速度比例配置文件，允许在特定层高度设置不同的速度倍数。这为整个打印过程提供动态速度控制，以获得最佳质量和效率。"
+
+msgctxt "user_speed_ratio_definition label"
+msgid "Speed Ratio Profile Definition"
+msgstr "速度比例配置文件定义"
+
+msgctxt "user_speed_ratio_definition description"
+msgid "Define speed ratio changes at specific layer heights using the format [[Height1,Ratio1],[Height2,Ratio2],...]. Ratios are percentages (e.g., 80 for 80% speed). Example: [[0,100],[10,80],[20,120]] sets 100% at layer 0, 80% at layer 10, and 120% at layer 20."
+msgstr "使用格式[[高度1,比例1],[高度2,比例2],...]在特定层高度定义速度比例变化。比例为百分比（例如，80表示80%速度）。示例：[[0,100],[10,80],[20,120]]在第0层设置100%，第10层设置80%，第20层设置120%。"
+
+msgctxt "retraction_after_wipe label"
+msgid "Retraction After Wipe"
+msgstr "擦拭后回抽"
+
+msgctxt "retraction_after_wipe description"
+msgid "When enabled, the nozzle will perform retraction after the wipe movement is completed. This helps prevent oozing and stringing by ensuring the filament is properly retracted after the cleaning wipe action."
+msgstr "启用时，喷嘴将在擦拭动作完成后执行回抽。这通过确保在清洁擦拭动作后正确回抽丝材来帮助防止渗出和拉丝。"
+
+msgctxt "layer_0_after_raft_temp label"
+msgid "First Layer Temperature After Raft"
+msgstr "筏板后首层温度"
+
+msgctxt "layer_0_after_raft_temp description"
+msgid "The nozzle temperature for the first layer of the actual model after the raft is completed. This temperature is typically lower than the raft temperature to improve layer adhesion and surface quality."
+msgstr "筏板完成后实际模型首层的喷嘴温度。该温度通常低于筏板温度，以改善层粘附性和表面质量。"
+
+msgctxt "layer_0_after_raft_fan label"
+msgid "First Layer Fan Speed After Raft"
+msgstr "筏板后首层风扇速度"
+
+msgctxt "layer_0_after_raft_fan description"
+msgid "The cooling fan speed for the first layer of the actual model after the raft is completed. Higher fan speeds can improve surface quality and dimensional accuracy for the transition from raft to model."
+msgstr "筏板完成后实际模型首层的冷却风扇速度。较高的风扇速度可以改善从筏板到模型过渡的表面质量和尺寸精度。"
+
+msgctxt "magic_spiralize_range label"
+msgid "Spiralize Height Range"
+msgstr "螺旋化高度范围"
+
+msgctxt "magic_spiralize_range description"
+msgid "Define the height range where spiralization should be applied using the format [start_height,end_height]. For example: [5.0,15.0] applies spiralization from 5mm to 15mm height. Leave empty to spiralize the entire print."
+msgstr "使用格式[起始高度,结束高度]定义应用螺旋化的高度范围。例如：[5.0,15.0]从5mm到15mm高度应用螺旋化。留空则对整个打印进行螺旋化。"
+
+msgctxt "smooth_spiralized_z label"
+msgid "Smooth Spiralized Z Movement"
+msgstr "平滑螺旋化Z移动"
+
+msgctxt "smooth_spiralized_z description"
+msgid "Enable smooth Z-axis movement during spiralization to create gradual height transitions. This reduces layer lines and creates a more continuous spiral surface, but may slightly reduce fine detail definition."
+msgstr "在螺旋化过程中启用平滑的Z轴移动以创建渐进的高度过渡。这减少了层线并创建更连续的螺旋表面，但可能会略微降低精细细节的清晰度。"
+
+msgctxt "smooth_spiralized_contours label"
+msgid "Smooth Spiralized Contours"
+msgstr "平滑螺旋化轮廓"
+
+msgctxt "smooth_spiralized_contours description"
+msgid "Apply smoothing to the spiralized contour paths to reduce sharp corners and create more fluid curves. This improves surface quality and reduces the visibility of layer transitions, especially beneficial for vase mode prints."
+msgstr "对螺旋化轮廓路径应用平滑处理以减少尖角并创建更流畅的曲线。这改善了表面质量并减少了层过渡的可见性，特别有利于花瓶模式打印。"
+
+msgctxt "spiralized_start_flow_rate label"
+msgid "Spiralized Start Flow Rate"
+msgstr "螺旋化起始流量率"
+
+msgctxt "spiralized_start_flow_rate description"
+msgid "The initial flow rate percentage when starting spiralization. This allows for a gradual transition into full flow, helping to prevent over-extrusion at the beginning of the spiral and improving surface quality."
+msgstr "开始螺旋化时的初始流量率百分比。这允许逐渐过渡到全流量，有助于防止螺旋开始时的过度挤出并改善表面质量。"
+
+msgctxt "spiralized_start_speed_rate label"
+msgid "Spiralized Start Speed Rate"
+msgstr "螺旋化起始速度率"
+
+msgctxt "spiralized_start_speed_rate description"
+msgid "The initial printing speed percentage when starting spiralization. This allows for a gradual speed transition into full speed, helping to ensure stable extrusion and better layer adhesion at the beginning of the spiral."
+msgstr "开始螺旋化时的初始打印速度百分比。这允许逐渐过渡到全速，有助于确保稳定的挤出和螺旋开始时更好的层粘附性。"
+
+msgctxt "only_spiralize_out_surface label"
+msgid "Only Spiralize Outer Surface"
+msgstr "仅螺旋化外表面"
+
+msgctxt "only_spiralize_out_surface description"
+msgid "When enabled, only the outermost surface will be spiralized while inner structures remain as normal layers. This is useful for complex models where you want the outer shell to be smooth but need internal support structures."
+msgstr "启用时，只有最外层表面会被螺旋化，而内部结构保持为正常层。这对于复杂模型很有用，您希望外壳平滑但需要内部支撑结构。"
+
+msgctxt "connect_out_walls label"
+msgid "Connect Outer Walls"
+msgstr "连接外壁"
+
+msgctxt "connect_out_walls description"
+msgid "When enabled, outer walls will be connected between layers to create continuous paths. This improves structural integrity and surface quality by ensuring proper wall connections in non-spiralized areas."
+msgstr "启用时，外壁将在层间连接以创建连续路径。这通过确保非螺旋化区域的适当壁连接来改善结构完整性和表面质量。"
+
+msgctxt "minimum_polygon_area label"
+msgid "Minimum Polygon Area"
+msgstr "最小多边形面积"
+
+msgctxt "minimum_polygon_area description"
+msgid "Polygons in sliced layers that have an area smaller than this value will be filtered out during slicing. Lower values preserve more fine details but increase slicing time. This is particularly useful for high-resolution prints and detailed models."
+msgstr "切片层中面积小于此值的多边形将在切片过程中被过滤掉。较低的值保留更多精细细节但增加切片时间。这对于高分辨率打印和详细模型特别有用。"
+
+msgctxt "mini_polygon_deceleration_mm label"
+msgid "Small Polygon Deceleration Threshold"
+msgstr "小多边形减速阈值"
+
+msgctxt "mini_polygon_deceleration_mm description"
+msgid "The perimeter length threshold below which printing speed will be reduced for small polygons. When a polygon's perimeter is smaller than this value, the printer will slow down to improve print quality and accuracy."
+msgstr "小多边形打印速度将被降低的周长阈值。当多边形的周长小于此值时，打印机将减速以提高打印质量和精度。"
+
+msgctxt "min_polygon_deceleration_scale label"
+msgid "Small Polygon Speed Reduction Scale"
+msgstr "小多边形速度降低比例"
+
+msgctxt "min_polygon_deceleration_scale description"
+msgid "The percentage by which printing speed is reduced for small polygons. Lower values mean more aggressive speed reduction. This helps improve print quality for fine details and small features."
+msgstr "小多边形打印速度降低的百分比。较低的值意味着更激进的速度降低。这有助于改善精细细节和小特征的打印质量。"
+
+msgctxt "user_thickness_definition_enable label"
+msgid "Enable Custom Layer Thickness Profile"
+msgstr "启用自定义层厚度配置文件"
+
+msgctxt "user_thickness_definition_enable description"
+msgid "Enable user-defined layer thickness profile that allows setting different layer heights at specific Z positions. This provides precise control over layer thickness throughout the print for optimal quality and detail."
+msgstr "启用用户定义的层厚度配置文件，允许在特定Z位置设置不同的层高度。这为整个打印过程提供精确的层厚度控制，以获得最佳质量和细节。"
+
+msgctxt "user_thickness_definition label"
+msgid "Layer Thickness Profile Definition"
+msgstr "层厚度配置文件定义"
+
+msgctxt "user_thickness_definition description"
+msgid "Define layer thickness changes at specific heights using the format [[Height1,Thickness1],[Height2,Thickness2],...]. For example: [[0,0.2],[10,0.1],[20,0.3]] sets 0.2mm at height 0, 0.1mm at height 10mm, and 0.3mm at height 20mm."
+msgstr "使用格式[[高度1,厚度1],[高度2,厚度2],...]在特定高度定义层厚度变化。例如：[[0,0.2],[10,0.1],[20,0.3]]在高度0设置0.2mm，在高度10mm设置0.1mm，在高度20mm设置0.3mm。"
+
+msgctxt "adaptive_layer_height_variation label"
+msgid "Adaptive Layer Height Maximum Variation"
+msgstr "自适应层高度最大变化"
+
+msgctxt "adaptive_layer_height_variation description"
+msgid "The maximum allowed deviation from the base layer height when using adaptive layer heights. This controls how much thicker or thinner layers can become compared to the standard layer height."
+msgstr "使用自适应层高度时允许的基础层高度最大偏差。这控制层相对于标准层高度可以变得多厚或多薄。"

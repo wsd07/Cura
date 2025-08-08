@@ -1110,8 +1110,8 @@
                         },
                         "wall0_extra_length":
                         {
-                            "label": "1 Wall extra length",
-                            "description": ".When there is only one outer wall, add extra length inside the outer wall",
+                            "label": "Single Wall Extra Length",
+                            "description": "When there is only one outer wall, add extra length inside the outer wall to improve structural strength and print quality. This helps compensate for the lack of inner walls by extending the single wall path.",
                             "type": "float",
                             "unit": "mm",
                             "default_value": 5.0,
@@ -1125,8 +1125,8 @@
                         },
                         "wall0_extra_dist_ratio":
                         {
-                            "label": "1 Wall extra distance ratio",
-                            "description": ".When there is only one outer wall, add extra length inside the outer wall",
+                            "label": "Single Wall Extra Distance Ratio",
+                            "description": "The ratio that determines how far inside the outer wall the extra length should be placed. A value of 1.1 means the extra path will be placed 10% further inside from the outer wall boundary.",
                             "type": "float",
                             "default_value": 1.1,
                             "minimum_value": "1.0",
@@ -1138,8 +1138,8 @@
                         },
                         "wall0_extra_dir_flip":
                         {
-                            "label": "1 Wall extra direction flip",
-                            "description": ".When there is only one outer wall, add extra length inside the outer wall",
+                            "label": "Single Wall Extra Direction Flip",
+                            "description": "When enabled, the direction of the extra length path inside the single outer wall will be flipped (reversed). This can help optimize the printing direction and reduce travel moves.",
                             "type": "bool",
                             "default_value": false,
                             "enabled": "wall_line_count == 1",
@@ -1327,8 +1327,8 @@
                 },
                 "beading_strategy_enable":
                 {
-                    "label": "Beading Strategy Enable",
-                    "description": "Print pieces of the model which are horizontally thinner than the nozzle size.",
+                    "label": "Enable Beading Strategy",
+                    "description": "Enable advanced beading strategy for optimizing wall line widths. This strategy automatically adjusts line widths to better fill thin areas and improve print quality by distributing material more evenly across wall lines.",
                     "type": "bool",
                     "default_value": false,
                     "limit_to_extruder": "wall_0_extruder_nr",
@@ -1502,7 +1502,7 @@
                 "z_seam_point_interpolation":
                 {
                     "label": "Z Seam Point Interpolation",
-                    "description": "When enabled, the z seam coordinates are relative to each part's centre. When disabled, the coordinates define an absolute position on the build plate.",
+                    "description": "When enabled, the Z seam position will be interpolated smoothly between layers to create a more gradual transition. This helps reduce visible seam lines by distributing the seam position changes over multiple layers.",
                     "type": "bool",
                     "default_value": false,
                     "limit_to_extruder": "wall_0_extruder_nr",
@@ -1510,8 +1510,8 @@
                 },
                 "z_seam_part_print_first":
                 {
-                    "label": "Z Seam Point Print First",
-                    "description": "When enabled, the z seam coordinates are relative to each part's centre. When disabled, the coordinates define an absolute position on the build plate.",
+                    "label": "Z Seam Part Print First",
+                    "description": "When enabled, parts containing the Z seam will be printed first in each layer. This can help improve seam alignment and reduce stringing between parts by minimizing travel moves after seam placement.",
                     "type": "bool",
                     "default_value": false,
                     "limit_to_extruder": "wall_0_extruder_nr",
@@ -1519,8 +1519,8 @@
                 },
                 "draw_z_seam_grow":
                 {
-                    "label": "Z Seam Point Grow",
-                    "description": "When enabled, the z seam coordinates are relative to each part's centre. When disabled, the coordinates define an absolute position on the build plate.",
+                    "label": "Z Seam Grow Effect",
+                    "description": "When enabled, the Z seam area will be expanded or grown to create a more prominent seam effect. This can be useful for creating intentional design features or improving layer adhesion at the seam location.",
                     "type": "bool",
                     "default_value": false,
                     "limit_to_extruder": "wall_0_extruder_nr",
@@ -2723,8 +2723,8 @@
                 },
                 "user_temperature_definition_enable":
                 {
-                    "label": "Enable Temperature Graph",
-                    "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                    "label": "Enable Custom Temperature Profile",
+                    "description": "Enable user-defined temperature profile that allows setting different temperatures at specific layer heights. This provides precise temperature control throughout the print for optimal material properties and print quality.",
                     "type": "bool",
                     "default_value": false,
                     "settable_per_mesh": false,
@@ -2733,8 +2733,8 @@
                 },
                 "user_temperature_definition":
                 {
-                    "label": "Temperature Height Graph[[H,T]..]",
-                    "description": "SpeedRatio Height Graph[[H,T]..].",
+                    "label": "Temperature Profile Definition",
+                    "description": "Define temperature changes at specific layer heights using the format [[Height1,Temperature1],[Height2,Temperature2],...]. For example: [[0,200],[10,210],[20,205]] sets 200°C at layer 0, 210°C at layer 10, and 205°C at layer 20.",
                     "unit": "",
                     "type": "str",
                     "default_value": "[]",
@@ -3542,8 +3542,8 @@
                             {
                                 "user_speed_ratio_definition_enable":
                                 {
-                                    "label": "Enable SpeedRatio Graph",
-                                    "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                                    "label": "Enable Custom Speed Ratio Profile",
+                                    "description": "Enable user-defined speed ratio profile that allows setting different speed multipliers at specific layer heights. This provides dynamic speed control throughout the print for optimal quality and efficiency.",
                                     "type": "bool",
                                     "default_value": false,
                                     "settable_per_mesh": false,
@@ -3552,8 +3552,8 @@
                                 },
                                 "user_speed_ratio_definition":
                                 {
-                                    "label": "SpeedRatio Height Graph[[H,R]..]/%",
-                                    "description": "SpeedRatio Height Graph[[H,R]..]/%.",
+                                    "label": "Speed Ratio Profile Definition",
+                                    "description": "Define speed ratio changes at specific layer heights using the format [[Height1,Ratio1],[Height2,Ratio2],...]. Ratios are percentages (e.g., 80 for 80% speed). Example: [[0,100],[10,80],[20,120]] sets 100% at layer 0, 80% at layer 10, and 120% at layer 20.",
                                     "unit": "",
                                     "type": "str",
                                     "default_value": "[]",
@@ -4812,6 +4812,20 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": false
                 },
+                "retraction_combing_offset":
+                {
+                    "label": "Combing Boundary Offset",
+                    "description": "When combing mode is set to 'All', this offset is applied to the outer wall (wall_0) polygons to define the combing boundary. Positive values expand the boundary outward (allowing travel further from walls), negative values shrink it inward (keeping travel closer to walls). This provides precise control over where the nozzle can travel during combing moves.",
+                    "unit": "mm",
+                    "type": "float",
+                    "default_value": 0,
+                    "value": "machine_nozzle_size * -0.5",
+                    "minimum_value": "-10",
+                    "maximum_value": "10",
+                    "enabled": "resolveOrValue('retraction_combing') == 'all'",
+                    "settable_per_mesh": false,
+                    "settable_per_extruder": true
+                },
                 "retraction_combing_max_distance":
                 {
                     "label": "Max Comb Distance With No Retract",
@@ -4835,7 +4849,7 @@
                     "minimum_value": "0",
                     "minimum_value_warning": "machine_nozzle_size * 0.5",
                     "maximum_value_warning": "machine_nozzle_size * 10",
-                    "enabled": "resolveOrValue('retraction_combing') != 'off'",
+                    "enabled": "resolveOrValue('retraction_combing') != 'off' and resolveOrValue('retraction_combing') != 'all'",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
@@ -4855,7 +4869,7 @@
                     "description": "The nozzle avoids already printed parts when traveling. This option is only available when combing is enabled.",
                     "type": "bool",
                     "default_value": true,
-                    "enabled": "resolveOrValue('retraction_combing') != 'off'",
+                    "enabled": "resolveOrValue('retraction_combing') != 'off' and resolveOrValue('retraction_combing') != 'all'",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
@@ -4880,7 +4894,7 @@
                     "minimum_value": "0",
                     "minimum_value_warning": "machine_nozzle_tip_outer_diameter * 0.5",
                     "maximum_value_warning": "machine_nozzle_tip_outer_diameter * 5",
-                    "enabled": "resolveOrValue('retraction_combing') != 'off' and travel_avoid_other_parts",
+                    "enabled": "resolveOrValue('retraction_combing') != 'off' and travel_avoid_other_parts and resolveOrValue('retraction_combing') != 'all'",
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
@@ -4912,8 +4926,8 @@
                 },
                 "retraction_after_wipe":
                 {
-                    "label": "Retraction after wipe",
-                    "description": "Printing nozzle retraction occurs after wiping the nozzle.",
+                    "label": "Retraction After Wipe",
+                    "description": "When enabled, the nozzle will perform retraction after the wipe movement is completed. This helps prevent oozing and stringing by ensuring the filament is properly retracted after the cleaning wipe action.",
                     "type": "bool",
                     "default_value": false,
                     "enabled": "retraction_enable",
@@ -6966,8 +6980,8 @@
                 },
                 "layer_0_after_raft_temp":
                 {
-                    "label": "Temperature after raft",
-                    "description": "The temperature of the first layer after raft",
+                    "label": "First Layer Temperature After Raft",
+                    "description": "The nozzle temperature for the first layer of the actual model after the raft is completed. This temperature is typically lower than the raft temperature to improve layer adhesion and surface quality.",
                     "unit": "\u00b0C",
                     "type": "float",
                     "value": "max(material_print_temperature - 20,170)",
@@ -6980,8 +6994,8 @@
                 },
                 "layer_0_after_raft_fan":
                 {
-                    "label": "Fan speed after raft",
-                    "description": "The fan speed of the first layer after raft",
+                    "label": "First Layer Fan Speed After Raft",
+                    "description": "The cooling fan speed for the first layer of the actual model after the raft is completed. Higher fan speeds can improve surface quality and dimensional accuracy for the transition from raft to model.",
                     "unit": "%",
                     "type": "float",
                     "minimum_value": "0",
@@ -8419,8 +8433,8 @@
                     {
                         "magic_spiralize_range":
                         {
-                            "label": "Spiralize Range",
-                            "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                            "label": "Spiralize Height Range",
+                            "description": "Define the height range where spiralization should be applied using the format [start_height,end_height]. For example: [5.0,15.0] applies spiralization from 5mm to 15mm height. Leave empty to spiralize the entire print.",
                             "unit": "[mm,mm]",
                             "type": "str",
                             "default_value": "[,]",
@@ -8428,10 +8442,64 @@
                             "settable_per_mesh": false,
                             "settable_per_extruder": true
                         },
+                        "magic_spiralize_reinforce_layers":
+                        {
+                            "label": "Spiralize Reinforce Layers",
+                            "description": "Number of initial layers in spiralize mode that will be reinforced with additional contours. These layers will have multiple concentric walls printed to provide extra strength at the base. Set to 0 to disable reinforcement.",
+                            "type": "int",
+                            "minimum_value": "0",
+                            "default_value": 0,
+                            "enabled": "magic_spiralize",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true
+                        },
+                        "magic_spiralize_reinforce_contours":
+                        {
+                            "label": "Spiralize Reinforce Contours",
+                            "description": "Total width of reinforcement structure as a multiple of wall_0 width. For example, 1.3 means the reinforcement structure has a total width of 1.3 times wall_0. The number of actual contours is calculated by rounding, and each contour's width is adjusted accordingly.",
+                            "type": "float",
+                            "minimum_value": "0.1",
+                            "default_value": 1.0,
+                            "enabled": "magic_spiralize and magic_spiralize_reinforce_layers > 0",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true
+                        },
+                        "magic_spiralize_reinforce_flip":
+                        {
+                            "label": "Spiralize Reinforce Flip Direction",
+                            "description": "Whether to print reinforcement contours in the opposite direction to the main spiral. When enabled, reinforcement contours will be printed in reverse direction, which can help reduce stress concentrations and improve layer adhesion.",
+                            "type": "bool",
+                            "default_value": false,
+                            "enabled": "magic_spiralize and magic_spiralize_reinforce_layers > 0",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true
+                        },
+                        "magic_spiralize_reinforce_fade":
+                        {
+                            "label": "Spiralize Reinforce Fade",
+                            "description": "When enabled, the reinforcement structure width linearly decreases from the specified value to 0.5 over the reinforcement layers. This creates a gradual transition from strong reinforcement to normal spiral printing.",
+                            "type": "bool",
+                            "default_value": false,
+                            "enabled": "magic_spiralize and magic_spiralize_reinforce_layers > 1",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true
+                        },
+                        "magic_spiralize_reinforce_mini_contours":
+                        {
+                            "label": "Spiralize Reinforce Mini Contours",
+                            "description": "Number of reinforcement contours for the last reinforcement layer. This parameter works with 'Spiralize Reinforce Contours' to create a linear gradient from the first layer to the last layer. For example, if first layer is 3.6 and last layer is 0.8, the contours will gradually decrease from 3.6 to 0.8 over the reinforcement layers.",
+                            "type": "float",
+                            "minimum_value": "0.0",
+                            "maximum_value": "5.0",
+                            "default_value": 1.0,
+                            "enabled": "magic_spiralize and magic_spiralize_reinforce_layers > 1 and magic_spiralize_reinforce_fade",
+                            "settable_per_mesh": true,
+                            "settable_per_extruder": true
+                        },
                         "smooth_spiralized_z":
                         {
-                            "label": "Smooth Spiralized Z move",
-                            "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
+                            "label": "Smooth Spiralized Z Movement",
+                            "description": "Enable smooth Z-axis movement during spiralization to create gradual height transitions. This reduces layer lines and creates a more continuous spiral surface, but may slightly reduce fine detail definition.",
                             "type": "bool",
                             "default_value": true,
                             "enabled": "magic_spiralize",
@@ -8441,7 +8509,7 @@
                         "smooth_spiralized_contours":
                         {
                             "label": "Smooth Spiralized Contours",
-                            "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
+                            "description": "Apply smoothing to the spiralized contour paths to reduce sharp corners and create more fluid curves. This improves surface quality and reduces the visibility of layer transitions, especially beneficial for vase mode prints.",
                             "type": "bool",
                             "default_value": true,
                             "enabled": "magic_spiralize and smooth_spiralized_z",
@@ -8450,8 +8518,8 @@
                         },
                         "spiralized_start_flow_rate":
                         {
-                            "label": "The Start Flow Rate",
-                            "description": "When the size of the polygon is too small, reduce the printing speed.",
+                            "label": "Spiralized Start Flow Rate",
+                            "description": "The initial flow rate percentage when starting spiralization. This allows for a gradual transition into full flow, helping to prevent over-extrusion at the beginning of the spiral and improving surface quality.",
                             "unit": "%",
                             "type": "float",
                             "default_value": 30.0,
@@ -8463,8 +8531,8 @@
                         },
                         "spiralized_start_speed_rate":
                         {
-                            "label": "The Start Speed Rate",
-                            "description": "When the size of the polygon is too small, reduce the printing speed.",
+                            "label": "Spiralized Start Speed Rate",
+                            "description": "The initial printing speed percentage when starting spiralization. This allows for a gradual speed transition into full speed, helping to ensure stable extrusion and better layer adhesion at the beginning of the spiral.",
                             "unit": "%",
                             "type": "float",
                             "default_value": 30.0,
@@ -8476,8 +8544,8 @@
                         },
                         "only_spiralize_out_surface":
                         {
-                            "label": "Only Print Out Surface",
-                            "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
+                            "label": "Only Spiralize Outer Surface",
+                            "description": "When enabled, only the outermost surface will be spiralized while inner structures remain as normal layers. This is useful for complex models where you want the outer shell to be smooth but need internal support structures.",
                             "type": "bool",
                             "default_value": true,
                             "enabled": "magic_spiralize",
@@ -8486,8 +8554,8 @@
                         },
                         "connect_out_walls":
                         {
-                            "label": "Connect Out Walls",
-                            "description": "Smooth the spiralized contours to reduce the visibility of the Z seam (the Z seam should be barely visible on the print but will still be visible in the layer view). Note that smoothing will tend to blur fine surface details.",
+                            "label": "Connect Outer Walls",
+                            "description": "When enabled, outer walls will be connected between layers to create continuous paths. This improves structural integrity and surface quality by ensuring proper wall connections in non-spiralized areas.",
                             "type": "bool",
                             "default_value": false,
                             "enabled": "not only_spiralize_out_surface",
@@ -8576,7 +8644,7 @@
                 "minimum_polygon_area":
                 {
                     "label": "Minimum Polygon Area",
-                    "description": "Polygons in sliced layers that have a circumference smaller than this amount will be filtered out. Lower values lead to higher resolution mesh at the cost of slicing time. It is meant mostly for high resolution SLA printers and very tiny 3D models with a lot of details.",
+                    "description": "Polygons in sliced layers that have an area smaller than this value will be filtered out during slicing. Lower values preserve more fine details but increase slicing time. This is particularly useful for high-resolution prints and detailed models.",
                     "unit": "mm²",
                     "type": "float",
                     "default_value": 1.0,
@@ -8588,8 +8656,8 @@
                 },
                 "mini_polygon_deceleration_mm":
                 {
-                    "label": "Mini-polygon length of deceleration",
-                    "description": "When the size of the polygon is too small, reduce the printing speed.",
+                    "label": "Small Polygon Deceleration Threshold",
+                    "description": "The perimeter length threshold below which printing speed will be reduced for small polygons. When a polygon's perimeter is smaller than this value, the printer will slow down to improve print quality and accuracy.",
                     "unit": "mm",
                     "type": "float",
                     "default_value": 5.0,
@@ -8599,8 +8667,8 @@
                 },
                 "min_polygon_deceleration_scale":
                 {
-                    "label": "Scale of deceleration for Mini-polygon",
-                    "description": "When the size of the polygon is too small, reduce the printing speed.",
+                    "label": "Small Polygon Speed Reduction Scale",
+                    "description": "The percentage by which printing speed is reduced for small polygons. Lower values mean more aggressive speed reduction. This helps improve print quality for fine details and small features.",
                     "unit": "%",
                     "type": "float",
                     "default_value": 10.0,
@@ -8975,8 +9043,8 @@
                     {
                         "user_thickness_definition_enable":
                         {
-                            "label": "Enable Thickness Height Graph",
-                            "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                            "label": "Enable Custom Layer Thickness Profile",
+                            "description": "Enable user-defined layer thickness profile that allows setting different layer heights at specific Z positions. This provides precise control over layer thickness throughout the print for optimal quality and detail.",
                             "type": "bool",
                             "default_value": false,
                             "enabled": "adaptive_layer_height_enabled",
@@ -8986,8 +9054,8 @@
                         },
                         "user_thickness_definition":
                         {
-                            "label": "Thickness Height Graph[[H,T]..]/mm",
-                            "description": "Data linking material flow (in mm3 per second) to temperature (degrees Celsius).",
+                            "label": "Layer Thickness Profile Definition",
+                            "description": "Define layer thickness changes at specific heights using the format [[Height1,Thickness1],[Height2,Thickness2],...]. For example: [[0,0.2],[10,0.1],[20,0.3]] sets 0.2mm at height 0, 0.1mm at height 10mm, and 0.3mm at height 20mm.",
                             "unit": "",
                             "type": "str",
                             "default_value": "[]",
@@ -8998,8 +9066,8 @@
                         },
                         "adaptive_layer_height_variation":
                         {
-                            "label": "Adaptive Layers Maximum Variation",
-                            "description": "The maximum allowed height different from the base layer height.",
+                            "label": "Adaptive Layer Height Maximum Variation",
+                            "description": "The maximum allowed deviation from the base layer height when using adaptive layer heights. This controls how much thicker or thinner layers can become compared to the standard layer height.",
                             "type": "float",
                             "enabled": "adaptive_layer_height_enabled and not user_thickness_definition_enable",
                             "unit": "mm",

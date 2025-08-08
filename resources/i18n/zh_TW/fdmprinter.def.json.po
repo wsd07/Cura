@@ -1493,6 +1493,54 @@ msgctxt "machine_gcode_flavor option Cheetah"
 msgid "Griffin+Cheetah"
 msgstr ""
 
+msgctxt "retraction_combing_offset label"
+msgid "Combing Boundary Offset"
+msgstr "避障邊界偏移"
+
+msgctxt "retraction_combing_offset description"
+msgid "When combing mode is set to 'All', this offset is applied to the outer wall (wall_0) polygons to define the combing boundary. Positive values expand the boundary outward (allowing travel further from walls), negative values shrink it inward (keeping travel closer to walls). This provides precise control over where the nozzle can travel during combing moves."
+msgstr "當避障模式設置為「全部」時，此偏移量應用於外牆（wall_0）多邊形以定義避障邊界。正值向外擴展邊界（允許遠離牆壁移動），負值向內收縮邊界（保持移動更接近牆壁）。這提供了對噴嘴在避障移動期間可以移動位置的精確控制。"
+
+msgctxt "magic_spiralize_reinforce_layers label"
+msgid "Spiralize Reinforce Layers"
+msgstr "螺旋模式加強層數"
+
+msgctxt "magic_spiralize_reinforce_layers description"
+msgid "Number of initial layers in spiralize mode that will be reinforced with additional contours. These layers will have multiple concentric walls printed to provide extra strength at the base. Set to 0 to disable reinforcement."
+msgstr "螺旋模式中需要加強的初始層數。這些層將打印多個同心壁以在底部提供額外強度。設置為0以禁用加強功能。"
+
+msgctxt "magic_spiralize_reinforce_contours label"
+msgid "Spiralize Reinforce Contours"
+msgstr "螺旋模式加強圈數"
+
+msgctxt "magic_spiralize_reinforce_contours description"
+msgid "Total width of reinforcement structure as a multiple of wall_0 width. For example, 1.3 means the reinforcement structure has a total width of 1.3 times wall_0. The number of actual contours is calculated by rounding, and each contour's width is adjusted accordingly."
+msgstr "加強結構的總寬度，以wall_0寬度的倍數表示。例如，1.3表示加強結構的總寬度為wall_0的1.3倍。實際輪廓數量通過四捨五入計算，每個輪廓的寬度會相應調整。"
+
+msgctxt "magic_spiralize_reinforce_fade label"
+msgid "Spiralize Reinforce Fade"
+msgstr "螺旋模式加強漸變"
+
+msgctxt "magic_spiralize_reinforce_fade description"
+msgid "When enabled, the reinforcement structure width linearly decreases from the specified value to 0.5 over the reinforcement layers. This creates a gradual transition from strong reinforcement to normal spiral printing."
+msgstr "啟用時，加強結構寬度在加強層範圍內從指定值線性減少到0.5。這創建了從強加強到正常螺旋打印的漸變過渡。"
+
+msgctxt "magic_spiralize_reinforce_mini_contours label"
+msgid "Spiralize Reinforce Mini Contours"
+msgstr "螺旋加強最小圈數"
+
+msgctxt "magic_spiralize_reinforce_mini_contours description"
+msgid "Number of reinforcement contours for the last reinforcement layer. This parameter works with 'Spiralize Reinforce Contours' to create a linear gradient from the first layer to the last layer. For example, if first layer is 3.6 and last layer is 0.8, the contours will gradually decrease from 3.6 to 0.8 over the reinforcement layers."
+msgstr "最後一個加強層的加強圈數。此參數與「螺旋加強圈數」配合使用，在第一層到最後一層之間創建線性漸變。例如，如果第一層是3.6，最後一層是0.8，則加強圈數將在加強層數範圍內從3.6逐漸減少到0.8。"
+
+msgctxt "magic_spiralize_reinforce_flip label"
+msgid "Spiralize Reinforce Flip Direction"
+msgstr "螺旋模式加強圈反向"
+
+msgctxt "magic_spiralize_reinforce_flip description"
+msgid "Whether to print reinforcement contours in the opposite direction to the main spiral. When enabled, reinforcement contours will be printed in reverse direction, which can help reduce stress concentrations and improve layer adhesion."
+msgstr "是否以與主螺旋相反的方向打印加強輪廓。啟用時，加強輪廓將以相反方向打印，這有助於減少應力集中並改善層間粘合。"
+
 msgctxt "group_outer_walls label"
 msgid "Group Outer Walls"
 msgstr ""
@@ -6226,6 +6274,46 @@ msgstr "鋸齒狀"
 msgctxt "travel description"
 msgid "travel"
 msgstr "空跑"
+
+msgctxt "wall0_extra_length label"
+msgid "Single Wall Extra Length"
+msgstr "單壁額外長度"
+
+msgctxt "wall0_extra_length description"
+msgid "When there is only one outer wall, add extra length inside the outer wall to improve structural strength and print quality. This helps compensate for the lack of inner walls by extending the single wall path."
+msgstr "當只有一個外壁時，在外壁內部添加額外長度以提高結構強度和列印品質。這透過延長單壁路徑來補償缺少內壁的問題。"
+
+msgctxt "wall0_extra_dist_ratio label"
+msgid "Single Wall Extra Distance Ratio"
+msgstr "單壁額外距離比例"
+
+msgctxt "wall0_extra_dist_ratio description"
+msgid "The ratio that determines how far inside the outer wall the extra length should be placed. A value of 1.1 means the extra path will be placed 10% further inside from the outer wall boundary."
+msgstr "確定額外長度應放置在外壁內多遠的比例。值為1.1意味著額外路徑將從外壁邊界向內放置10%的距離。"
+
+msgctxt "beading_strategy_enable label"
+msgid "Enable Beading Strategy"
+msgstr "啟用珠狀策略"
+
+msgctxt "beading_strategy_enable description"
+msgid "Enable advanced beading strategy for optimizing wall line widths. This strategy automatically adjusts line widths to better fill thin areas and improve print quality by distributing material more evenly across wall lines."
+msgstr "啟用高級珠狀策略以優化壁線寬度。該策略自動調整線寬以更好地填充薄區域，並透過在壁線之間更均勻地分布材料來提高列印品質。"
+
+msgctxt "user_temperature_definition_enable label"
+msgid "Enable Custom Temperature Profile"
+msgstr "啟用自訂溫度設定檔"
+
+msgctxt "user_temperature_definition_enable description"
+msgid "Enable user-defined temperature profile that allows setting different temperatures at specific layer heights. This provides precise temperature control throughout the print for optimal material properties and print quality."
+msgstr "啟用使用者定義的溫度設定檔，允許在特定層高度設定不同的溫度。這為整個列印過程提供精確的溫度控制，以獲得最佳的材料特性和列印品質。"
+
+msgctxt "spiralized_start_flow_rate label"
+msgid "Spiralized Start Flow Rate"
+msgstr "螺旋化起始流量率"
+
+msgctxt "spiralized_start_flow_rate description"
+msgid "The initial flow rate percentage when starting spiralization. This allows for a gradual transition into full flow, helping to prevent over-extrusion at the beginning of the spiral and improving surface quality."
+msgstr "開始螺旋化時的初始流量率百分比。這允許逐漸過渡到全流量，有助於防止螺旋開始時的過度擠出並改善表面品質。"
 
 #~ msgctxt "user_defined_print_order_enabled description"
 #~ msgid "Allows to order the object list to set the print sequence manually. First object from the list will be printed first."
