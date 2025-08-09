@@ -6149,6 +6149,14 @@ msgctxt "magic_spiralize_reinforce_mini_contours description"
 msgid "Number of reinforcement contours for the last reinforcement layer. This parameter works with 'Spiralize Reinforce Contours' to create a linear gradient from the first layer to the last layer. For example, if first layer is 3.6 and last layer is 0.8, the contours will gradually decrease from 3.6 to 0.8 over the reinforcement layers."
 msgstr "最后一个加强层的加强圈数。此参数与"螺旋加强圈数"配合使用，在第一层到最后一层之间创建线性渐变。例如，如果第一层是3.6，最后一层是0.8，则加强圈数将在加强层数范围内从3.6逐渐减少到0.8。"
 
+msgctxt "z_seam_wedge_length label"
+msgid "Z Seam Wedge Length"
+msgstr "Z接缝楔形长度"
+
+msgctxt "z_seam_wedge_length description"
+msgid "Length of the wedge-shaped overlap at the start and end of outer walls to eliminate seam artifacts. The nozzle height gradually increases from the previous layer height to the current layer height over this distance, while flow rate increases from 0 to 1. At the end, flow decreases from 1 to 0 over the same distance to create a complementary wedge."
+msgstr "外墙起始和结束处楔形重叠的长度，用于消除接缝瑕疵。喷嘴高度在此距离内从前一层高度逐渐增加到当前层高度，同时流量从0增加到1。在结束时，流量在相同距离内从1减少到0，形成互补的楔形。"
+
 msgctxt "magic_spiralize_reinforce_flip label"
 msgid "Spiralize Reinforce Flip Direction"
 msgstr "螺旋模式加强圈反向"

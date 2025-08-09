@@ -1524,6 +1524,14 @@ msgctxt "magic_spiralize_reinforce_mini_contours description"
 msgid "Number of reinforcement contours for the last reinforcement layer. This parameter works with 'Spiralize Reinforce Contours' to create a linear gradient from the first layer to the last layer. For example, if first layer is 3.6 and last layer is 0.8, the contours will gradually decrease from 3.6 to 0.8 over the reinforcement layers."
 msgstr "最後の補強レイヤーの補強輪郭数。このパラメータは「スパイラル補強輪郭数」と連携して、最初のレイヤーから最後のレイヤーまでの線形グラデーションを作成します。例えば、最初のレイヤーが3.6で最後のレイヤーが0.8の場合、輪郭数は補強レイヤー範囲内で3.6から0.8まで徐々に減少します。"
 
+msgctxt "z_seam_wedge_length label"
+msgid "Z Seam Wedge Length"
+msgstr "Zシーム楔形長さ"
+
+msgctxt "z_seam_wedge_length description"
+msgid "Length of the wedge-shaped overlap at the start and end of outer walls to eliminate seam artifacts. The nozzle height gradually increases from the previous layer height to the current layer height over this distance, while flow rate increases from 0 to 1. At the end, flow decreases from 1 to 0 over the same distance to create a complementary wedge."
+msgstr "外壁の開始と終了部分での楔形重複の長さで、シームアーティファクトを除去します。ノズル高さはこの距離で前のレイヤー高さから現在のレイヤー高さまで徐々に増加し、同時に流量は0から1まで増加します。終了時には、流量は同じ距離で1から0まで減少し、相補的な楔形を作成します。"
+
 msgctxt "magic_spiralize_reinforce_flip label"
 msgid "Spiralize Reinforce Flip Direction"
 msgstr "スパイラル補強方向反転"

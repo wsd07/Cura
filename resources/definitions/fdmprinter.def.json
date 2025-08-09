@@ -1266,9 +1266,10 @@
                 "min_wall_line_width":
                 {
                     "label": "Minimum Wall Line Width",
-                    "description": "For thin structures around once or twice the nozzle size, the line widths need to be altered to adhere to the thickness of the model. This setting controls the minimum line width allowed for the walls. The minimum line widths inherently also determine the maximum line widths, since we transition from N to N+1 walls at some geometry thickness where the N walls are wide and the N+1 walls are narrow. The widest possible wall line is twice the Minimum Wall Line Width.",
+                    "description": "For thin structures around once or twice the nozzle size, the line widths need to be altered to adhere to the thickness of the model. This setting controls the minimum line width allowed for the walls. The minimum line widths inherently also determine the maximum line widths, since we transition from N to N+1 walls at some geometry thickness where the N walls are wide and the N+1 walls are narrow. The widest possible wall line is twice the Minimum Wall Line Width. WARNING: Values below 40% of nozzle diameter may cause slicing errors.",
                     "unit": "mm",
-                    "minimum_value_warning": ".5 * max(wall_line_width_0, wall_line_width_x)",
+                    "minimum_value": "max(0.1, max(wall_line_width_0, wall_line_width_x) * 0.4)",
+                    "minimum_value_warning": "max(wall_line_width_0, wall_line_width_x) * 0.5",
                     "maximum_value_warning": "min(wall_line_width_0, wall_line_width_x)",
                     "default_value": 0.3,
                     "value": "machine_nozzle_size * .85",
@@ -1281,7 +1282,8 @@
                             "label": "Minimum Even Wall Line Width",
                             "description": "The minimum line width for normal polygonal walls. This setting determines at which model thickness we switch from printing a single thin wall line, to printing two wall lines. A higher Minimum Even Wall Line Width leads to a higher maximum odd wall line width. The maximum even wall line width is calculated as Outer Wall Line Width + 0.5 * Minimum Odd Wall Line Width.",
                             "unit": "mm",
-                            "minimum_value_warning": ".5 * max(wall_line_width_0, wall_line_width_x)",
+                            "minimum_value": "max(0.1, max(wall_line_width_0, wall_line_width_x) * 0.4)",
+                            "minimum_value_warning": "max(wall_line_width_0, wall_line_width_x) * 0.5",
                             "maximum_value_warning": "min(wall_line_width_0, wall_line_width_x)",
                             "default_value": 0.3,
                             "value": "min_wall_line_width",
@@ -1293,7 +1295,8 @@
                             "label": "Minimum Odd Wall Line Width",
                             "description": "The minimum line width for middle line gap filler polyline walls. This setting determines at which model thickness we switch from printing two wall lines, to printing two outer walls and a single central wall in the middle. A higher Minimum Odd Wall Line Width leads to a higher maximum even wall line width. The maximum odd wall line width is calculated as 2 * Minimum Even Wall Line Width.",
                             "unit": "mm",
-                            "minimum_value_warning": ".5 * max(wall_line_width_0, wall_line_width_x)",
+                            "minimum_value": "max(0.1, max(wall_line_width_0, wall_line_width_x) * 0.4)",
+                            "minimum_value_warning": "max(wall_line_width_0, wall_line_width_x) * 0.5",
                             "maximum_value_warning": "min(wall_line_width_0, wall_line_width_x)",
                             "default_value": 0.3,
                             "value": "min_wall_line_width",
@@ -1325,12 +1328,18 @@
                     "enabled": "fill_outline_gaps",
                     "settable_per_mesh": true
                 },
-                "beading_strategy_enable":
+                "beading_strategy_scope":
                 {
-                    "label": "Enable Beading Strategy",
-                    "description": "Enable advanced beading strategy for optimizing wall line widths. This strategy automatically adjusts line widths to better fill thin areas and improve print quality by distributing material more evenly across wall lines.",
-                    "type": "bool",
-                    "default_value": false,
+                    "label": "Beading Strategy Scope",
+                    "description": "Controls which parts of the model use the advanced beading strategy for optimizing line widths. 'All' applies to all walls and skin; 'Inner Wall & Skin' excludes outer walls for better surface quality; 'Only Skin' applies only to top/bottom surfaces; 'Off' disables beading strategy completely.",
+                    "type": "enum",
+                    "options": {
+                        "all": "All",
+                        "inner_wall_skin": "Inner Wall & Skin",
+                        "only_skin": "Only Skin",
+                        "off": "Off"
+                    },
+                    "default_value": "inner_wall_skin",
                     "limit_to_extruder": "wall_0_extruder_nr",
                     "settable_per_mesh": true
                 },
