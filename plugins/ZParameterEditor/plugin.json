@@ -1,0 +1,9 @@
+{
+    "name": "Z Parameter Editor",
+    "author": "wsd",
+    "version": "1.0.0",
+    "description": "Visual editor for Z-height dependent parameters like temperature and speed profiles",
+    "api": 6,
+    "supported_sdk_versions": ["6.0.0", "7.0.0", "8.0.0"],
+    "i18n-catalog": "ZParameterEditor"
+}

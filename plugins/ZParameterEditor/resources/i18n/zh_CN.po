@@ -1,0 +1,69 @@
+# Chinese (Simplified) translation for ZParameterEditor
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: zh_CN\n"
+
+msgctxt "@label"
+msgid "Z Parameter Editor"
+msgstr "Z参数编辑器"
+
+msgctxt "@info:tooltip"
+msgid "Visual editor for Z-height dependent parameters like temperature and speed profiles."
+msgstr "用于Z高度相关参数（如温度和速度配置文件）的可视化编辑器。"
+
+msgctxt "@label"
+msgid "Parameter Type:"
+msgstr "参数类型："
+
+msgctxt "@label"
+msgid "Model Height: %1 mm"
+msgstr "模型高度：%1 mm"
+
+msgctxt "@label"
+msgid "Layer Height: %1 mm"
+msgstr "层高：%1 mm"
+
+msgctxt "@label"
+msgid "Total Layers: %1"
+msgstr "总层数：%1"
+
+msgctxt "@label"
+msgid "Add Parameter Point"
+msgstr "添加参数点"
+
+msgctxt "@label"
+msgid "Height (mm):"
+msgstr "高度 (mm)："
+
+msgctxt "@action:button"
+msgid "Set to Top"
+msgstr "设置到顶部"
+
+msgctxt "@label"
+msgid "Value (%1):"
+msgstr "值 (%1)："
+
+msgctxt "@action:button"
+msgid "Add Point"
+msgstr "添加点"
+
+msgctxt "@action:button"
+msgid "Clear All"
+msgstr "清除全部"
+
+msgctxt "@label"
+msgid "Parameter Points (%1)"
+msgstr "参数点 (%1)"
+
+msgctxt "@label"
+msgid "H: %1mm"
+msgstr "高：%1mm"
+
+msgctxt "@label"
+msgid "V: %1%2"
+msgstr "值：%1%2"
+
+msgctxt "@action:button"
+msgid "Apply to Settings"
+msgstr "应用到设置"
