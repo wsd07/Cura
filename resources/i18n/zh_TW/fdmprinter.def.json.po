@@ -2787,6 +2787,22 @@ msgctxt "optimize_wall_printing_order description"
 msgid "Optimize the order in which walls are printed so as to reduce the number of retractions and the distance travelled. Most parts will benefit from this being enabled but some may actually take longer so please compare the print time estimates with and without optimization. First layer is not optimized when choosing brim as build plate adhesion type."
 msgstr "最佳化列印牆壁的順序，以減少縮回次數和行進距離。啟用此功能對大多數的零件是有益的，但有些零件可能反而會更花時間，因此請比較列印時間的估計值評估是否進行最佳化。當列印平台附著類型設定為邊緣時，第一層不會進行最佳化。"
 
+msgctxt "flip_wall_printing_order label"
+msgid "Flip Wall Printing Order"
+msgstr "翻轉牆體列印順序"
+
+msgctxt "flip_wall_printing_order description"
+msgid "Reverse the printing order of polygons within the same wall layer. For hollow models like cylinders, this controls whether to print outer ring first or inner ring first. This is different from 'Wall Ordering' which controls the order between wall_0 and wall_x."
+msgstr "反轉同一層牆體內多邊形的列印順序。對於圓筒等空心模型，控制是先列印外圈還是先列印內圈。這與控制wall_0和wall_x之間順序的「牆體順序」不同。"
+
+msgctxt "minimize_travel_before_wall0 label"
+msgid "Minimize Travel Before Wall0"
+msgstr "最小化外牆前的空移"
+
+msgctxt "minimize_travel_before_wall0 description"
+msgid "Optimize the end position of the previous layer to minimize travel distance to the start position of the next layer's first wall (wall_0). This can reduce stringing and improve print quality by reducing long travel moves between layers."
+msgstr "最佳化前一層的結束位置，以最小化到下一層第一道牆體(wall_0)起始位置的空移距離。透過減少層間長距離空移，可以減少拉絲並提高列印品質。"
+
 msgctxt "machine_nozzle_tip_outer_diameter label"
 msgid "Outer Nozzle Diameter"
 msgstr "噴頭外徑"

@@ -1241,6 +1241,24 @@
                     "default_value": true,
                     "settable_per_mesh": true
                 },
+                "flip_wall_printing_order":
+                {
+                    "label": "Flip Wall Printing Order",
+                    "description": "Reverse the printing order of polygons within the same wall layer. For hollow models like cylinders, this controls whether to print outer ring first or inner ring first. This is different from 'Wall Ordering' which controls the order between wall_0 and wall_x.",
+                    "type": "bool",
+                    "default_value": false,
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": true
+                },
+                "minimize_travel_before_wall0":
+                {
+                    "label": "Minimize Travel Before Wall0",
+                    "description": "Optimize the end position of the previous layer to minimize travel distance to the start position of the next layer's first wall (wall_0). This can reduce stringing and improve print quality by reducing long travel moves between layers.",
+                    "type": "bool",
+                    "default_value": false,
+                    "settable_per_mesh": true,
+                    "settable_per_extruder": true
+                },
                 "inset_direction":
                 {
                     "label": "Wall Ordering",

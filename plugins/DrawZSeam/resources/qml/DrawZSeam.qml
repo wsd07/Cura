@@ -36,10 +36,13 @@ Item
 
     function setSType(type)
     {
+        console.log("[DRAWZSEAM_DEBUG] setSType called with type:", type)
         // set checked state of mesh type buttons
 		addPoint.checked = type === 'add'
 		removePoint.checked = type === 'remove'
+        console.log("[DRAWZSEAM_DEBUG] Setting property SType to:", type)
         UM.ActiveTool.setProperty("SType", type)
+        console.log("[DRAWZSEAM_DEBUG] setSType completed")
     }
 	
     Column
@@ -65,7 +68,10 @@ Item
 				}
                 property bool needBorder: true
                 checkable:true
-                onClicked: setSType('add')
+                onClicked: {
+                    console.log("[DRAWZSEAM_DEBUG] Add Point button clicked")
+                    setSType('add')
+                }
                 checked: UM.ActiveTool.properties.getValue("SType") === 'add'
                 z: 3 // Depth position 
             }
@@ -81,7 +87,10 @@ Item
 				}
                 property bool needBorder: true
                 checkable:true
-                onClicked: setSType('remove')
+                onClicked: {
+                    console.log("[DRAWZSEAM_DEBUG] Remove Point button clicked")
+                    setSType('remove')
+                }
                 checked: UM.ActiveTool.properties.getValue("SType") === 'remove'
                 z: 2 // Depth position 
             }
@@ -96,7 +105,10 @@ Item
                     color: UM.Theme.getColor("icon")
                 }
                 property bool needBorder: true
-                onClicked: UM.ActiveTool.triggerAction("resetPoints")
+                onClicked: {
+                    console.log("[DRAWZSEAM_DEBUG] Reset button clicked")
+                    UM.ActiveTool.triggerAction("resetPoints")
+                }
                 z: 1 // Depth position 
             }
 

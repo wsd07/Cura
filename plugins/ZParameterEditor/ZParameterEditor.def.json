@@ -1,0 +1,68 @@
+{
+    "user_speed_ratio_enable": {
+        "label": "Enable Z Speed Ratio",
+        "description": "Enable variable speed ratio by Z height",
+        "type": "bool",
+        "default_value": false,
+        "settable_per_mesh": false,
+        "settable_per_extruder": false,
+        "settable_per_meshgroup": false,
+        "children": {
+            "user_speed_ratio_definition": {
+                "label": "Z Speed Ratio Points",
+                "description": "Speed ratio points defined by Z height",
+                "unit": "%",
+                "type": "str",
+                "default_value": "[]",
+                "settable_per_mesh": false,
+                "settable_per_extruder": false,
+                "settable_per_meshgroup": false,
+                "enabled": "user_speed_ratio_enable"
+            }
+        }
+    },
+    "user_thickness_enable": {
+        "label": "Enable Z Layer Thickness",
+        "description": "Enable variable layer thickness by Z height",
+        "type": "bool",
+        "default_value": false,
+        "settable_per_mesh": false,
+        "settable_per_extruder": false,
+        "settable_per_meshgroup": false,
+        "children": {
+            "user_thickness_definition": {
+                "label": "Z Layer Thickness Points",
+                "description": "Layer thickness points defined by Z height",
+                "unit": "mm",
+                "type": "str",
+                "default_value": "[]",
+                "settable_per_mesh": false,
+                "settable_per_extruder": false,
+                "settable_per_meshgroup": false,
+                "enabled": "user_thickness_enable"
+            }
+        }
+    },
+    "user_temperature_enable": {
+        "label": "Enable Z Temperature",
+        "description": "Enable variable temperature by Z height",
+        "type": "bool",
+        "default_value": false,
+        "settable_per_mesh": false,
+        "settable_per_extruder": false,
+        "settable_per_meshgroup": false,
+        "children": {
+            "user_temperature_definition": {
+                "label": "Z Temperature Points",
+                "description": "Temperature points defined by Z height",
+                "unit": "°C",
+                "type": "str",
+                "default_value": "[]",
+                "settable_per_mesh": false,
+                "settable_per_extruder": false,
+                "settable_per_meshgroup": false,
+                "enabled": "user_temperature_enable"
+            }
+        }
+    }
+}

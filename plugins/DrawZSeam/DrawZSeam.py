@@ -57,9 +57,11 @@ from typing import Optional, TYPE_CHECKING
 class DrawZSeam(Tool):
     def __init__(self, parent=None) -> None:
         super().__init__()
+        Logger.log("i", "[DRAWZSEAM_DEBUG] DrawZSeam tool initializing")
 
         self._application = CuraApplication.getInstance()
         self._controller = self.getController()
+        Logger.log("i", "[DRAWZSEAM_DEBUG] DrawZSeam tool initialized successfully")
         self._measure_passes = []  # type: List[MeasurePass]
         self._measure_passes_dirty = True
 
@@ -265,9 +267,11 @@ class DrawZSeam(Tool):
             self._toolbutton_item = self._findToolbarIcon(main_window.contentItem())
 
     def event(self, event: Event) -> bool:
+        Logger.log("d", f"[DRAWZSEAM_DEBUG] Event received: {type(event).__name__}")
         result = super().event(event)
 
         if not self._tool_enabled:
+            Logger.log("d", "[DRAWZSEAM_DEBUG] Tool not enabled, returning")
             return result
 
         # overridden from ToolHandle.event(), because we also want to show the handle when there is no selection

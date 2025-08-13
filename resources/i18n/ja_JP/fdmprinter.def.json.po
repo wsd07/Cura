@@ -2780,6 +2780,22 @@ msgctxt "optimize_wall_printing_order description"
 msgid "Optimize the order in which walls are printed so as to reduce the number of retractions and the distance travelled. Most parts will benefit from this being enabled but some may actually take longer so please compare the print time estimates with and without optimization. First layer is not optimized when choosing brim as build plate adhesion type."
 msgstr "引き戻しと移動距離を減らすために、壁のプリント順序を最適化します。ほとんどの部品がこの設定を有効にしている方が良い印刷結果につながりますが、実際には時間がかかることがありますので、最適化の有無に関わらず印刷時間を比較してください。ビルドプレートの接着タイプにブリムを選択すると最初のレイヤーは最適化されません。"
 
+msgctxt "flip_wall_printing_order label"
+msgid "Flip Wall Printing Order"
+msgstr "ウォール印刷順序を反転"
+
+msgctxt "flip_wall_printing_order description"
+msgid "Reverse the printing order of polygons within the same wall layer. For hollow models like cylinders, this controls whether to print outer ring first or inner ring first. This is different from 'Wall Ordering' which controls the order between wall_0 and wall_x."
+msgstr "同一ウォール層内のポリゴンの印刷順序を反転します。円筒などの中空モデルでは、外側のリングを先に印刷するか内側のリングを先に印刷するかを制御します。これはwall_0とwall_xの間の順序を制御する「ウォール順序」とは異なります。"
+
+msgctxt "minimize_travel_before_wall0 label"
+msgid "Minimize Travel Before Wall0"
+msgstr "外壁前の移動を最小化"
+
+msgctxt "minimize_travel_before_wall0 description"
+msgid "Optimize the end position of the previous layer to minimize travel distance to the start position of the next layer's first wall (wall_0). This can reduce stringing and improve print quality by reducing long travel moves between layers."
+msgstr "前の層の終了位置を最適化して、次の層の最初の壁(wall_0)の開始位置への移動距離を最小化します。層間の長距離移動を減らすことで、ストリンギングを減らし、印刷品質を向上させることができます。"
+
 msgctxt "machine_nozzle_tip_outer_diameter label"
 msgid "Outer Nozzle Diameter"
 msgstr "ノズル外径"
