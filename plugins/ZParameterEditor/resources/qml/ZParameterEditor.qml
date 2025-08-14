@@ -231,7 +231,6 @@ Item {
 
     // 状态保存和加载函数
     function saveCurrentState() {
-        console.log("[SAVE_DEBUG] saveCurrentState called")
         if (parameterTypeComboBox.currentParameterKey) {
             var state = {
                 "controlPoints": curveCanvas.controlPoints,
@@ -239,9 +238,7 @@ Item {
                 "minValue": chartCanvas.minParamValue,
                 "maxValue": chartCanvas.maxParamValue
             }
-            console.log("[SAVE_DEBUG] Saving state for:", parameterTypeComboBox.currentParameterKey)
-            console.log("[SAVE_DEBUG] State data:", JSON.stringify(state))
-            console.log("[SAVE_DEBUG] Control points count:", curveCanvas.controlPoints.length)
+            console.log("[保存] 参数:", parameterTypeComboBox.currentParameterKey, "控制点数:", curveCanvas.controlPoints.length)
 
             // 调用工具的保存方法
             var result = callZParameterEditorMethod("setParameterDataSlot", {
@@ -250,12 +247,43 @@ Item {
             })
 
             if (result !== null) {
-                console.log("[SAVE_DEBUG] Successfully saved parameter state")
+                console.log("[保存] 成功保存参数状态")
+                // 验证保存后的状态
+                verifyChartUpdate()
             } else {
                 console.log("[SAVE_DEBUG] Failed to save parameter state")
             }
         } else {
             console.log("[SAVE_DEBUG] No current parameter key, cannot save state")
+        }
+    }
+
+    function saveParameterState(parameterKey) {
+        console.log("[SAVE_DEBUG] saveParameterState called for:", parameterKey)
+        if (parameterKey) {
+            var state = {
+                "controlPoints": curveCanvas.controlPoints,
+                "curveMode": chartCanvas.curveMode,
+                "minValue": chartCanvas.minParamValue,
+                "maxValue": chartCanvas.maxParamValue
+            }
+            console.log("[SAVE_DEBUG] Saving state for:", parameterKey)
+            console.log("[SAVE_DEBUG] State data:", JSON.stringify(state))
+            console.log("[SAVE_DEBUG] Control points count:", curveCanvas.controlPoints.length)
+
+            // 调用工具的保存方法
+            var result = callZParameterEditorMethod("setParameterDataSlot", {
+                "parameterKey": parameterKey,
+                "stateData": JSON.stringify(state)
+            })
+
+            if (result !== null) {
+                console.log("[SAVE_DEBUG] Successfully saved parameter state for:", parameterKey)
+            } else {
+                console.log("[SAVE_DEBUG] Failed to save parameter state for:", parameterKey)
+            }
+        } else {
+            console.log("[SAVE_DEBUG] No parameter key provided, cannot save state")
         }
     }
 
@@ -334,7 +362,27 @@ Item {
         updatePreview()
         gridCanvas.requestPaint()
         curveCanvas.requestPaint()
+
+        // 验证图表是否真正更新了
+        verifyChartUpdate()
         console.log("[SAVE_DEBUG] loadParameterState completed")
+    }
+
+    function verifyChartUpdate() {
+        console.log("[VERIFY_DEBUG] ========== Chart Verification ==========")
+        console.log("[VERIFY_DEBUG] Current control points count:", curveCanvas.controlPoints.length)
+        console.log("[VERIFY_DEBUG] Control points details:")
+        for (var i = 0; i < curveCanvas.controlPoints.length; i++) {
+            var point = curveCanvas.controlPoints[i]
+            console.log("[VERIFY_DEBUG]   Point", i, "- z:", point.z, "value:", point.value)
+        }
+        console.log("[VERIFY_DEBUG] Chart canvas curve mode:", chartCanvas.curveMode)
+        console.log("[VERIFY_DEBUG] Chart canvas min value:", chartCanvas.minParamValue)
+        console.log("[VERIFY_DEBUG] Chart canvas max value:", chartCanvas.maxParamValue)
+        console.log("[VERIFY_DEBUG] Min value input text:", minValueInput.text)
+        console.log("[VERIFY_DEBUG] Max value input text:", maxValueInput.text)
+        console.log("[VERIFY_DEBUG] Current parameter key:", parameterTypeComboBox.currentParameterKey)
+        console.log("[VERIFY_DEBUG] ========== Chart Verification End ==========")
     }
 
     function updatePreview() {
@@ -498,12 +546,14 @@ Item {
                             checkable: true
                             checked: chartCanvas.curveMode === "bezier"
                             onClicked: {
-                                console.log("[MOUSE_DEBUG] Bezier mode button clicked")
+                                console.log("[模式] 切换到曲线模式")
                                 chartCanvas.curveMode = "bezier"
                                 lineModeButton.checked = false
                                 curveCanvas.requestPaint()
+
+                                // 立即保存
+                                console.log("[保存] 切换曲线模式后立即保存")
                                 saveCurrentState()
-                                console.log("[MOUSE_DEBUG] Bezier mode activated, curve mode:", chartCanvas.curveMode)
                             }
                             background: Rectangle {
                                 color: bezierModeButton.checked ? UM.Theme.getColor("primary") :
@@ -529,12 +579,14 @@ Item {
                             checkable: true
                             checked: chartCanvas.curveMode === "line"
                             onClicked: {
-                                console.log("[MOUSE_DEBUG] Line mode button clicked")
+                                console.log("[模式] 切换到折线模式")
                                 chartCanvas.curveMode = "line"
                                 bezierModeButton.checked = false
                                 curveCanvas.requestPaint()
+
+                                // 立即保存
+                                console.log("[保存] 切换折线模式后立即保存")
                                 saveCurrentState()
-                                console.log("[MOUSE_DEBUG] Line mode activated, curve mode:", chartCanvas.curveMode)
                             }
                             background: Rectangle {
                                 color: lineModeButton.checked ? UM.Theme.getColor("primary") :
@@ -945,35 +997,40 @@ Item {
                             }
 
                             onClicked: function(mouse) {
-                                console.log("[MOUSE_DEBUG] Mouse clicked - button:", mouse.button, "x:", mouse.x, "y:", mouse.y)
+                                console.log("[点击] 按钮:", mouse.button, "位置:", mouse.x, mouse.y)
                                 if (mouse.button === Qt.LeftButton) {
                                     var pointIndex = curveCanvas.getControlPointAt(mouse.x, mouse.y)
-                                    console.log("[MOUSE_DEBUG] Left click - control point index:", pointIndex)
                                     if (pointIndex < 0) {
                                         // 添加新控制点
                                         var z = chartCanvas.yToHeight(mouse.y)
                                         var value = chartCanvas.xToValue(mouse.x)
-                                        console.log("[MOUSE_DEBUG] Adding new control point - raw z:", z, "raw value:", value)
+                                        console.log("[新增] 原始位置 z:", z, "值:", value)
 
                                         z = Math.max(0, Math.min(chartCanvas.modelHeight, z))
                                         value = Math.max(chartCanvas.minParamValue, Math.min(chartCanvas.maxParamValue, value))
-                                        console.log("[MOUSE_DEBUG] Adding new control point - clamped z:", z, "clamped value:", value)
+                                        console.log("[新增] 限制后 z:", z, "值:", value)
 
                                         curveCanvas.controlPoints.push({z: z, value: value})
-                                        console.log("[MOUSE_DEBUG] New control point added, total points:", curveCanvas.controlPoints.length)
+                                        console.log("[新增] 控制点总数:", curveCanvas.controlPoints.length)
                                         curveCanvas.requestPaint()
                                         updatePreview()
+
+                                        // 立即保存
+                                        console.log("[保存] 新增控制点后立即保存")
                                         saveCurrentState()
                                     }
                                 } else if (mouse.button === Qt.RightButton) {
                                     var pointIndex = curveCanvas.getControlPointAt(mouse.x, mouse.y)
-                                    console.log("[MOUSE_DEBUG] Right click - control point index:", pointIndex, "total points:", curveCanvas.controlPoints.length)
+                                    console.log("[右键] 控制点索引:", pointIndex, "总数:", curveCanvas.controlPoints.length)
                                     if (pointIndex >= 0 && curveCanvas.controlPoints.length > 2) {
-                                        console.log("[MOUSE_DEBUG] Removing control point", pointIndex)
+                                        console.log("[删除] 删除控制点索引:", pointIndex)
                                         curveCanvas.controlPoints.splice(pointIndex, 1)
-                                        console.log("[MOUSE_DEBUG] Control point removed, remaining points:", curveCanvas.controlPoints.length)
+                                        console.log("[删除] 剩余控制点:", curveCanvas.controlPoints.length)
                                         curveCanvas.requestPaint()
                                         updatePreview()
+
+                                        // 立即保存
+                                        console.log("[保存] 删除控制点后立即保存")
                                         saveCurrentState()
                                     }
                                 }
@@ -1034,17 +1091,21 @@ Item {
                         property real currentDefaultValue: model.count > 0 ? model.get(currentIndex).defaultValue : 100
                         
                         onActivated: function(index) {
-                            console.log("[UI_DEBUG] Parameter type changed to index:", index)
                             var item = model.get(index)
-                            console.log("[UI_DEBUG] New parameter type:", item.value)
-                            console.log("[UI_DEBUG] New parameter range:", item.minValue, "to", item.maxValue, "default:", item.defaultValue)
+                            console.log("[切换] 参数类型:", item.value, "范围:", item.minValue, "-", item.maxValue)
 
-                            // 先保存当前状态
-                            console.log("[UI_DEBUG] Saving current state before parameter switch")
-                            saveCurrentState()
+                            // 先保存当前状态（使用旧的参数类型）
+                            var oldParameterKey = currentParameterKey
+                            if (oldParameterKey && oldParameterKey !== item.value) {
+                                console.log("[保存] 保存旧参数:", oldParameterKey)
+                                saveParameterState(oldParameterKey)
+                            }
+
+                            // 更新当前参数类型
+                            currentParameterKey = item.value
 
                             // 加载新参数的状态
-                            console.log("[UI_DEBUG] Loading state for new parameter:", item.value)
+                            console.log("[加载] 加载新参数:", item.value)
                             loadParameterState(item.value)
 
                             // 更新界面
@@ -1099,17 +1160,19 @@ Item {
                                 height: 25
                                 text: parameterTypeComboBox.currentMinValue.toString()
                                 onTextChanged: {
-                                    console.log("[UI_DEBUG] Min value input changed to:", text)
+                                    console.log("[范围] 最小值改为:", text)
                                     var value = parseFloat(text)
                                     if (!isNaN(value)) {
-                                        console.log("[UI_DEBUG] Setting min parameter value to:", value)
                                         chartCanvas.minParamValue = value
                                         gridCanvas.requestPaint()
                                         curveCanvas.requestPaint()
                                         updatePreview()
+
+                                        // 立即保存
+                                        console.log("[保存] 修改最小值后立即保存")
                                         saveCurrentState()
                                     } else {
-                                        console.log("[UI_DEBUG] Invalid min value input:", text)
+                                        console.log("[范围] 无效最小值:", text)
                                     }
                                 }
                             }
@@ -1131,17 +1194,19 @@ Item {
                                 height: 25
                                 text: parameterTypeComboBox.currentMaxValue.toString()
                                 onTextChanged: {
-                                    console.log("[UI_DEBUG] Max value input changed to:", text)
+                                    console.log("[范围] 最大值改为:", text)
                                     var value = parseFloat(text)
                                     if (!isNaN(value)) {
-                                        console.log("[UI_DEBUG] Setting max parameter value to:", value)
                                         chartCanvas.maxParamValue = value
                                         gridCanvas.requestPaint()
                                         curveCanvas.requestPaint()
                                         updatePreview()
+
+                                        // 立即保存
+                                        console.log("[保存] 修改最大值后立即保存")
                                         saveCurrentState()
                                     } else {
-                                        console.log("[UI_DEBUG] Invalid max value input:", text)
+                                        console.log("[范围] 无效最大值:", text)
                                     }
                                 }
                             }
