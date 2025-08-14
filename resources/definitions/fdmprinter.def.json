@@ -2748,28 +2748,6 @@
                     "settable_per_mesh": false,
                     "settable_per_extruder": true
                 },
-                "user_temperature_definition_enable":
-                {
-                    "label": "Enable Custom Temperature Profile",
-                    "description": "Enable user-defined temperature profile that allows setting different temperatures at specific layer heights. This provides precise temperature control throughout the print for optimal material properties and print quality.",
-                    "type": "bool",
-                    "default_value": false,
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": false,
-                    "settable_per_meshgroup": false
-                },
-                "user_temperature_definition":
-                {
-                    "label": "Temperature Profile Definition",
-                    "description": "Define temperature changes at specific layer heights using the format [[Height1,Temperature1],[Height2,Temperature2],...]. For example: [[0,200],[10,210],[20,205]] sets 200°C at layer 0, 210°C at layer 10, and 205°C at layer 20.",
-                    "unit": "",
-                    "type": "str",
-                    "default_value": "[]",
-                    "enabled": "user_temperature_definition_enable",
-                    "settable_per_mesh": false,
-                    "settable_per_extruder": false,
-                    "settable_per_meshgroup": false
-                },
                 "material_extrusion_cool_down_speed":
                 {
                     "label": "Extrusion Cool Down Speed Modifier",
@@ -3567,28 +3545,6 @@
                             "settable_per_mesh": true,
                             "children":
                             {
-                                "user_speed_ratio_definition_enable":
-                                {
-                                    "label": "Enable Custom Speed Ratio Profile",
-                                    "description": "Enable user-defined speed ratio profile that allows setting different speed multipliers at specific layer heights. This provides dynamic speed control throughout the print for optimal quality and efficiency.",
-                                    "type": "bool",
-                                    "default_value": false,
-                                    "settable_per_mesh": false,
-                                    "settable_per_extruder": false,
-                                    "settable_per_meshgroup": false
-                                },
-                                "user_speed_ratio_definition":
-                                {
-                                    "label": "Speed Ratio Profile Definition",
-                                    "description": "Define speed ratio changes at specific layer heights using the format [[Height1,Ratio1],[Height2,Ratio2],...]. Ratios are percentages (e.g., 80 for 80% speed). Example: [[0,100],[10,80],[20,120]] sets 100% at layer 0, 80% at layer 10, and 120% at layer 20.",
-                                    "unit": "",
-                                    "type": "str",
-                                    "default_value": "[]",
-                                    "enabled": "user_speed_ratio_definition_enable",
-                                    "settable_per_mesh": false,
-                                    "settable_per_extruder": false,
-                                    "settable_per_meshgroup": false
-                                },
                                 "speed_wall_0":
                                 {
                                     "label": "Outer Wall Speed",
@@ -9068,29 +9024,6 @@
                     "settable_per_meshgroup": false,
                     "children":
                     {
-                        "user_thickness_definition_enable":
-                        {
-                            "label": "Enable Custom Layer Thickness Profile",
-                            "description": "Enable user-defined layer thickness profile that allows setting different layer heights at specific Z positions. This provides precise control over layer thickness throughout the print for optimal quality and detail.",
-                            "type": "bool",
-                            "default_value": false,
-                            "enabled": "adaptive_layer_height_enabled",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false,
-                            "settable_per_meshgroup": false
-                        },
-                        "user_thickness_definition":
-                        {
-                            "label": "Layer Thickness Profile Definition",
-                            "description": "Define layer thickness changes at specific heights using the format [[Height1,Thickness1],[Height2,Thickness2],...]. For example: [[0,0.2],[10,0.1],[20,0.3]] sets 0.2mm at height 0, 0.1mm at height 10mm, and 0.3mm at height 20mm.",
-                            "unit": "",
-                            "type": "str",
-                            "default_value": "[]",
-                            "enabled": "adaptive_layer_height_enabled and user_thickness_definition_enable",
-                            "settable_per_mesh": false,
-                            "settable_per_extruder": false,
-                            "settable_per_meshgroup": false
-                        },
                         "adaptive_layer_height_variation":
                         {
                             "label": "Adaptive Layer Height Maximum Variation",

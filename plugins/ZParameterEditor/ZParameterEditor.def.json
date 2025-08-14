@@ -1,5 +1,5 @@
 {
-    "user_speed_ratio_enable": {
+    "user_speed_ratio_definition_enable": {
         "label": "Enable Z Speed Ratio",
         "description": "Enable variable speed ratio by Z height",
         "type": "bool",
@@ -17,11 +17,11 @@
                 "settable_per_mesh": false,
                 "settable_per_extruder": false,
                 "settable_per_meshgroup": false,
-                "enabled": "user_speed_ratio_enable"
+                "enabled": "user_speed_ratio_definition_enable"
             }
         }
     },
-    "user_thickness_enable": {
+    "user_thickness_definition_enable": {
         "label": "Enable Z Layer Thickness",
         "description": "Enable variable layer thickness by Z height",
         "type": "bool",
@@ -39,11 +39,11 @@
                 "settable_per_mesh": false,
                 "settable_per_extruder": false,
                 "settable_per_meshgroup": false,
-                "enabled": "user_thickness_enable"
+                "enabled": "user_thickness_definition_enable"
             }
         }
     },
-    "user_temperature_enable": {
+    "user_temperature_definition_enable": {
         "label": "Enable Z Temperature",
         "description": "Enable variable temperature by Z height",
         "type": "bool",
@@ -61,7 +61,7 @@
                 "settable_per_mesh": false,
                 "settable_per_extruder": false,
                 "settable_per_meshgroup": false,
-                "enabled": "user_temperature_enable"
+                "enabled": "user_temperature_definition_enable"
             }
         }
     }

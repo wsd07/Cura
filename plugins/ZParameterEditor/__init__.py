@@ -11,6 +11,7 @@ i18n_catalog = i18nCatalog("ZParameterEditor")
 
 
 def getMetaData():
+    tool_icon_path = "resources/icons/tool_icon.svg"
     tool_panel_path = "resources/qml/ZParameterEditor.qml"
     metadata = {
         "tool": {
@@ -18,7 +19,7 @@ def getMetaData():
             "description": i18n_catalog.i18nc(
                 "@info:tooltip", "Visual editor for Z-height dependent parameters like temperature and speed profiles."
             ),
-
+            "icon": tool_icon_path,
             "tool_panel": tool_panel_path,
             "weight": 7,
         }
