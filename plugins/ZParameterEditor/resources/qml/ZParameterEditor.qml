@@ -79,7 +79,11 @@ Item {
 
             // 强制更新图表高度
             console.log("[CHART_DEBUG] Force updating chart model height from", chartCanvas.modelHeight, "to", newHeight)
+            var oldHeight = chartCanvas.modelHeight
             chartCanvas.modelHeight = newHeight
+
+            // 自动调整控制点范围
+            adjustControlPointsToNewHeight(oldHeight, newHeight)
 
             // 重新绘制图表
             gridCanvas.requestPaint()
@@ -88,6 +92,44 @@ Item {
         } else {
             console.log("[CHART_DEBUG] Failed to get model height from backend")
         }
+    }
+
+    // 调整控制点到新的高度范围
+    function adjustControlPointsToNewHeight(oldHeight, newHeight) {
+        console.log("[CHART_DEBUG] Adjusting control points from height", oldHeight, "to", newHeight)
+
+        if (oldHeight <= 0 || newHeight <= 0) {
+            console.log("[CHART_DEBUG] Invalid height values, skipping adjustment")
+            return
+        }
+
+        // 如果控制点只有默认的两个点（起始和结束），则直接调整结束点
+        if (curveCanvas.controlPoints.length === 2) {
+            var startPoint = curveCanvas.controlPoints[0]
+            var endPoint = curveCanvas.controlPoints[1]
+
+            // 检查是否是默认配置（起始点在z=0，结束点在旧的模型高度）
+            if (Math.abs(startPoint.z - 0) < 0.1 && Math.abs(endPoint.z - oldHeight) < 0.1) {
+                console.log("[CHART_DEBUG] Detected default control points, adjusting end point to new height")
+                curveCanvas.controlPoints[1].z = newHeight
+                console.log("[CHART_DEBUG] Adjusted end point z from", oldHeight, "to", newHeight)
+                updatePreview()
+                saveCurrentState()
+                return
+            }
+        }
+
+        // 对于其他情况，按比例调整所有控制点
+        for (var i = 0; i < curveCanvas.controlPoints.length; i++) {
+            var point = curveCanvas.controlPoints[i]
+            if (point.z > newHeight) {
+                console.log("[CHART_DEBUG] Clamping control point", i, "z from", point.z, "to", newHeight)
+                curveCanvas.controlPoints[i].z = newHeight
+            }
+        }
+
+        updatePreview()
+        saveCurrentState()
     }
 
     // 定时器用于延迟更新模型高度
@@ -237,10 +279,11 @@ Item {
 
         console.log("[SAVE_DEBUG] Found parameter item:", JSON.stringify(currentItem))
 
-        // 设置默认值
+        // 设置默认值，使用当前模型高度
+        var modelHeight = chartCanvas.modelHeight || 50
         var defaultControlPoints = [
             {"z": 0, "value": currentItem.defaultValue},
-            {"z": chartCanvas.modelHeight || 50, "value": currentItem.defaultValue}
+            {"z": modelHeight, "value": currentItem.defaultValue}
         ]
         console.log("[SAVE_DEBUG] Default control points:", JSON.stringify(defaultControlPoints))
 
@@ -938,52 +981,7 @@ Item {
                         }
                     }
 
-                    // Z轴标签
-                    Column {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 5
-                        anchors.top: parent.top
-                        anchors.topMargin: 20
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 30
-
-                        Repeater {
-                            model: 6
-                            Text {
-                                text: (chartCanvas.modelHeight * (5 - index) / 5).toFixed(1) + "mm"
-                                color: UM.Theme.getColor("text")
-                                font.pixelSize: 10
-                                y: index * (parent.height / 5)
-                                anchors.verticalCenter: undefined
-                            }
-                        }
-                    }
-
-                    // 参数值标签
-                    Row {
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 5
-                        anchors.left: parent.left
-                        anchors.leftMargin: 40
-                        anchors.right: parent.right
-                        anchors.rightMargin: 40
-
-                        Repeater {
-                            model: 6
-                            Text {
-                                text: {
-                                    var value = chartCanvas.minParamValue +
-                                               (chartCanvas.maxParamValue - chartCanvas.minParamValue) * index / 5
-                                    var decimals = parameterTypeComboBox.currentParameterKey === "user_thickness_definition" ? 2 : 0
-                                    return value.toFixed(decimals)
-                                }
-                                color: UM.Theme.getColor("text")
-                                font.pixelSize: 10
-                                width: parent.width / 6
-                                horizontalAlignment: Text.AlignHCenter
-                            }
-                        }
-                    }
+                    // 移除重复的坐标轴标签，只保留gridCanvas中的绘制
                 }
             }
         }
@@ -1307,12 +1305,14 @@ Item {
                         console.log("[CORE_DEBUG] Preview text length:", formattedValue.length)
 
                         // 直接调用后端方法
-                        console.log("[CORE_DEBUG] Calling applyParameterSettings...")
-                        var result = callZParameterEditorMethod("applyParameterSettings", {
-                            "parameter_type": parameterKey,
-                            "parameter_value": formattedValue
-                        })
-                        console.log("[CORE_DEBUG] applyParameterSettings result:", result)
+                        console.log("[CORE_DEBUG] Calling applyParameterSettingsSlot...")
+                        try {
+                            // 使用正确的参数格式调用
+                            var result = UM.Controller.callToolMethod("ZParameterEditor", "applyParameterSettingsSlot", parameterKey + "," + formattedValue)
+                            console.log("[CORE_DEBUG] applyParameterSettingsSlot result:", result)
+                        } catch (e) {
+                            console.log("[CORE_DEBUG] Error calling applyParameterSettingsSlot:", e)
+                        }
                     }
                     background: Rectangle {
                         color: parent.hovered ? UM.Theme.getColor("primary_hover") : UM.Theme.getColor("primary")

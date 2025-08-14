@@ -290,10 +290,22 @@ class ZParameterEditor(Tool):
         """QML可调用的设置当前参数类型槽函数"""
         self.setCurrentParameterType(parameter_type)
 
-    @pyqtSlot(str, str)
-    def applyParameterSettingsSlot(self, parameter_key, formatted_value):
+    @pyqtSlot(str)
+    def applyParameterSettingsSlot(self, combined_params):
         """QML可调用的应用参数设置槽函数"""
-        self.applyParameterSettings(parameter_key, formatted_value)
+        Logger.log("i", f"[APPLY_DEBUG] applyParameterSettingsSlot called with combined_params: {combined_params}")
+        try:
+            # 解析组合参数
+            parts = combined_params.split(",", 1)  # 只分割第一个逗号
+            if len(parts) == 2:
+                parameter_key = parts[0].strip()
+                formatted_value = parts[1].strip()
+                Logger.log("i", f"[APPLY_DEBUG] Parsed - key: {parameter_key}, value: {formatted_value}")
+                self.applyParameterSettings(parameter_key, formatted_value)
+            else:
+                Logger.log("e", f"[APPLY_DEBUG] Invalid parameter format: {combined_params}")
+        except Exception as e:
+            Logger.log("e", f"[APPLY_DEBUG] Error parsing parameters: {e}")
         
     def _setupParameterListening(self):
         """设置参数变化监听"""
@@ -533,7 +545,7 @@ class ZParameterEditor(Tool):
         Logger.log("i", f"[PARAM_DEBUG] Global stack ID: {global_stack.getId()}")
 
         try:
-            # 根据参数类型确定对应的enable参数
+            # 根据参数类型确定对应的enable参数（修正参数名称）
             enable_key = None
             if parameter_key == "user_speed_ratio_definition":
                 enable_key = "user_speed_ratio_enable"
