@@ -8420,7 +8420,7 @@
                             "description": "Define the height range where spiralization should be applied using the format [start_height,end_height]. For example: [5.0,15.0] applies spiralization from 5mm to 15mm height. Leave empty to spiralize the entire print.",
                             "unit": "[mm,mm]",
                             "type": "str",
-                            "default_value": "[,]",
+                            "default_value": "[]",
                             "enabled": "magic_spiralize",
                             "settable_per_mesh": false,
                             "settable_per_extruder": true

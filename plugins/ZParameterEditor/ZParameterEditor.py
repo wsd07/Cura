@@ -23,8 +23,16 @@ from UM.Platform import Platform
 
 from typing import Dict, List, Any, Optional
 import os.path
+import numpy as np
 from cura.CuraApplication import CuraApplication
 from UM.Math.Vector import Vector
+from UM.Math.Matrix import Matrix
+from UM.Math.Color import Color
+from UM.Mesh.MeshBuilder import MeshBuilder
+from UM.Mesh.MeshData import MeshData
+from UM.View.RenderBatch import RenderBatch
+from UM.View.GL.OpenGL import OpenGL
+from UM.Resources import Resources
 
 from cura.Settings.ExtruderManager import ExtruderManager
 from cura.Settings.GlobalStack import GlobalStack
@@ -97,6 +105,12 @@ class ZParameterEditor(Tool):
         # 按模型保存参数数据的字典
         self._model_parameter_data = {}  # {model_id: {param_type: data}}
         self._current_model_id = None
+
+        # 3D截线显示相关
+        self._cross_section_node = None  # 用于显示截线的场景节点
+        self._cross_section_z = 0.0  # 当前截线的Z高度
+        self._cross_section_visible = False  # 截线是否可见
+        self._shader = None  # 用于渲染截线的着色器
 
         # 添加信号用于QML通信
         self.parameterDataChanged = pyqtSignal()
@@ -1093,3 +1107,466 @@ class ZParameterEditor(Tool):
 
         Logger.log("i", f"[MODEL_DEBUG] ========== _cleanupRemovedModels end ==========")
         Logger.log("i", f"[MODEL_DEBUG] Remaining model parameter data keys: {list(self._model_parameter_data.keys())}")
+
+    # 3D截线显示相关方法
+    def _createCrossSectionMesh(self, z_height: float) -> MeshData:
+        """创建水平截线的网格数据 - 计算模型与平面的交线"""
+        Logger.log("i", f"[CROSS_SECTION] Creating cross section mesh at Z={z_height}")
+
+        # 获取选中的模型
+        selected_nodes = Selection.getAllSelectedObjects()
+        Logger.log("i", f"[CROSS_SECTION] Selected nodes count: {len(selected_nodes)}")
+        if not selected_nodes:
+            Logger.log("w", "[CROSS_SECTION] No selected nodes found")
+            return None
+
+        # 使用第一个选中的模型
+        selected_node = selected_nodes[0]
+        Logger.log("i", f"[CROSS_SECTION] Using selected node: {selected_node.getName()}")
+
+        # 获取网格数据
+        mesh_data = selected_node.getMeshData()
+        if not mesh_data:
+            Logger.log("w", "[CROSS_SECTION] No mesh data found for selected node")
+            return None
+
+        Logger.log("i", f"[CROSS_SECTION] Mesh data vertices count: {mesh_data.getVertexCount()}")
+        Logger.log("i", f"[CROSS_SECTION] Mesh data face count: {mesh_data.getFaceCount()}")
+        Logger.log("i", f"[CROSS_SECTION] Mesh data has vertices: {mesh_data.getVertices() is not None}")
+        Logger.log("i", f"[CROSS_SECTION] Mesh data has indices: {mesh_data.hasIndices()}")
+
+        # 尝试获取变换后的网格数据
+        transformation = selected_node.getWorldTransformation()
+        Logger.log("i", f"[CROSS_SECTION] Node transformation: {transformation}")
+
+        # 检查是否需要应用变换（简单检查是否为单位矩阵）
+        try:
+            # 手动检查是否为单位矩阵
+            matrix_data = transformation.getData()
+            identity_matrix = np.eye(4, dtype=np.float32)
+            is_identity = np.allclose(matrix_data, identity_matrix, atol=1e-6)
+            Logger.log("i", f"[CROSS_SECTION] Is identity matrix: {is_identity}")
+        except Exception as e:
+            Logger.log("w", f"[CROSS_SECTION] Error checking transformation: {e}")
+            is_identity = True  # 假设是单位矩阵，跳过变换
+
+        if transformation and not is_identity:
+            Logger.log("i", "[CROSS_SECTION] Applying transformation to mesh data")
+            try:
+                mesh_data = mesh_data.getTransformed(transformation)
+                Logger.log("i", f"[CROSS_SECTION] Transformed mesh data vertices count: {mesh_data.getVertexCount()}")
+            except Exception as e:
+                Logger.log("w", f"[CROSS_SECTION] Error applying transformation: {e}")
+        else:
+            Logger.log("i", "[CROSS_SECTION] Skipping transformation (identity matrix or error)")
+
+        # 计算模型与平面的交线
+        intersection_lines = self._calculatePlaneIntersection(mesh_data, z_height)
+        Logger.log("i", f"[CROSS_SECTION] Intersection lines count: {len(intersection_lines) if intersection_lines else 0}")
+        if not intersection_lines:
+            Logger.log("w", "[CROSS_SECTION] No intersection lines found")
+            return None
+
+        # 创建线段网格
+        builder = MeshBuilder()
+
+        # 为每条线段创建一个小的管状几何体以便可见
+        line_width = 1.0  # 加粗线宽
+        color = Color(1.0, 0.0, 0.0, 1.0)  # 红色不透明
+
+        for i, line in enumerate(intersection_lines):
+            Logger.log("d", f"[CROSS_SECTION] Adding line {i}: {line[0]} -> {line[1]}")
+            self._addLineToMesh(builder, line[0], line[1], line_width, color)
+
+        mesh_result = builder.build()
+        Logger.log("i", f"[CROSS_SECTION] Built mesh with {mesh_result.getVertexCount() if mesh_result else 0} vertices")
+        return mesh_result
+
+    def _calculatePlaneIntersection(self, mesh_data: MeshData, z_height: float):
+        """计算网格与水平平面的交线（Y轴截面）"""
+        Logger.log("i", f"[CROSS_SECTION] Calculating plane intersection at Y={z_height}")
+
+        vertices = mesh_data.getVertices()
+        indices = mesh_data.getIndices()
+
+        Logger.log("i", f"[CROSS_SECTION] Vertices type: {type(vertices)}, value: {vertices is not None}")
+        Logger.log("i", f"[CROSS_SECTION] Indices type: {type(indices)}, value: {indices is not None}")
+
+        if vertices is not None:
+            Logger.log("i", f"[CROSS_SECTION] Vertices shape: {vertices.shape if hasattr(vertices, 'shape') else 'no shape'}")
+        if indices is not None:
+            Logger.log("i", f"[CROSS_SECTION] Indices shape: {indices.shape if hasattr(indices, 'shape') else 'no shape'}")
+
+        if vertices is None:
+            Logger.log("w", "[CROSS_SECTION] Vertices is None")
+            return []
+
+        # 添加调试信息：检查顶点Y范围（Cura中Y轴是高度）
+        y_coords = vertices[:, 1]  # 获取所有Y坐标
+        min_y = np.min(y_coords)
+        max_y = np.max(y_coords)
+        Logger.log("i", f"[CROSS_SECTION] Mesh Y range: {min_y:.3f} to {max_y:.3f}, target Y: {z_height:.3f}")
+
+        intersection_lines = []
+        triangle_count = 0
+        processed_count = 0
+
+        if indices is not None:
+            # 有索引的网格 - 使用索引访问顶点
+            triangle_count = len(indices) // 3
+            Logger.log("i", f"[CROSS_SECTION] Processing indexed mesh with {triangle_count} triangles")
+
+            # 性能优化：每隔一定数量处理一个三角形
+            step = max(1, triangle_count // 50000)  # 限制最多处理50000个三角形
+
+            for i in range(0, len(indices), 3 * step):
+                # 获取三角形的三个顶点
+                v0_idx, v1_idx, v2_idx = indices[i], indices[i+1], indices[i+2]
+                v0 = vertices[v0_idx]
+                v1 = vertices[v1_idx]
+                v2 = vertices[v2_idx]
+
+                # 计算三角形与平面的交线
+                line_segment = self._trianglePlaneIntersection(v0, v1, v2, z_height)
+                if line_segment:
+                    intersection_lines.append(line_segment)
+                processed_count += 1
+        else:
+            # 无索引的网格 - 每3个顶点组成一个三角形
+            triangle_count = len(vertices) // 3
+            Logger.log("i", f"[CROSS_SECTION] Processing non-indexed mesh with {triangle_count} triangles")
+
+            # 性能优化：每隔一定数量处理一个三角形
+            step = max(1, triangle_count // 50000)  # 限制最多处理50000个三角形
+
+            for i in range(0, len(vertices), 3 * step):
+                if i + 2 >= len(vertices):
+                    break
+
+                # 获取三角形的三个顶点
+                v0 = vertices[i]
+                v1 = vertices[i+1]
+                v2 = vertices[i+2]
+
+                # 计算三角形与平面的交线
+                line_segment = self._trianglePlaneIntersection(v0, v1, v2, z_height)
+                if line_segment:
+                    intersection_lines.append(line_segment)
+                processed_count += 1
+
+        Logger.log("i", f"[CROSS_SECTION] Processed {processed_count}/{triangle_count} triangles, found {len(intersection_lines)} intersection line segments")
+
+        # 简化线段：合并相近的线段，减少数量
+        simplified_lines = self._simplifyIntersectionLines(intersection_lines)
+        Logger.log("i", f"[CROSS_SECTION] Simplified to {len(simplified_lines)} line segments")
+
+        return simplified_lines
+
+    def _createCrossSectionPlane(self, z_height: float):
+        """创建水平截面平面"""
+        Logger.log("i", f"[CROSS_SECTION] Creating cross section plane at Z={z_height}")
+
+        # 获取选中的模型
+        selected_nodes = Selection.getAllSelectedObjects()
+        if not selected_nodes:
+            Logger.log("w", "[CROSS_SECTION] No selected objects")
+            return None
+
+        # 获取模型的边界框
+        node = selected_nodes[0]
+        bounding_box = node.getBoundingBox()
+        if not bounding_box:
+            Logger.log("w", "[CROSS_SECTION] No bounding box")
+            return None
+
+        # 计算平面大小（稍微大于模型）
+        min_x = bounding_box.minimum.x - 10
+        max_x = bounding_box.maximum.x + 10
+        min_z = bounding_box.minimum.z - 10
+        max_z = bounding_box.maximum.z + 10
+
+        # 将Z高度转换为Y坐标（因为我们使用Y轴作为高度）
+        y_pos = z_height
+
+        # 创建半透明的矩形平面
+        builder = MeshBuilder()
+
+        # 定义平面的四个顶点
+        v1 = Vector(min_x, y_pos, min_z)
+        v2 = Vector(max_x, y_pos, min_z)
+        v3 = Vector(max_x, y_pos, max_z)
+        v4 = Vector(min_x, y_pos, max_z)
+
+        # 添加两个三角形组成矩形（双面渲染）
+        # 正面
+        builder.addFaceByPoints(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z)
+        builder.addFaceByPoints(v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, v4.x, v4.y, v4.z)
+
+        # 反面（确保双面可见）
+        builder.addFaceByPoints(v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, v2.x, v2.y, v2.z)
+        builder.addFaceByPoints(v1.x, v1.y, v1.z, v4.x, v4.y, v4.z, v3.x, v3.y, v3.z)
+
+        mesh_result = builder.build()
+        Logger.log("i", f"[CROSS_SECTION] Created cross section plane with {mesh_result.getVertexCount() if mesh_result else 0} vertices")
+        return mesh_result
+
+    def _simplifyIntersectionLines(self, intersection_lines):
+        """简化交线：合并相近的线段，减少数量"""
+        if not intersection_lines:
+            return []
+
+        # 设置简化参数
+        min_distance = 1.0  # 最小线段长度（mm）
+        merge_distance = 0.5  # 合并距离阈值（mm）
+
+        simplified = []
+
+        for line in intersection_lines:
+            p1, p2 = line
+
+            # 计算线段长度
+            dx = p2[0] - p1[0]
+            dy = p2[1] - p1[1]
+            dz = p2[2] - p1[2]
+            length = (dx*dx + dy*dy + dz*dz) ** 0.5
+
+            # 过滤太短的线段
+            if length < min_distance:
+                continue
+
+            # 检查是否可以与现有线段合并
+            merged = False
+            for i, existing_line in enumerate(simplified):
+                ep1, ep2 = existing_line
+
+                # 检查端点是否相近
+                if (self._pointDistance(p1, ep1) < merge_distance and self._pointDistance(p2, ep2) < merge_distance) or \
+                   (self._pointDistance(p1, ep2) < merge_distance and self._pointDistance(p2, ep1) < merge_distance):
+                    # 合并线段：使用更长的线段
+                    existing_length = self._pointDistance(ep1, ep2)
+                    if length > existing_length:
+                        simplified[i] = (p1, p2)
+                    merged = True
+                    break
+
+            if not merged:
+                simplified.append((p1, p2))
+
+        # 进一步减少线段数量：每隔一定距离采样
+        if len(simplified) > 1000:  # 如果线段太多，进行采样
+            step = len(simplified) // 500  # 最多保留500条线段
+            simplified = simplified[::step]
+
+        return simplified
+
+    def _pointDistance(self, p1, p2):
+        """计算两点之间的距离"""
+        dx = p2[0] - p1[0]
+        dy = p2[1] - p1[1]
+        dz = p2[2] - p1[2]
+        return (dx*dx + dy*dy + dz*dz) ** 0.5
+
+    def _trianglePlaneIntersection(self, v0, v1, v2, z_height):
+        """计算三角形与水平平面的交线（Y轴截面）"""
+        # 检查顶点相对于平面的位置（使用Y坐标）
+        d0 = v0[1] - z_height  # Y坐标与平面的距离
+        d1 = v1[1] - z_height
+        d2 = v2[1] - z_height
+
+        # 如果所有顶点都在平面同一侧，没有交线
+        if (d0 > 0 and d1 > 0 and d2 > 0) or (d0 < 0 and d1 < 0 and d2 < 0):
+            return None
+
+        # 如果所有顶点都在平面上，忽略（退化情况）
+        if abs(d0) < 1e-6 and abs(d1) < 1e-6 and abs(d2) < 1e-6:
+            return None
+
+        # 找到与平面相交的边
+        intersection_points = []
+
+        # 检查边 v0-v1
+        if (d0 > 0) != (d1 > 0) and abs(d0 - d1) > 1e-6:  # 边跨越平面
+            t = d0 / (d0 - d1)
+            point = [
+                v0[0] + t * (v1[0] - v0[0]),
+                z_height,  # Y坐标固定为截面高度
+                v0[2] + t * (v1[2] - v0[2])
+            ]
+            intersection_points.append(point)
+
+        # 检查边 v1-v2
+        if (d1 > 0) != (d2 > 0) and abs(d1 - d2) > 1e-6:  # 边跨越平面
+            t = d1 / (d1 - d2)
+            point = [
+                v1[0] + t * (v2[0] - v1[0]),
+                z_height,  # Y坐标固定为截面高度
+                v1[2] + t * (v2[2] - v1[2])
+            ]
+            intersection_points.append(point)
+
+        # 检查边 v2-v0
+        if (d2 > 0) != (d0 > 0) and abs(d2 - d0) > 1e-6:  # 边跨越平面
+            t = d2 / (d2 - d0)
+            point = [
+                v2[0] + t * (v0[0] - v2[0]),
+                z_height,  # Y坐标固定为截面高度
+                v2[2] + t * (v0[2] - v2[2])
+            ]
+            intersection_points.append(point)
+
+        # 如果有两个交点，返回线段
+        if len(intersection_points) == 2:
+            return (intersection_points[0], intersection_points[1])
+
+        return None
+
+    def _addLineToMesh(self, builder: MeshBuilder, p1, p2, width: float, color: Color):
+        """将线段添加到网格中，创建一个加粗的管状几何体"""
+        # 计算线段方向
+        dx = p2[0] - p1[0]
+        dy = p2[1] - p1[1]
+        dz = p2[2] - p1[2]
+        length = (dx*dx + dy*dy + dz*dz) ** 0.5
+
+        if length < 1e-6:
+            return
+
+        # 标准化方向向量
+        dx /= length
+        dy /= length
+        dz /= length
+
+        # 创建两个垂直向量来形成圆形截面
+        if abs(dz) < 0.9:
+            # 如果不是垂直线，使用Z轴叉积
+            perp1_x = -dy
+            perp1_y = dx
+            perp1_z = 0
+        else:
+            # 如果是垂直线，使用X轴叉积
+            perp1_x = 1
+            perp1_y = 0
+            perp1_z = 0
+
+        # 标准化第一个垂直向量
+        perp1_length = (perp1_x*perp1_x + perp1_y*perp1_y + perp1_z*perp1_z) ** 0.5
+        if perp1_length > 1e-6:
+            perp1_x /= perp1_length
+            perp1_y /= perp1_length
+            perp1_z /= perp1_length
+
+        # 创建第二个垂直向量（与第一个垂直向量和方向向量都垂直）
+        perp2_x = dy * perp1_z - dz * perp1_y
+        perp2_y = dz * perp1_x - dx * perp1_z
+        perp2_z = dx * perp1_y - dy * perp1_x
+
+        # 创建八边形截面的顶点（更圆滑的效果）
+        half_width = width * 0.5
+        segments = 8  # 八边形
+
+        for i in range(segments):
+            angle1 = 2 * 3.14159 * i / segments
+            angle2 = 2 * 3.14159 * (i + 1) / segments
+
+            # 当前段的顶点
+            cos1, sin1 = np.cos(angle1), np.sin(angle1)
+            cos2, sin2 = np.cos(angle2), np.sin(angle2)
+
+            # 起点的顶点
+            v1_start = Vector(
+                p1[0] + (perp1_x * cos1 + perp2_x * sin1) * half_width,
+                p1[1] + (perp1_y * cos1 + perp2_y * sin1) * half_width,
+                p1[2] + (perp1_z * cos1 + perp2_z * sin1) * half_width
+            )
+            v2_start = Vector(
+                p1[0] + (perp1_x * cos2 + perp2_x * sin2) * half_width,
+                p1[1] + (perp1_y * cos2 + perp2_y * sin2) * half_width,
+                p1[2] + (perp1_z * cos2 + perp2_z * sin2) * half_width
+            )
+
+            # 终点的顶点
+            v1_end = Vector(
+                p2[0] + (perp1_x * cos1 + perp2_x * sin1) * half_width,
+                p2[1] + (perp1_y * cos1 + perp2_y * sin1) * half_width,
+                p2[2] + (perp1_z * cos1 + perp2_z * sin1) * half_width
+            )
+            v2_end = Vector(
+                p2[0] + (perp1_x * cos2 + perp2_x * sin2) * half_width,
+                p2[1] + (perp1_y * cos2 + perp2_y * sin2) * half_width,
+                p2[2] + (perp1_z * cos2 + perp2_z * sin2) * half_width
+            )
+
+            # 添加四边形的两个三角形
+            builder.addFaceByPoints(v1_start.x, v1_start.y, v1_start.z,
+                                  v2_start.x, v2_start.y, v2_start.z,
+                                  v1_end.x, v1_end.y, v1_end.z)
+            builder.addFaceByPoints(v2_start.x, v2_start.y, v2_start.z,
+                                  v2_end.x, v2_end.y, v2_end.z,
+                                  v1_end.x, v1_end.y, v1_end.z)
+
+        # 使用传入的颜色（避免未使用变量警告）
+        Logger.log("d", f"[CROSS_SECTION] Adding line segment with color: {color}")
+
+    def _createCrossSectionNode(self) -> SceneNode:
+        """创建截面指示器场景节点"""
+        if self._cross_section_node:
+            # 如果已存在，先移除
+            self._removeCrossSectionNode()
+
+        # 创建新的场景节点
+        self._cross_section_node = SceneNode()
+        self._cross_section_node.setSelectable(False)
+
+        # 设置节点属性（使用默认渲染）
+        Logger.log("i", "[CROSS_SECTION] Created cross section indicator node")
+
+        # 添加到场景根节点
+        scene = self._controller.getScene()
+        scene.getRoot().addChild(self._cross_section_node)
+
+        return self._cross_section_node
+
+    def _removeCrossSectionNode(self):
+        """移除截线场景节点"""
+        if self._cross_section_node:
+            if self._cross_section_node.getParent():
+                self._cross_section_node.getParent().removeChild(self._cross_section_node)
+            self._cross_section_node = None
+
+    def _updateCrossSection(self, z_height: float):
+        """更新截面指示器位置"""
+        self._cross_section_z = z_height
+
+        if not self._cross_section_visible:
+            return
+
+        # 创建水平截面平面
+        mesh_data = self._createCrossSectionPlane(z_height)
+        if not mesh_data:
+            return
+
+        # 如果截面节点不存在，创建它
+        if not self._cross_section_node:
+            self._createCrossSectionNode()
+
+        # 更新网格数据
+        self._cross_section_node.setMeshData(mesh_data)
+
+        # 触发场景更新
+        scene = self._controller.getScene()
+        scene.sceneChanged.emit(self._cross_section_node)
+
+    @pyqtSlot(float)
+    def showCrossSection(self, z_height: float):
+        """显示截线"""
+        Logger.log("i", f"[CROSS_SECTION] Showing cross section at Z={z_height}")
+        self._cross_section_visible = True
+        self._updateCrossSection(z_height)
+
+    @pyqtSlot(str)
+    def hideCrossSection(self, dummy_param=""):
+        """隐藏截线"""
+        Logger.log("i", "[CROSS_SECTION] Hiding cross section")
+        Logger.log("d", f"[CROSS_SECTION] Dummy param: {dummy_param}")  # 避免未使用变量警告
+        self._cross_section_visible = False
+        self._removeCrossSectionNode()

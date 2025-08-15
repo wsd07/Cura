@@ -945,6 +945,18 @@ Item {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onPositionChanged: function(mouse) {
+                                // 计算鼠标对应的Z高度和参数值
+                                var mouseZ = chartCanvas.yToHeight(mouse.y)
+                                mouseZ = Math.max(0, Math.min(chartCanvas.modelHeight, mouseZ))
+                                var mouseValue = chartCanvas.xToValue(mouse.x)
+
+                                // 更新鼠标坐标显示
+                                mouseCoordinateDisplay.updateCoordinates(mouseZ, mouseValue, mouse.x, mouse.y)
+
+                                // 显示3D截面平面
+                                console.log("[CROSS_SECTION] Mouse Z:", mouseZ)
+                                callZParameterEditorMethod("showCrossSection", mouseZ)
+
                                 if (curveCanvas.dragIndex >= 0) {
                                     console.log("[MOUSE_DEBUG] Position changed - mouse.x:", mouse.x, "mouse.y:", mouse.y, "dragIndex:", curveCanvas.dragIndex)
                                     var newZ = chartCanvas.yToHeight(mouse.y)
@@ -1035,6 +1047,52 @@ Item {
                                     }
                                 }
                             }
+
+                            onEntered: {
+                                console.log("[CROSS_SECTION] Mouse entered chart area")
+                                mouseCoordinateDisplay.visible = true
+                            }
+
+                            onExited: {
+                                console.log("[CROSS_SECTION] Mouse exited chart area")
+                                mouseCoordinateDisplay.visible = false
+                                callZParameterEditorMethod("hideCrossSection", "")
+                            }
+                        }
+                    }
+
+                    // 鼠标坐标显示
+                    Rectangle {
+                        id: mouseCoordinateDisplay
+                        width: 120
+                        height: 50
+                        color: UM.Theme.getColor("setting_category")
+                        border.color: UM.Theme.getColor("setting_control_border")
+                        border.width: 1
+                        radius: 3
+                        visible: false
+                        z: 1000  // 确保在最上层
+
+                        property real mouseX: 0
+                        property real mouseY: 0
+
+                        // 动态定位到鼠标右上角
+                        x: Math.min(mouseX + 10, parent.width - width - 10)
+                        y: Math.max(mouseY - height - 10, 10)
+
+                        function updateCoordinates(z, paramValue, mx, my) {
+                            mouseX = mx
+                            mouseY = my
+                            coordinateText.text = "Z: " + z.toFixed(1) + " mm\nP: " + paramValue.toFixed(1)
+                        }
+
+                        Text {
+                            id: coordinateText
+                            anchors.centerIn: parent
+                            text: "Z: 0.0 mm\nP: 0.0"
+                            color: UM.Theme.getColor("text")
+                            font.pixelSize: 11
+                            horizontalAlignment: Text.AlignHCenter
                         }
                     }
 
